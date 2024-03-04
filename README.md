@@ -7,6 +7,14 @@ adiabatic_fermi_hubbard
 
 A Python package to simulate the Hubbard model ground state for simple lattices through adiabatic state preparation.
 
+### Dependencies
+
+This package has the following dependencies:
+- qiskit
+- qiskit-nature
+- qiskit-algorithms
+
+
 ### Copyright
 
 Copyright (c) 2024, Yannick Pleimling
