@@ -5,7 +5,7 @@ adiabatic_fermi_hubbard
 [![codecov](https://codecov.io/gh/REPLACE_WITH_OWNER_ACCOUNT/adiabatic_fermi_hubbard/branch/main/graph/badge.svg)](https://codecov.io/gh/REPLACE_WITH_OWNER_ACCOUNT/adiabatic_fermi_hubbard/branch/main)
 
 
-A Python package to simulate the Hubbard model ground state through adiabatic evolution
+A Python package to simulate the Hubbard model ground state for simple lattices through adiabatic state preparation.
 
 ### Copyright
 
