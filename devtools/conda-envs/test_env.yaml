@@ -7,11 +7,6 @@ dependencies:
   - python
   - pip
 
-    # Package dependencies
-  - qiskit
-  - qiskit-nature
-  - qiskit-algorithms
-
     # Testing
   - pytest
   - pytest-cov
@@ -19,4 +14,11 @@ dependencies:
   # Pip-only installs
   - pip:
     - codecov
+    - qiskit-nature
+    - qiskit-algorithms
+
+  # conda-forge
+  - conda-forge:
+    - qiskit
+    - qiskit-aer
 
