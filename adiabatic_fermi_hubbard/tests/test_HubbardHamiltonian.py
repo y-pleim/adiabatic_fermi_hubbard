@@ -112,7 +112,11 @@ def test_jw_hamiltonian():
             0.5 + 0.0j,
         ],
     )
-    assert test_pauli_op == ham1.jw_hamiltonian() or test_pauli_op_2 == ham1.jw_hamiltonian()
+    assert (
+        test_pauli_op == ham1.jw_hamiltonian()
+        or test_pauli_op_2 == ham1.jw_hamiltonian()
+    )
+
 
 def test_get_t_value():
     """Test for get_t_value() access method."""
@@ -222,13 +226,16 @@ def test_get_hamiltonian():
     """Test for get_hamiltonian() method."""
     lattice1 = afh.Lattice(2, 1)
     ham1 = afh.HubbardHamiltonian(lattice1, 2, 2)
-    assert ham1.get_hopping_term() + ham1.get_interaction_term() == ham1.get_hamiltonian()
+    assert (
+        ham1.get_hopping_term() + ham1.get_interaction_term() == ham1.get_hamiltonian()
+    )
 
-#def test_jw_hamiltonian_2():
+
+# def test_jw_hamiltonian_2():
 #    lattice1 = afh.Lattice(2,1)
 #    ham1 = afh.HubbardHamiltonian(lattice1,2,2)
 #    qiskit_lattice = lattice1.get_qiskit_object()
-#    
+#
 #    fermi_hubbard_test = FermiHubbardModel(
 #    qiskit_lattice.uniform_parameters(
 #        uniform_interaction=-2.0,
