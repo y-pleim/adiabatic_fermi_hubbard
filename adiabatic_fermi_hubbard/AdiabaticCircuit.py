@@ -29,7 +29,7 @@ class AdiabaticCircuit():
             if str(gates_list[i]) == "X":
                 circ.h(i)
             elif str(gates_list[i]) == "Y":
-                circ.rx(np.pi/2, i)
+                circ.rx(3*np.pi/2, i)
     
         for i in range(self.n-1):
             circ.cx(i,self.n-1)
@@ -45,7 +45,7 @@ class AdiabaticCircuit():
             if str(gates_list[i]) == "X":
                 circ.h(i)
             elif str(gates_list[i]) == "Y":
-                circ.rx(-np.pi/2, i)
+                circ.rx(-3*np.pi/2, i)
         
         return circ
                     
