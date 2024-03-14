@@ -47,8 +47,6 @@ class AdiabaticCircuit():
             elif str(gates_list[i]) == "Y":
                 circ.rx(-np.pi/2, i)
         
-        print(circ.draw(output="text"))
-
         return circ
                     
 
