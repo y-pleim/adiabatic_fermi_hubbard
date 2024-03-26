@@ -25,7 +25,7 @@ class AdiabaticCircuit:
         self.step_count = step_count
 
     def pauli_string_rotation(self, pauli_string: Pauli, argument: float):
-        """Performs a rotation about a specified Pauli string through a specified angle.
+        """Performs a rotation about a specified Pauli string through a specified angle. Based on Nielsen and Chuang, Ch 4.
 
         Parameters
         ----------
@@ -59,13 +59,13 @@ class AdiabaticCircuit:
         # perform rotation
         circ.rz(argument, self.n - 1)
 
-        # uncompute parity
+        # undoes parity encoding
         index = self.n - 2
         while index >= 0:
             circ.cx(index, self.n - 1)
             index -= 1
 
-        # uncompute conversion
+        # undoes conversion
         for i in range(len(gates_list)):
             if str(gates_list[i]) == "X":
                 circ.h(i)
