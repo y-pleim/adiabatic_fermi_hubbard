@@ -6,8 +6,8 @@ def test_pauli_string_rotation():
     '''Test method for pauli_string_rotation function'''
     #do XYIZ rotation, phase pi
     circ = qi.QuantumCircuit(4,0)
-    circ.h(0)
-    circ.rx(3*np.pi/2,1)
+    circ.h(3)
+    circ.rx(3*np.pi/2,2)
     circ.cx(0,3)
     circ.cx(1,3)
     circ.cx(2,3)
@@ -15,8 +15,8 @@ def test_pauli_string_rotation():
     circ.cx(2,3)
     circ.cx(1,3)
     circ.cx(0,3)
-    circ.rx(-3*np.pi/2,1)
-    circ.h(0)
+    circ.rx(-3*np.pi/2,2)
+    circ.h(3)
 
     circ_drawn = circ.draw(output="text")
 
@@ -29,3 +29,6 @@ def test_pauli_string_rotation():
     circ1_drawn = circ1.draw(output="text")
 
     assert str(circ) == str(circ1)
+
+def test_evolution_operator():
+    

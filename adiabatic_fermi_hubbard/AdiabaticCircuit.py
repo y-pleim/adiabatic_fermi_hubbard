@@ -1,8 +1,8 @@
 from adiabatic_fermi_hubbard import HubbardHamiltonian
 
-from qiskit import QuantumCircuit, execute
+from qiskit import QuantumCircuit, execute, QuantumRegister
 from qiskit.result import Result
-from qiskit.quantum_info import Pauli
+from qiskit.quantum_info import Pauli, SparsePauliOp
 from qiskit_aer import Aer
 from qiskit_algorithms import NumPyMinimumEigensolver
 from qiskit_nature.second_q.algorithms import GroundStateEigensolver
@@ -40,29 +40,56 @@ class AdiabaticCircuit:
             A qiskit QuantumCircuit object which performs the rotation when executed.
 
         """
-        circ = QuantumCircuit(self.n, 0)  # 0 qubits on classical register
+        qubits_reg = QuantumRegister(self.n, 'q')
+        #anc_reg = QuantumRegister(1,'ancilla')
+        #circ = QuantumCircuit(qubits_reg, anc_reg)  # 0 qubits on classical register
+        circ = QuantumCircuit(qubits_reg)
+        
         gates_list = []
         for i in range(len(pauli_string)):
             gates_list.append(pauli_string[i])
+
+        keeper_indices = []
 
         # initial step - converting Y, X gates
         for i in range(len(gates_list)):
             if str(gates_list[i]) == "X":
                 circ.h(i)
+                if i < len(gates_list):
+                    keeper_indices.append(i)
             elif str(gates_list[i]) == "Y":
                 circ.rx(3 * np.pi / 2, i)
+                if i < len(gates_list):
+                    keeper_indices.append(i)
+            elif str(gates_list[i]) == "Z":
+                if i < len(gates_list):
+                    keeper_indices.append(i)
+            else:
+                circ.id(i)
 
-        # encode parity onto final qubit
-        for i in range(self.n - 1):
-            circ.cx(i, self.n - 1)
+        # encode parity
+        j = 0
+        for i in keeper_indices:
+            if len(keeper_indices) == len(gates_list):
+                j = len(pauli_string)-1
+                circ.cx(i, j)
+            elif i != max(keeper_indices):
+                j = max(keeper_indices)
+                circ.cx(i, j)
 
         # perform rotation
-        circ.rz(argument, self.n - 1)
+        if keeper_indices:
+            circ.rz(argument, j)
 
         # undoes parity encoding
         index = self.n - 2
         while index >= 0:
-            circ.cx(index, self.n - 1)
+            if index in keeper_indices and len(keeper_indices) == len(gates_list):
+                j = len(pauli_string)-1
+                circ.cx(index, j)
+            elif index in keeper_indices and index != max(keeper_indices):
+                j = max(keeper_indices)
+                circ.cx(index, j)
             index -= 1
 
         # undoes conversion
@@ -77,7 +104,7 @@ class AdiabaticCircuit:
     def evolution_operator(self, k):
         """Implements the operation
 
-        .. math:: U(k) = \exp{H_init (1-k/M) \delta t}\exp{H_{FH} (k/M) \delta t}
+        .. math:: U(k) = \exp{H_{init} (1-k/M) \delta t}\exp{H_{FH} (k/M) \delta t}
 
         where :math:'H_{init} = \sum_i{X_i}', :math:'H_{FH}' is the Jordan-Wigner transformed Fermi-Hubbard Hamiltonian and
         :math:'M' is the number of steps associated with this AdiabaticCircuit object.
@@ -270,3 +297,118 @@ class AdiabaticCircuit:
             The number of steps involved in creating the adiabatic state preparation circuit.
         """
         return self.step_count
+    
+    def get_eigenvalues(self):
+        """Calculate eigenvalues for the JW transformed Hamiltonian...
+        
+        """
+        
+        ham = self.hubbard_hamiltonian.jw_hamiltonian()
+        ham_paulis = ham.paulis
+        ham_coeffs = ham.coeffs
+    
+        matrices = []
+
+        for pauli_string in ham_paulis:
+            for i in range(len(pauli_string)):
+                if str(pauli_string[i]) == "X":
+                    a = np.asarray([(0,1),(1,0)])
+                elif str(pauli_string[i]) == "Y":
+                    a = np.asarray([(0,-1.j),(1.j,0)])
+                elif str(pauli_string[i]) == "Z":
+                    a = np.array([(1,0),(0,-1)])
+                else:
+                    a = np.eye(2)
+                
+                if i == 0:
+                    b = 1
+                
+                b = np.kron(a,b)
+            matrices.append(b)
+        
+        for i in range(len(matrices)):
+            if i == 0:
+                total_matrix = ham_coeffs[i] * matrices[i]
+            else:
+                total_matrix = np.add(total_matrix, ham_coeffs[i] * matrices[i])
+
+        eigs = np.linalg.eig(total_matrix).eigenvalues
+
+        return eigs
+
+    def ising_test(self, exchange):
+        self.n = 4
+        val = exchange
+        self.ising_ham = SparsePauliOp(["ZZII","IZZI","IIZZ"],coeffs=[val,val,val])
+        print(self.ising_ham)
+
+
+    def ising_evolution_operator(self, k):
+        delta_s = 1 / self.step_count
+
+        circ = QuantumCircuit(self.n, 0)
+
+        final_ham = self.ising_ham
+        final_ham_paulis = final_ham.paulis  # paulis list
+        final_ham_coeffs = final_ham.coeffs  # weights list
+
+        # stores qubit indices
+        seq = []
+        for i in range(self.n):
+            seq.append(i)
+
+        # first exponential factor: evolution under H_init for step k on qubits in seq
+        for i in range(self.n):
+            circ.rx(self.time_step * (1 - k * delta_s), i)
+
+        # second exponential factor: evolution under H_HF for step k on qubits in seq
+        for i in range(len(final_ham_paulis)):
+            circ.append(
+                self.pauli_string_rotation(
+                    final_ham_paulis[i],
+                    self.time_step * k * delta_s * np.real(final_ham_coeffs[i]),
+                ),
+                seq,
+            )
+        return circ
+
+    def ising_create_circuit(self):
+        circ = QuantumCircuit(self.n, 0)
+
+        # start system in ground state of H_init (i.e., the all minus state)
+        for i in range(self.n):
+            circ.x(i)
+            circ.h(i)
+
+        # store qubit indices
+        seq = []
+        for i in range(self.n):
+            seq.append(i)
+
+        # build a circuit of M+1 steps out of evolution operators
+        for i in range(self.step_count + 1):
+            circ.append(self.ising_evolution_operator(i), seq)
+
+        return circ
+
+    def ising_calc_energy(self, result: Result):
+        """Calculates the energy for the state represented by result using the HubbardHamiltonian associated
+        with this AdiabaticCircuit object.
+
+        Parameters
+        ----------
+        result : Result
+            A qiskit Result containing the state to calculate the energy for.
+
+        Returns
+        -------
+        energy : float
+            The energy of the state.
+
+        """
+        result_statevector = result.get_statevector()
+        ham = self.ising_ham
+        print(ham)
+        energy = result_statevector.expectation_value(ham)
+
+        return energy
