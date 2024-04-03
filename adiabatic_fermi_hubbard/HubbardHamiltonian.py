@@ -16,9 +16,10 @@ class HubbardHamiltonian:
         The strength of the onsite interaction term.
     """
 
-    def __init__(self, lattice: Lattice, t: float = 1.0, U: float = 1.0):
+    def __init__(self, lattice: Lattice, t: float = 2, U: float = 10, mu: float = -5):
         self.t = t
         self.U = U
+        self.mu = mu
         self.lattice = lattice
 
         # get single fermionic operators
@@ -78,7 +79,17 @@ class HubbardHamiltonian:
             )
 
         self.hopping_term = t * sum(hopping_operators)
-        self.hamiltonian = self.hopping_term + self.interaction_term
+
+        
+        # build chemical potential term
+        chemical_potential_operators = []
+        
+        for i in range(0, 2 * n):
+            chemical_potential_operators.append(creation_operators[i] @ annihilation_operators[i])
+        
+        self.chemical_potential_term = mu * sum(chemical_potential_operators)
+
+        self.hamiltonian = self.hopping_term + self.interaction_term + self.chemical_potential_term
 
     def __str__(self):
         return (
@@ -86,6 +97,8 @@ class HubbardHamiltonian:
             + str(self.t)
             + "\nU = "
             + str(self.U)
+            + "\nmu = "
+            + str(self.mu)
             + "\n\nLattice:\n"
             + str(self.lattice)
             + "\n\n"
@@ -117,6 +130,11 @@ class HubbardHamiltonian:
         jw = JordanWignerMapper()
         jw_hopping = jw.map(self.hopping_term)
         return jw_hopping
+    
+    def jw_chemical_potential_term(self):
+        jw = JordanWignerMapper()
+        jw_chem = jw.map(self.chemical_potential_term)
+        return jw_chem
 
     def jw_hamiltonian(self):
         """Applies Jordan-Wigner transformation to HubbardHamiltonian and returns result.
@@ -151,6 +169,9 @@ class HubbardHamiltonian:
         """
         return self.U
 
+    def get_mu_value(self):
+        return self.mu
+
     def get_lattice(self):
         """Access method for acquiring the Lattice associated with a HubbardHamiltonian.
 
@@ -180,6 +201,9 @@ class HubbardHamiltonian:
             The FermionicOp representation of the hopping term.
         """
         return self.hopping_term
+    
+    def get_chemical_potential_term(self):
+        return self.chemical_potential_term
 
     def get_hamiltonian(self):
         """Access method for acquiring the HubbardHamiltonian in FermionicOp form.

@@ -40,55 +40,51 @@ class AdiabaticCircuit:
             A qiskit QuantumCircuit object which performs the rotation when executed.
 
         """
-        qubits_reg = QuantumRegister(self.n, 'q')
-        #anc_reg = QuantumRegister(1,'ancilla')
-        #circ = QuantumCircuit(qubits_reg, anc_reg)  # 0 qubits on classical register
-        circ = QuantumCircuit(qubits_reg)
+        circ = QuantumCircuit(self.n, 0)
         
+        # extract constituent Pauli gates
         gates_list = []
         for i in range(len(pauli_string)):
             gates_list.append(pauli_string[i])
 
-        keeper_indices = []
+        # list of qubits whose parity will be encoded onto the last qubit
+        control_qubits = []
 
         # initial step - converting Y, X gates
         for i in range(len(gates_list)):
             if str(gates_list[i]) == "X":
-                circ.h(i)
-                if i < len(gates_list):
-                    keeper_indices.append(i)
+                circ.h(i) 
+                control_qubits.append(i)
             elif str(gates_list[i]) == "Y":
                 circ.rx(3 * np.pi / 2, i)
-                if i < len(gates_list):
-                    keeper_indices.append(i)
+                control_qubits.append(i)
             elif str(gates_list[i]) == "Z":
-                if i < len(gates_list):
-                    keeper_indices.append(i)
+                control_qubits.append(i)
             else:
                 circ.id(i)
 
         # encode parity
         j = 0
-        for i in keeper_indices:
-            if len(keeper_indices) == len(gates_list):
+        for i in control_qubits:
+            if len(control_qubits) == len(gates_list):
                 j = len(pauli_string)-1
                 circ.cx(i, j)
-            elif i != max(keeper_indices):
-                j = max(keeper_indices)
+            elif i != max(control_qubits):
+                j = max(control_qubits)
                 circ.cx(i, j)
 
         # perform rotation
-        if keeper_indices:
+        if control_qubits:
             circ.rz(argument, j)
 
         # undoes parity encoding
         index = self.n - 2
         while index >= 0:
-            if index in keeper_indices and len(keeper_indices) == len(gates_list):
+            if index in control_qubits and len(control_qubits) == len(gates_list):
                 j = len(pauli_string)-1
                 circ.cx(index, j)
-            elif index in keeper_indices and index != max(keeper_indices):
-                j = max(keeper_indices)
+            elif index in control_qubits and index != max(control_qubits):
+                j = max(control_qubits)
                 circ.cx(index, j)
             index -= 1
 
@@ -213,12 +209,13 @@ class AdiabaticCircuit:
         lattice = ham.get_lattice().get_qiskit_object()
         t = ham.get_t_value()
         u = ham.get_U_value()
+        mu = ham.get_mu_value()
 
         # create FermiHubbardModel with interaction strength t and onsite interaction strength u
         fh_model = FermiHubbardModel(
             lattice.uniform_parameters(
                 uniform_interaction=-t,
-                uniform_onsite_potential=0.0,  # no potential offset at each site
+                uniform_onsite_potential=mu,
             ),
             onsite_interaction=u,
         )
@@ -302,7 +299,6 @@ class AdiabaticCircuit:
         """Calculate eigenvalues for the JW transformed Hamiltonian...
         
         """
-        
         ham = self.hubbard_hamiltonian.jw_hamiltonian()
         ham_paulis = ham.paulis
         ham_coeffs = ham.coeffs
@@ -339,8 +335,10 @@ class AdiabaticCircuit:
     def ising_test(self, exchange):
         self.n = 4
         val = exchange
-        self.ising_ham = SparsePauliOp(["ZZII","IZZI","IIZZ"],coeffs=[val,val,val])
-        print(self.ising_ham)
+        if self.get_hubbard_hamiltonian().get_lattice().has_pbc():
+            self.ising_ham = SparsePauliOp(["ZZII","IZZI","IIZZ", "ZIIZ"],coeffs=[val,val,val,val])
+        else:
+            self.ising_ham = SparsePauliOp(["ZZII","IZZI","IIZZ"],coeffs=[val,val,val])
 
 
     def ising_evolution_operator(self, k):
