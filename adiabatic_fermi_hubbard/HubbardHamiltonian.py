@@ -4,7 +4,10 @@ from qiskit_nature.second_q.mappers import JordanWignerMapper
 
 
 class HubbardHamiltonian:
-    """A class for constructing the Fermi-Hubbard Hamiltonian for particular lattice, hopping strength, and interaction strength.
+    """A class for constructing the Fermi-Hubbard Hamiltonian for particular lattice, hopping strength :math:'t', interaction strength :math:'U',
+      and chemical potential :math:'\\mu'.
+
+    .. math ::  H = -t \\sum_{<i,j>,\\sigma}(a_{i\\sigma}^\\dag a_{j\\sigma} + h.c.) + U\\sum_{i} n_{i\\uparrow}n_{i\\downarrow} + \\mu \\sum_{i,\\sigma} n_{i\\sigma}
 
     Parameters
     ----------
@@ -14,6 +17,8 @@ class HubbardHamiltonian:
         The strength of the hopping term.
     U : float
         The strength of the onsite interaction term.
+    mu : float
+        The chemical potential.
     """
 
     def __init__(self, lattice: Lattice, t: float = 2, U: float = 10, mu: float = -5):
@@ -53,14 +58,14 @@ class HubbardHamiltonian:
         # build hopping term
         hopping_operators = []
 
-        # hopping factors for up-spin fermions (operators with even indices)
+        # hopping factors for spin-up fermions (operators with even indices)
         for i in range(0, 2 * n - 3, 2):
             hopping_operators.append(
                 -1 * creation_operators[i] @ annihilation_operators[i + 2]
                 + annihilation_operators[i] @ creation_operators[i + 2]
             )
 
-        # hopping factors for down-spin fermions (operators with odd indices)
+        # hopping factors for spin-down fermions (operators with odd indices)
         for i in range(1, 2 * n - 2, 2):
             hopping_operators.append(
                 -1 * creation_operators[i] @ annihilation_operators[i + 2]
@@ -80,16 +85,19 @@ class HubbardHamiltonian:
 
         self.hopping_term = t * sum(hopping_operators)
 
-        
         # build chemical potential term
         chemical_potential_operators = []
-        
+
         for i in range(0, 2 * n):
-            chemical_potential_operators.append(creation_operators[i] @ annihilation_operators[i])
-        
+            chemical_potential_operators.append(
+                creation_operators[i] @ annihilation_operators[i]
+            )
+
         self.chemical_potential_term = mu * sum(chemical_potential_operators)
 
-        self.hamiltonian = self.hopping_term + self.interaction_term + self.chemical_potential_term
+        self.hamiltonian = (
+            self.hopping_term + self.interaction_term + self.chemical_potential_term
+        )
 
     def __str__(self):
         return (
@@ -130,8 +138,16 @@ class HubbardHamiltonian:
         jw = JordanWignerMapper()
         jw_hopping = jw.map(self.hopping_term)
         return jw_hopping
-    
+
     def jw_chemical_potential_term(self):
+        """Applies Jordan-Wigner transformation to HubbardHamiltonian chemical potential term and returns result.
+
+        Returns
+        -------
+        jw_hopping : SparsePauliOp
+            The qiskit-nature representation of the Jordan-Wigner transformed chemical potential term.
+
+        """
         jw = JordanWignerMapper()
         jw_chem = jw.map(self.chemical_potential_term)
         return jw_chem
@@ -170,6 +186,13 @@ class HubbardHamiltonian:
         return self.U
 
     def get_mu_value(self):
+        """Access method for acquiring the chemical potential of a HubbardHamiltonian.
+
+        Returns
+        -------
+        mu : float
+            The value of the chemical potential for the HubbardHamiltonian.
+        """
         return self.mu
 
     def get_lattice(self):
@@ -201,8 +224,16 @@ class HubbardHamiltonian:
             The FermionicOp representation of the hopping term.
         """
         return self.hopping_term
-    
+
     def get_chemical_potential_term(self):
+        """Access method for acquiring the chemical potential term of a HubbardHamiltonian in FermionicOp form.
+
+        Returns
+        -------
+        hopping_term : FermionicOp
+            The FermionicOp representation of the chemical potential term.
+        """
+
         return self.chemical_potential_term
 
     def get_hamiltonian(self):
