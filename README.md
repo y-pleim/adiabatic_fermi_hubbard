@@ -10,9 +10,11 @@ A Python package to simulate the Hubbard model ground state for simple lattices 
 ### Dependencies
 
 This package has the following dependencies:
+- numpy
 - qiskit
 - qiskit-nature
 - qiskit-algorithms
+- qiskit-aer
 
 
 ### Copyright
