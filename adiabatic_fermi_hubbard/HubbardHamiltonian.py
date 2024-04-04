@@ -4,24 +4,24 @@ from qiskit_nature.second_q.mappers import JordanWignerMapper
 
 
 class HubbardHamiltonian:
-    """A class for constructing the Fermi-Hubbard Hamiltonian for particular lattice, hopping strength :math:'t', interaction strength :math:'U',
-      and chemical potential :math:'\\mu'.
-
-    .. math ::  H = -t \\sum_{<i,j>,\\sigma}(a_{i\\sigma}^\\dag a_{j\\sigma} + h.c.) + U\\sum_{i} n_{i\\uparrow}n_{i\\downarrow} + \\mu \\sum_{i,\\sigma} n_{i\\sigma}
-
-    Parameters
-    ----------
-    lattice : Lattice
-        The Lattice to find the Hamiltonian for.
-    t : float
-        The strength of the hopping term.
-    U : float
-        The strength of the onsite interaction term.
-    mu : float
-        The chemical potential.
-    """
-
     def __init__(self, lattice: Lattice, t: float = 2, U: float = 10, mu: float = -5):
+        """A class for constructing the Fermi-Hubbard Hamiltonian for particular lattice, hopping strength :math:'t', interaction strength :math:'U',
+        and chemical potential :math:'\\mu'.
+
+        .. math ::  H = -t \\sum_{<i,j>,\\sigma}(a_{i\\sigma}^\\dag a_{j\\sigma} + h.c.) + U\\sum_{i} n_{i\\uparrow}n_{i\\downarrow} + \\mu \\sum_{i,\\sigma} n_{i\\sigma}
+
+        Parameters
+        ----------
+        lattice : Lattice
+            The Lattice to find the Hamiltonian for.
+        t : float
+            The strength of the hopping term.
+        U : float
+            The strength of the onsite interaction term.
+        mu : float
+            The chemical potential.
+        """
+
         self.t = t
         self.U = U
         self.mu = mu
