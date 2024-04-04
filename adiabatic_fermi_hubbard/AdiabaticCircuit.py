@@ -11,7 +11,7 @@ from qiskit_nature.second_q.problems import LatticeModelProblem
 from qiskit_nature.second_q.mappers import JordanWignerMapper
 
 import numpy as np
-
+import platform
 
 class AdiabaticCircuit:
     def __init__(
@@ -364,7 +364,11 @@ class AdiabaticCircuit:
                 total_matrix = np.add(total_matrix, ham_coeffs[i] * matrices[i])
 
         # find array of eigenvalues
-        eigs = np.linalg.eig(total_matrix).eigenvalues
+
+        if platform.python_version() == '3.8':
+            eigs = np.linalg.eig(total_matrix).w
+        else:
+            eigs = np.linalg.eig(total_matrix).eigenvalues
 
         return eigs
 

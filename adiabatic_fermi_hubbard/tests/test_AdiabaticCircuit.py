@@ -5,7 +5,7 @@ from qiskit.quantum_info import Pauli, SparsePauliOp
 from qiskit_aer import Aer
 
 import numpy as np
-
+import platform
 
 def test_str():
     """Test method for str dunder method"""
@@ -195,7 +195,11 @@ def test_diagonalize_ham():
     ad_circ = afh.AdiabaticCircuit(ham1, 0.1, 2)
 
     matrix = ham1.jw_hamiltonian().to_matrix()
-    energies = np.linalg.eig(matrix).eigenvalues
+
+    if platform.python_version() == '3.8':
+        energies = np.linalg.eig(matrix).w
+    else:
+        energies = np.linalg.eig(matrix).eigenvalues
 
     energies_from_method = ad_circ.diagonalize_ham()
 
