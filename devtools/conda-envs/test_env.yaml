@@ -11,15 +11,14 @@ dependencies:
   - pytest
   - pytest-cov
 
+  # conda-forge
+  - conda-forge:
+    - numpy
+    - qiskit >= 0.46.0, < 1.0.0
+    - qiskit-aer
+
   # Pip-only installs
   - pip:
     - codecov
     - qiskit-nature
     - qiskit-algorithms
-
-  # conda-forge
-  - conda-forge:
-    - numpy
-    - qiskit < 1.0.0
-    - qiskit-aer
-
