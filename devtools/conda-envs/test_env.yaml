@@ -19,6 +19,7 @@ dependencies:
 
   # conda-forge
   - conda-forge:
+    - numpy
     - qiskit
     - qiskit-aer
 
