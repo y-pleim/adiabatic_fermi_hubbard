@@ -14,7 +14,6 @@ dependencies:
   # conda-forge
   - conda-forge:
     - numpy
-    - qiskit-aer
 
   # Pip-only installs
   - pip:
@@ -22,3 +21,4 @@ dependencies:
     - codecov
     - qiskit-nature
     - qiskit-algorithms
+    - qiskit-aer
