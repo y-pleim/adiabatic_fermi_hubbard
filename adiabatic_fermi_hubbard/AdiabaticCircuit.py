@@ -14,7 +14,6 @@ import numpy as np
 
 
 class AdiabaticCircuit:
-
     def __init__(
         self, ham: HubbardHamiltonian, time_step: float = 0.01, step_count: int = 1000
     ):
@@ -24,7 +23,7 @@ class AdiabaticCircuit:
         .. math:: H(k) = H_{init} (1-k/M) + H_{final} (k/M).
 
         where :math:'M' is the number of interpolation steps, :math:'k = 0, 1, ... , M', and :math:'H_{init} = \\sum_i X_i'
-    
+
         Parameters
         ----------
         ham : HubbardHamiltonian
@@ -39,10 +38,8 @@ class AdiabaticCircuit:
         self.n = 2 * ham.get_lattice().get_num_sites()
         self.time_step = time_step
         self.step_count = step_count
-    
-    def __str__(
-        self
-    ):
+
+    def __str__(self):
         return (
             "Time step: "
             + str(self.time_step)
@@ -71,7 +68,7 @@ class AdiabaticCircuit:
 
         """
         circ = QuantumCircuit(self.n, 0)
-        
+
         # extract constituent Pauli gates
         gates_list = []
         for i in range(len(pauli_string)):
@@ -83,7 +80,7 @@ class AdiabaticCircuit:
         # initial step - converting Y, X gates and assigning rotation qubits
         for i in range(len(gates_list)):
             if str(gates_list[i]) == "X":
-                circ.h(i) 
+                circ.h(i)
                 rotation_qubits.append(i)
             elif str(gates_list[i]) == "Y":
                 circ.rx(3 * np.pi / 2, i)
@@ -96,13 +93,17 @@ class AdiabaticCircuit:
         # encode parity onto last qubit in rotation_qubits
         j = 0
         for i in rotation_qubits:
-            if len(rotation_qubits) == len(gates_list): # if all qubits participate in the rotation
-                j = len(pauli_string)-1
+            if len(rotation_qubits) == len(
+                gates_list
+            ):  # if all qubits participate in the rotation
+                j = len(pauli_string) - 1
                 if i < j:
-                    circ.cx(i, j) # encode parity onto last qubit
-            elif i != max(rotation_qubits): # if qubit i isn't the last one that participates in the rotation
+                    circ.cx(i, j)  # encode parity onto last qubit
+            elif i != max(
+                rotation_qubits
+            ):  # if qubit i isn't the last one that participates in the rotation
                 j = max(rotation_qubits)
-                circ.cx(i, j) # encode parity onto last qubit in rotation_qubits
+                circ.cx(i, j)  # encode parity onto last qubit in rotation_qubits
 
         # perform rotation on last qubit
         if rotation_qubits:
@@ -112,7 +113,7 @@ class AdiabaticCircuit:
         index = self.n - 2
         while index >= 0:
             if index in rotation_qubits and len(rotation_qubits) == len(gates_list):
-                j = len(pauli_string)-1
+                j = len(pauli_string) - 1
                 circ.cx(index, j)
             elif index in rotation_qubits and index != max(rotation_qubits):
                 j = max(rotation_qubits)
@@ -325,36 +326,37 @@ class AdiabaticCircuit:
             The number of steps involved in creating the adiabatic state preparation circuit.
         """
         return self.step_count
-    
+
     def diagonalize_ham(self):
-        """Diagonalize the final Fermi-Hubbard Hamiltonian to validate adiabatic state result and qiskit-nature eigensolver result.
-        
-        """
+        """Diagonalize the final Fermi-Hubbard Hamiltonian to validate adiabatic state result and qiskit-nature eigensolver result."""
         ham = self.hubbard_hamiltonian.jw_hamiltonian()
         ham_paulis = ham.paulis
         ham_coeffs = ham.coeffs
-    
+
         matrices = []
 
         for pauli_string in ham_paulis:
-            for i in range(len(pauli_string)): #iterate through all gates in the Pauli string
+            for i in range(
+                len(pauli_string)
+            ):  # iterate through all gates in the Pauli string
                 if str(pauli_string[i]) == "X":
-                    a = np.asarray([(0,1),(1,0)]) # numpy implementation of X gate
+                    a = np.asarray([(0, 1), (1, 0)])  # numpy implementation of X gate
                 elif str(pauli_string[i]) == "Y":
-                    a = np.asarray([(0,-1.j),(1.j,0)]) # numpy implementation of Y gate
+                    a = np.asarray(
+                        [(0, -1.0j), (1.0j, 0)]
+                    )  # numpy implementation of Y gate
                 elif str(pauli_string[i]) == "Z":
-                    a = np.array([(1,0),(0,-1)]) # numpy implementation of Z gate
+                    a = np.array([(1, 0), (0, -1)])  # numpy implementation of Z gate
                 else:
                     a = np.eye(2)
-                
-                if i == 0: # if gate i is the first gate in the Pauli string
+
+                if i == 0:  # if gate i is the first gate in the Pauli string
                     b = 1
-                
-                b = np.kron(a,b) # take tensor product of gate i with previous gates
+
+                b = np.kron(a, b)  # take tensor product of gate i with previous gates
             matrices.append(b)
 
-        
-        # sum up all matrices        
+        # sum up all matrices
         for i in range(len(matrices)):
             if i == 0:
                 total_matrix = ham_coeffs[i] * matrices[i]
@@ -378,15 +380,18 @@ class AdiabaticCircuit:
         ----------
         exchange : float
             value of J parameter
-        
+
         """
         self.ising_n = self.n
         val = exchange
         if self.get_hubbard_hamiltonian().get_lattice().has_pbc():
-            self.ising_ham = SparsePauliOp(["ZZII","IZZI","IIZZ", "ZIIZ"],coeffs=[val,val,val,val])
+            self.ising_ham = SparsePauliOp(
+                ["ZZII", "IZZI", "IIZZ", "ZIIZ"], coeffs=[val, val, val, val]
+            )
         else:
-            self.ising_ham = SparsePauliOp(["ZZII","IZZI","IIZZ"],coeffs=[val,val,val])
-
+            self.ising_ham = SparsePauliOp(
+                ["ZZII", "IZZI", "IIZZ"], coeffs=[val, val, val]
+            )
 
     def ising_evolution_operator(self, k):
         """Support method that implements the evolution operator
@@ -405,7 +410,7 @@ class AdiabaticCircuit:
         -------
         circ : QuantumCircuit
             A qiskit QuantumCircuit object which implements the evolution.
-        
+
         """
         delta_s = 1 / self.step_count
 
@@ -484,4 +489,3 @@ class AdiabaticCircuit:
         energy = np.real(result_statevector.expectation_value(ham))
 
         return energy
-    

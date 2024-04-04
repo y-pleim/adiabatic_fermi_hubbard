@@ -14,7 +14,7 @@ dependencies:
   # conda-forge
   - conda-forge:
     - numpy
-    - qiskit >= 0.46.0, < 1.0.0
+    - qiskit
     - qiskit-aer
 
   # Pip-only installs
