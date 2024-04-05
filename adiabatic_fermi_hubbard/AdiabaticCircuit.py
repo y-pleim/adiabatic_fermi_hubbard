@@ -366,7 +366,7 @@ class AdiabaticCircuit:
         # find array of eigenvalues
 
         if platform.python_version()[:3] == '3.8':
-            eigs = np.linalg.eig(total_matrix).w
+            eigs = np.linalg.eig(total_matrix)
         else:
             eigs = np.linalg.eig(total_matrix).eigenvalues
 

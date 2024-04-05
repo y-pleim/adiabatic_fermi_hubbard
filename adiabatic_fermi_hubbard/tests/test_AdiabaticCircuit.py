@@ -197,7 +197,7 @@ def test_diagonalize_ham():
     matrix = ham1.jw_hamiltonian().to_matrix()
 
     if platform.python_version()[:3] == '3.8':
-        energies = np.linalg.eig(matrix).w
+        energies = np.linalg.eig(matrix)
     else:
         energies = np.linalg.eig(matrix).eigenvalues
 
