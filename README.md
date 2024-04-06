@@ -15,6 +15,7 @@ This package has the following dependencies:
 - qiskit-nature
 - qiskit-algorithms
 - qiskit-aer
+- matplotlib (optional)
 
 
 ### Copyright
