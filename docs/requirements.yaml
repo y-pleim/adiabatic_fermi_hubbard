@@ -1,11 +1,21 @@
 name: docs
 channels:
+
+  - defaults
 dependencies:
     # Base depends
   - python
   - pip
 
+  # conda-forge
+  - conda-forge:
+    - numpy
 
   # Pip-only installs
   - pip:
+    - qiskit==0.46.0
+    - codecov
+    - qiskit-nature
+    - qiskit-algorithms
+    - qiskit-aer
 

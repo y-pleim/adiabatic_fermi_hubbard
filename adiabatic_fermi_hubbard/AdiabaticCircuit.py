@@ -1,6 +1,6 @@
 from adiabatic_fermi_hubbard import HubbardHamiltonian
 
-from qiskit import QuantumCircuit, execute, QuantumRegister
+from qiskit import QuantumCircuit, execute, QuantumRegister, transpile
 from qiskit.result import Result
 from qiskit.quantum_info import Pauli, SparsePauliOp
 from qiskit_aer import Aer
@@ -18,11 +18,11 @@ class AdiabaticCircuit:
         self, ham: HubbardHamiltonian, time_step: float = 0.01, step_count: int = 1000
     ):
         """A class for building/executing Qiskit circuits for adiabatic state preparation of the Hubbard Hamiltonian ground state through
-        interpolating between :math:'H_{init}' and :math:'H_{Fermi-Hubbard}' according to
+        interpolating between :math:`H_{init}` and :math:`H_{Fermi-Hubbard}` according to
 
         .. math:: H(k) = H_{init} (1-k/M) + H_{final} (k/M).
 
-        where :math:'M' is the number of interpolation steps, :math:'k = 0, 1, ... , M', and :math:'H_{init} = \\sum_i X_i'
+        where :math:`M` is the number of interpolation steps, :math:`k = 0, 1, ... , M`, and :math:`H_{init} = \\sum_i X_i`
 
         Parameters
         ----------
@@ -31,7 +31,7 @@ class AdiabaticCircuit:
         time_step : float
             Duration of each interpolating step.
         step_count : float
-            The number of steps to take when interpolating between :math:'H_{init}' and :math:'H_{Fermi-Hubbard}'.
+            The number of steps to take when interpolating between :math:`H_{init}` and :math:`H_{Fermi-Hubbard}`.
         """
 
         self.hubbard_hamiltonian = ham
@@ -134,8 +134,8 @@ class AdiabaticCircuit:
 
         .. math:: U(k) = \\exp{H_{init} (1-k/M) \\delta t}\\exp{H_{FH} (k/M) \\delta t}
 
-        where :math:'H_{init} = \\sum_i{X_i}', :math:'H_{FH}' is the Jordan-Wigner transformed Fermi-Hubbard Hamiltonian and
-        :math:'M' is the number of interpolation steps.
+        where :math:`H_{init} = \\sum_i{X_i}`, :math:`H_{FH}` is the Jordan-Wigner transformed Fermi-Hubbard Hamiltonian and
+        :math:`M` is the number of interpolation steps.
 
         Parameters
         ----------
@@ -221,12 +221,13 @@ class AdiabaticCircuit:
             A qiskit Result object containing the execution results.
         """
         simulator = Aer.get_backend("statevector_simulator")
-        result = execute(circ, backend=simulator).result()
+        circ_transpiled = transpile(circ, backend=simulator)
+        result = execute(circ_transpiled, backend=simulator).result()
         return result
 
     def run_eigensolver_comparison(self):
         """Computes the ground state energy for the HubbardHamiltonian associated with the AdiabaticCircuit
-        through qiskit-nature methods. Based on the example code found in 'LatticeModels'_.
+        through qiskit-nature methods. Based on the example code found in `LatticeModels`_.
 
         .. _LatticeModels: https://qiskit-community.github.io/qiskit-nature/tutorials/10_lattice_models.html#The-Fermi-Hubbard-model
 
@@ -377,7 +378,7 @@ class AdiabaticCircuit:
 
         .. math:: H = J\\sum_{<i,j>} Z_i Z_j
 
-        where :math:'<i,j>' denotes nearest neighbors on the lattice. Implemented with periodic boundary
+        where :math:`<i,j>` denotes nearest neighbors on the lattice. Implemented with periodic boundary
         conditions if the Lattice associated with the AdiabaticCircuit has periodic boundary conditions.
 
         Parameters
@@ -402,8 +403,8 @@ class AdiabaticCircuit:
 
         .. math:: U(k) = \\exp{H_{init} (1-k/M) \\delta t}\\exp{H_{Ising} (k/M) \\delta t}
 
-        where :math:'H_{Ising}' is the Ising Hamiltonian created by running the ising_setup method, :math:'M' is the step count,
-        and :math:'k = 0, 1, ..., M".
+        where :math:`H_{Ising}` is the Ising Hamiltonian created by running the ising_setup method, :math:`M` is the step count,
+        and :math:`k = 0, 1, ..., M`.
 
         Parameters
         ----------
