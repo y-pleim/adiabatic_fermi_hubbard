@@ -2,17 +2,17 @@ from qiskit_nature.second_q.hamiltonians.lattices import BoundaryCondition, Line
 
 
 class Lattice:
-    """A class for representing a 1D lattice of fermions.
-
-    Parameters
-    ----------
-    num_sites : int, default: 2
-        The number of lattice sites.
-    bc : int, default: 1
-        Specifies boundary conditions; 1 for periodic, 0 for open.
-    """
-
     def __init__(self, num_sites: int = 2, bc: int = 1):
+        """A class for representing a 1D lattice of fermions.
+        
+        Parameters
+        ----------
+        num_sites : int, default: 2
+            The number of lattice sites.
+        bc : int, default: 1
+            Specifies boundary conditions; 1 for periodic, 0 for open.
+        """
+        
         self.num_sites = num_sites
 
         if bc == 0:

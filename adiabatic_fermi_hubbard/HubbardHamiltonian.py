@@ -8,7 +8,7 @@ class HubbardHamiltonian:
         """A class for constructing the Fermi-Hubbard Hamiltonian for particular lattice, hopping strength :math:`t`, interaction strength :math:`U`,
         and chemical potential :math:`\\mu`.
 
-        .. math ::  H = -t \\sum_{<i,j>,\\sigma}(a_{i\\sigma}^\\dag a_{j\\sigma} + h.c.) + U\\sum_{i} n_{i\\uparrow}n_{i\\downarrow} + \\mu \\sum_{i,\\sigma} n_{i\\sigma}
+        .. math ::  H = -t \\sum_{<i,j>,\\sigma}(a_{i\\sigma}^\\dagger a_{j\\sigma} + h.c.) + U\\sum_{i} n_{i\\uparrow}n_{i\\downarrow} + \\mu \\sum_{i,\\sigma} n_{i\\sigma}
 
         Parameters
         ----------
