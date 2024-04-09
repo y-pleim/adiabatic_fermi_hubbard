@@ -89,13 +89,14 @@ Examples
 
 Initializing a HubbardHamiltonian object for a 4 site lattice
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+This example shows how to create instances of the Lattice and HubbardHamiltonian classes.
 
 ::
 
     import adiabatic_fermi_hubbard as afh 
     lattice1 = afh.Lattice(4, bc=0) # no periodic boundary conditions
 
-    # create HubbardHamiltonian with \t = 2, \U = 4, \mu = -2
+    # create HubbardHamiltonian with t = 2, U = 4, mu = -2
     hamiltonian1 = afh.HubbardHamiltonian(lattice1, t=2, U=4, mu=-2)
 
     print(hamiltonian1)
@@ -137,24 +138,98 @@ This should produce the following output:
 
 Rotating about a Pauli string
 '''''''''''''''''''''''''''''
+This example demonstrates the functionality of the AdiabaticCircuit method pauli_string_rotation.
+
+::
+    
+    import adiabatic_fermi_hubbard as afh
+    import numpy as np
+    import matplotlib as mpl
+    from qiskit.quantum_info import SparsePauliOp
+
+    lattice1 = afh.Lattice(2, bc=0) # 2 sites = 4 qubits, no periodic boundary conditions
+
+    # create HubbardHamiltonian with t = 2, U = 4, \mu = -2
+    hamiltonian1 = afh.HubbardHamiltonian(lattice1, t=2, U=4, mu=-2)
+
+    # create AdiabaticCircuit object
+    ad_circ1 = afh.AdiabaticCircuit(hamiltonian1)
+
+    operators = SparsePauliOp(["ZYXI", "ZZII"], coeffs=[1,1])
+    # rotation about ZYXI (rightmost gate acts on qubit 0)
+
+    circ1 = ad_circ1.pauli_string_rotation(operators.paulis[0], np.pi)
+
+    # rotation about ZZII (rightmost gate acts on qubit 0)
+    circ2 = ad_circ1.pauli_string_rotation(operators.paulis[1], np.pi)
+
+    circ2.draw(output = "mpl")
+
+This should produce the following two circuits:
+
+.. image:: ./zyxi.png
+ :width: 400
+
+
+.. image:: ./zzii.png
+ :width: 400
+
+
+Building and running an adiabatic state preparation circuit for N = 2 lattice sites
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+This example shows how to create and execute a circuit to find the ground state energy of a Fermi-Hubbard Hamiltonian through
+adiabatic state preparation.
 
 ::
 
-    import adiabatic_fermi_hubbard as afh 
-    lattice1 = afh.Lattice(4, bc=0) # no periodic boundary conditions
+    import adiabatic_fermi_hubbard as afh
 
-    # create HubbardHamiltonian with \t = 2, \U = 4, \mu = -2
-    hamiltonian1 = afh.HubbardHamiltonian(lattice1, t=2, U=4, mu=-2)
+    lattice1 = afh.Lattice(2, bc=0) # no periodic boundary conditions
 
+    # create HubbardHamiltonian with t = 2, U = 10, \mu = -5
+    hamiltonian1 = afh.HubbardHamiltonian(lattice1, t=2, U=10, mu=-5)
 
-Building and running an adiabatic state preparation circuit
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+    # create AdiabaticCircuit with time_step = 0.01, step_count = 20000
+    ad_circ1 = afh.AdiabaticCircuit(hamiltonian1, time_step = 0.01, step_count = 20000)
 
+    circ = ad_circ1.create_circuit()
+    result = ad_circ1.run(circ)
+    energy = ad_circ.calc_energy(result)
 
-Comparing results to eigensolver
-''''''''''''''''''''''''''''''''
+    print("Ground state energy: " + str(energy))
+    
+This should result in the following output:
 
+::
 
+    Ground state energy: 
+
+Using qiskit-nature's eigensolver
+'''''''''''''''''''''''''''''''''
+This example illustrates the methods in the AdiabaticCircuit class which can be used for validating
+the ground state energy resulting from adiabatic state preparation.
+
+::
+
+    import adiabatic_fermi_hubbard as afh
+
+    lattice1 = afh.Lattice(2, bc=0) # no periodic boundary conditions
+
+    # create HubbardHamiltonian with t = 2, U = 10, \mu = -5
+    hamiltonian1 = afh.HubbardHamiltonian(lattice1, t=2, U=10, mu=-5)
+
+    # create AdiabaticCircuit with time_step = 0.01, step_count = 20000
+    ad_circ1 = afh.AdiabaticCircuit(hamiltonian1, time_step = 0.01, step_count = 20000)
+
+    comparison_energy = ad_circ1.run_eigensolver_comparison()
+
+    print("Ground state energy from eigensolver: " + str(comparison_energy))
+
+This result in the following output:
+
+::
+
+    Ground state energy from eigensolver: 
 
 References
 ----------

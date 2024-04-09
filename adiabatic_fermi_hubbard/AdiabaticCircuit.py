@@ -221,8 +221,7 @@ class AdiabaticCircuit:
             A qiskit Result object containing the execution results.
         """
         simulator = Aer.get_backend("statevector_simulator")
-        circ_transpiled = transpile(circ, backend=simulator)
-        result = execute(circ_transpiled, backend=simulator).result()
+        result = execute(circ, backend=simulator).result()
         return result
 
     def run_eigensolver_comparison(self):
