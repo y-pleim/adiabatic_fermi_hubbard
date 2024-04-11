@@ -10,6 +10,7 @@ dependencies:
   # conda-forge
   - conda-forge:
     - numpy
+    - matplotlib
 
   # Pip-only installs
   - pip:
@@ -18,4 +19,5 @@ dependencies:
     - qiskit-nature
     - qiskit-algorithms
     - qiskit-aer
+    - sphinx-rtd-theme
 
