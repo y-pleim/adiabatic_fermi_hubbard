@@ -6,9 +6,8 @@ dependencies:
   - pip
 
   # conda-forge
-  - conda-forge:
-    - numpy
-    - matplotlib
+  - numpy
+  - matplotlib
 
   # Pip-only installs
   - pip:
