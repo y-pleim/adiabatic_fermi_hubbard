@@ -32,6 +32,7 @@ This package simulates the ground state of the Fermi-Hubbard model, which descri
 on a lattice. The Hamiltonian is given by:
 
 .. math:: H = -t \sum_{<i,j>,\sigma}(a_{i\sigma}^\dagger a_{j\sigma} + h.c.) + U\sum_{i} n_{i\uparrow}n_{i\downarrow}
+    :label: ham
 
 where 
 
@@ -50,6 +51,7 @@ It has been applied to explain phenomena in materials whose properties depend on
 The above Hamiltonian can be modified to include a chemical potential term with strength :math:`\mu` to control the number of electrons in the lattice **[2]**:
 
 .. math:: H = -t \sum_{<i,j>,\sigma}(a_{i\sigma}^\dagger a_{j\sigma} + h.c.) + U\sum_{i} n_{i\uparrow}n_{i\downarrow} + \mu \sum_{i,\sigma} n_{i\sigma}
+    :label: ham_with_mu
 
 
 Quantum Computing and the Fermi-Hubbard Model
@@ -71,6 +73,7 @@ A general approach to finding the ground state of a "difficult" Hamiltonian :mat
 :math:`H_{initial}` and evolve the system using evolution operator :math:`U(s) = exp(-iH(s)\Delta t)` with Hamiltonian
 
 .. math:: H(s) = (1-s) H_{init} + (s) H_{final} = H_{init} (1- k/M) + H_{final} (k/M)
+    :label: adiabatic
 
 where :math:`M` is the number of interpolating steps and :math:`k = 0, 1, ... M` **[10]**, **[11]**. Provided the interpolation between :math:`H_{initial}` and :math:`H_{final}` is slow,
 the adiabatic principle states the system remains in an energy eigenstate of :math:`H(s)` at all times. So, the state of the system following interpolation is
@@ -78,30 +81,52 @@ the ground state of :math:`H_{final}`. The total evolution time :math:`t = M\Del
 the smallest difference between the first excited state and the ground state of :math:`H` for any :math:`s` **[10]**.
 
 This approach has been previously applied to simulate the ground state of Fermi-Hubbard model with chemical potential and magnetic
-field terms, starting from the ground state of a Hamiltonian that describes d-wave electron pairing (a type of superconductivity) **[12]**. 
+field terms, starting from the ground state of a Hamiltonian that describes d-wave electron pairing (a type of superconductivity) **[2]**. 
 The adiabatic_fermi_hubbard package uses a different starting point to find the ground state of the Fermi-Hubbard model through adiabatic state preparation
 for small lattices.
 
 Implementation
 --------------
-This package creates Qiskit circuits **[12]** to carry out adiabatic state preparation to find the ground state energy of the Fermi-Hubbard Hamiltonian. The following
-section highlights some details of the implementation.
+This package creates Qiskit circuits **[12]** to carry out adiabatic state preparation to find the ground state energy of the Fermi-Hubbard Hamiltonian on
+1D lattices. The following section highlights some details of the implementation.
+
+Representing Fermionic Operators
+''''''''''''''''''''''''''''''''
+This package relies heavily on methods in qiskit-nature, a part of the Qiskit ecosystem **[13]**, to create and manipulate fermionic raising/lowering operators. This
+is accomplished through the use of qiskit-nature's FermionicOp objects **[14]**. The adiabatic_fermi_hubbard package adopts qiskit-nature's convention for representing 
+creation/annihilation operators for up and down spins, where FermionicOps with even (odd) indices correspond to spin up (down) electrons. For example, the
+four creation/annilhilation operators for the first site in a 8-site 1D lattice are
+
+* :math:`a_{0 \uparrow}`: ``FermionicOp({“-_0”:1.0}, num_spin_orbitals=16)``
+* :math:`a^\dagger_{0 \uparrow}`: ``FermionicOp({“+_0”:1.0}, num_spin_orbitals=16)``
+* :math:`a_{0 \downarrow}`: ``FermionicOp({“-_1”:1.0}, num_spin_orbitals=16)``
+* :math:`a^\dagger_{0 \downarrow}`: ``FermionicOp({“+_1”:1.0}, num_spin_orbitals=16)``
+
+The above example shows that the fermionic operators for a single lattice site are represented by two qubits (in this case, 0 and 1). For an :math:`N = 8` lattice, the
+total number of qubits is :math:`2N = 16` (hence the value of ``num_spin_orbitals`` in the above constructors) **[15]**.
+
+For a specified lattice size and :math:`t, U, \mu` parameters, the adiabatic_fermi_hubbard constructs the Fermi-Hubbard Hamiltonian :eq:`ham_with_mu` out of these FermionicOp objects.
 
 Jordan-Wigner Transformation
 ''''''''''''''''''''''''''''
-One mapping which takes the fermionic raising/lowering operators in the Fermi-Hubbard Hamiltonian to operations which can be run on a spin-based qubit system is the
+One mapping which takes the fermionic operators in the Fermi-Hubbard Hamiltonian to operations which can be run on a spin-based qubit system is the
 Jordan-Wigner transformation. The transformation is given by
 
-.. math:: a_{i \sigma}
+.. math:: a_{i} = \bigotimes_{j=1}^{i} Z_j \otimes (X_i - i Y_i), a_{i}^\dagger = \bigotimes_{j=1}^{i} Z_j \otimes (X_i + i Y_i), 
+
+where :math:`X_k, Y_k, Z_k` are Pauli gates acting on qubit :math:`k` and :math:`i` are the indices assigned by the convention in the previous section **[16]**.
+The adiabatic_fermi_hubbard package applies this transformation to express the Hamiltonian as a weighted sum of Pauli strings (e.g., :math:`X \otimes Y \otimes Z \otimes I`).
+of size :math:`2N`, where :math:`N` is the number of lattice sites.
 
 Trotterization
 ''''''''''''''
 Following the Jordan-Wigner transformation, the Fermi-Hubbard Hamiltonian becomes a sum of Pauli strings, each of which has an associated
 coefficient. Symbolically,
 
-.. math:: H_{after JW} = \sum_{j}^{K} \alpha_j P_j
+.. math:: H_{after ~JW} = \sum_{j}^{K} \alpha_j P_j
+    :label: jw_ham
 
-where :math:`\alpha_i` are the coefficients and :math:`P_i` are Pauli strings of length :math:`2N`, where :math:`N` is the number of lattice sites.
+where :math:`\alpha_i` are the coefficients and :math:`P_i` are Pauli strings of length :math:`2N`.
 Generally, not all of the Pauli strings in :math:`H_{after JW}` commute, meaning
 
 .. math:: exp(-i \Delta t \sum_{j} \alpha_j P_j ) \neq exp(-i \Delta t \alpha_1 P_1) exp(-i \Delta t \alpha_2 P_2) ... exp(-i \Delta t \alpha_K P_K)
@@ -110,14 +135,14 @@ However, provided :math:`\Delta t` is small, the Trotter approximation allows
 
 .. math:: exp(-i \Delta t \sum_{j} \alpha_j P_j ) \approx exp(-i \Delta t \alpha_1 P_1) exp(-i \Delta t \alpha_2 P_2) ... exp(-i \Delta t \alpha_K P_K)
 
-The adiabatic_fermi_hubbard package assumes the Trotter approximation to decompose the Jordan-Wigner transformed Hamiltonian into a sequence
+**[11]**, **[17]**. The adiabatic_fermi_hubbard package assumes the Trotter approximation to decompose the Jordan-Wigner transformed Hamiltonian into a sequence
 of rotations about Pauli strings.
 
-Rotation about N-dimensional Pauli strings
-''''''''''''''''''''''''''''''''''''''''''
-Once an evolution operator of the form :math:`exp(-i \Delta t  \sum_{j}^{K} \alpha_j P_j)`` is decomposed using the 
+Rotation about :math:`2N` -dimensional Pauli strings
+''''''''''''''''''''''''''''''''''''''''''''''''''''
+Once an evolution operator of the form :math:`exp(-i \Delta t  \sum_{j}^{K} \alpha_j P_j)` is decomposed using the 
 Trotter approximation, it becomes necessary to implement rotations about arbitrary Pauli strings of length :math:`2N`. 
-To accomplish this, the package utilizes the approach discussed in Nielsen and Chuang, Ch 4 **[14]**. The strategy is briefly summarized here.
+To accomplish this, the package utilizes the approach discussed in Nielsen and Chuang, Ch 4 **[17]**. The strategy is briefly summarized here.
 
 A rotation about an arbitrary Pauli string can be turned into a single qubit rotation by mapping the parity of each qubit onto an
 ancilla qubit (or onto the last qubit involved in the rotation) using :math:`CNOT` gates and then performing a :math:`Z`-rotation on that qubit. Following said 
@@ -127,18 +152,38 @@ rotation, :math:`CNOT` s are required to "uncompute" the parity. For instance, a
  :width: 400
 
 If the Pauli string contains :math:`X` or :math:`Y` gates, they can be transformed into :math:`Z` gates for the purpose of the parity encoding by applying a 
-:math:`H` gate or a :math:`R_Y(3\pi/2)` gate before the CNOTs, respectively. The inverse operations are required after the second set of :math:`CNOT` s. For example,
-a circuit which perofrms the rotation :math:`exp(-i \ pi (ZXYZ))` is
+:math:`H` gate or a :math:`R_Y(3\pi/2)` gate before the :math:`CNOT` s, respectively. The inverse operations are required after the second set of :math:`CNOT` s. For example,
+a circuit which performs the rotation :math:`exp(-i \ pi (ZXYZ))` is
 
 .. image:: ./zxyz.png
  :width: 400
 
-Additional details can be found in **[14]**.
+Additional details can be found in **[17]**.
+
+Adiabatic Evolution
+'''''''''''''''''''
+With the evolution operator corresponding to the Fermi-Hubbard Hamiltonian written in terms of single- and two-qubit gates, the adiabatic evolution can
+be implemented according to Equation :eq:`adiabatic` provided :math:`H_{init}` is specified and the system is initialized in the ground state of :math:`H_{init}`.
+The adiabatic_fermi_hubbard package uses
+
+.. math:: H_{init} = \sum_{i}^{2N} X_i, ~ |\psi_0 \rangle = |--...- \rangle
+
+as its starting Hamiltonian, with the ground state :math:`|\psi_0 \rangle`, as in **[11]**. For each :math:`k = 0, 1, ..., M`, the package builds the evolution operator
+
+.. math:: U(k) \approx exp(-i \Delta t H_{init}) exp(-i \Delta t H_{final})
+
+and constructs the circuit which carries out the operation
+
+.. math:: |\psi_0, ~FH \rangle = U(M)U(M-1)...U(2)U(1)U(0) |\psi_0 \rangle
+
+from which the ground state energy is calculated:
+
+.. math:: E_{gs} = \langle \psi_0 | H_{after~JW} | \psi_0 \rangle
 
 Validation
 ''''''''''
-
-
+To verify the ground state energy which results from the adiabatic state preparation circuit, adiabatic_fermi_hubbard includes methods which
+utilize qiskit-nature's lattice problem eigensolver **[15]**. This approach works for lattices up to :math:`N = 11` sites. 
 
 Examples
 --------
@@ -250,15 +295,15 @@ adiabatic state preparation.
 
     circ = ad_circ1.create_circuit()
     result = ad_circ1.run(circ)
-    energy = ad_circ.calc_energy(result)
+    energy = ad_circ1.calc_energy(result)
 
     print("Ground state energy: " + str(energy))
     
-This should result in the following output:
+This should result in the following output (after approximately 5 minutes): 
 
 ::
 
-    Ground state energy: 
+    Ground state energy: -11.389327679835297
 
 Using qiskit-nature's eigensolver
 '''''''''''''''''''''''''''''''''
@@ -279,18 +324,73 @@ the ground state energy resulting from adiabatic state preparation.
 
     comparison_energy = ad_circ1.run_eigensolver_comparison()
 
-    print("Ground state energy from eigensolver: " + str(comparison_energy))
+    print("Ground state energy (eigensolver): " + str(comparison_energy))
 
 This result in the following output:
 
 ::
 
-    Ground state energy (eigensolver): 
+    Ground state energy (eigensolver): -11.403124237432863
 
 Error as a function of step count / step length
 '''''''''''''''''''''''''''''''''''''''''''''''
+The following code block creates a plot which shows the difference between the ground state energy found through adiabatic state preparation and
+the reference ground state energy found using qiskit-nature for different step counts and sizes.
+
+::
+
+    import adiabatic_fermi_hubbard as afh
+    import numpy as np
+    import matplotlib.pyplot as plt
 
 
+    counts_list = [100, 250, 500, 750, 1000, 2500, 5000, 7500] # step counts
+    steps_list = [0.001, 0.01, 0.1, 1, 10] # time steps
+
+    lattice1 = afh.Lattice(2, bc=0) # 2 sites = 4 qubits, no periodic boundary conditions
+
+    # create HubbardHamiltonian with t = 2, U = 10, \mu = -5
+    hamiltonian1 = afh.HubbardHamiltonian(lattice1)
+    ad_circ1 = afh.AdiabaticCircuit(hamiltonian1)
+    energy_diffs = []
+    
+    # get qiskit-nature reference energy for lattice
+    ref_energy = ad_circ1.run_eigensolver_comparison()
+
+    for i in range(len(steps_list)): # for each step duration
+        row = []
+        for j in range(len(counts_list)):
+            # assign time step, step count
+            ad_circ1 = afh.AdiabaticCircuit(hamiltonian1, time_step = steps_list[i], step_count = counts_list[j])
+            circuit = ad_circ1.create_circuit()
+            result = ad_circ1.run(circuit)
+            energy = ad_circ1.calc_energy(result)
+            row.append(energy-ref_energy)
+    energy_diffs.append(row)
+
+    plt.plot(counts_list, energy_diffs[0], "-r",
+            counts_list, energy_diffs[1], "-b",
+            counts_list, energy_diffs[2], "-g",
+            counts_list, energy_diffs[3], "-y",
+             counts_list, energy_diffs[4], "-k")
+
+    plt.legend(["step duration = 0.001", "0.01", "0.1", "1", "10"], loc='best')
+    plt.xlabel("Step Count")
+    plt.ylabel("Error in Ground State Energy")
+    plt.title("Error in Ground State Energy for N = 2")
+
+This will produce the following after an evaluation time of approximately 25 minutes:
+
+.. image:: ./errorplot.png
+ :width: 400
+
+There are a few trends to pick out from the above plot:
+
+* First, as the step count :math:`M` increases, the error or difference between the adiabatic solution and the qiskit-nature reference generally improves. This can be understood from the fact that as the total evolution time :math:`t = M \Delta t` increases, :math:`t` becomes larger relative to :math:`1/(E_0-E_1)^2`.
+* For short time steps, the total evolution time becomes small, in which case the condition :math:`t >> 1/(E_0-E_1)^2` may no longer be fulfilled.
+* For long time steps (e.g., 1 and 10) the evolution time is longer; however, the Trotter approximation becomes worse since :math:`\Delta t` is no longer considered a small argument.
+
+<To add: spectral gap analysis>
 
 References
 ----------
@@ -318,4 +418,12 @@ References
 
 **[12]** Qiskit contributors. Qiskit: An Open-source Framework for Quantum Computing, 2023, DOI: https://doi.org/10.5281/zenodo.2573505. 
 
-**[14]**
+**[13]** Qiskit Nature Development Team. Qiskit Nature. DOI: https://doi.org/10.5281/zenodo.7828767.
+
+**[14]** Qiskit Nature Development Team. FermionicOp.  https://qiskit-community.github.io/qiskit-nature/stubs/qiskit_nature.second_q.operators.FermionicOp.html#qiskit_nature.second_q.operators.FermionicOp 
+
+**[15]** Qiskit Nature Development Team. Lattice models. https://qiskit-community.github.io/qiskit-nature/tutorials/10_lattice_models.html. 
+
+**[16]** Qiskit Nature Development Team. Mapping to the Qubit Space. https://qiskit-community.github.io/qiskit-nature/tutorials/06_qubit_mappers.html. 
+
+**[17]** Nielsen, M., A., and I. L. Chuang. “4: Quantum Circuits”, Quantum Computation and Quantum Information, Cambridge University Press, 2010. 
