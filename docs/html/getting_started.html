@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started &mdash; adiabatic_fermi_hubbard  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Class Overview" href="api.html" />
+    <link rel="prev" title="Welcome to adiabatic_fermi_hubbard’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            adiabatic_fermi_hubbard
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#background">Background</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#fermi-hubbard-model">Fermi-Hubbard Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#quantum-computing-and-the-fermi-hubbard-model">Quantum Computing and the Fermi-Hubbard Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adiabatic-state-preparation">Adiabatic State Preparation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#implementation">Implementation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#jordan-wigner-transformation">Jordan-Wigner Transformation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#trotterization">Trotterization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rotation-about-n-dimensional-pauli-strings">Rotation about N-dimensional Pauli strings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#validation">Validation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#initializing-a-hubbardhamiltonian-object-for-a-4-site-lattice">Initializing a HubbardHamiltonian object for a 4 site lattice</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rotating-about-a-pauli-string">Rotating about a Pauli string</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-and-running-an-adiabatic-state-preparation-circuit-for-n-2-lattice-sites">Building and running an adiabatic state preparation circuit for N = 2 lattice sites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-qiskit-nature-s-eigensolver">Using qiskit-nature’s eigensolver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#error-as-a-function-of-step-count-step-length">Error as a function of step count / step length</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Class Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html#api-documentation">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">adiabatic_fermi_hubbard</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Getting Started</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/getting_started.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h1>
+<p>This page details how to get started with adiabatic_fermi_hubbard.</p>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
+<p>This package is designed for Python 3.8-3.12, provided the following packages are installed in the environment:</p>
+<ul class="simple">
+<li><p>numpy</p></li>
+<li><p>qiskit 0.46.1</p></li>
+<li><p>qiskit-aer</p></li>
+<li><p>qiskit-nature</p></li>
+<li><p>qiskit-algorithms</p></li>
+<li><p>matplotlib (optional)</p></li>
+</ul>
+<p>To install adiabatic_fermi_hubbard in an environment with the above dependencies installed, run the following
+commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="nd">@github</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="n">y</span><span class="o">-</span><span class="n">pleim</span><span class="o">/</span><span class="n">adiabatic_fermi_hubbard</span><span class="o">.</span><span class="n">git</span>
+<span class="n">cd</span> <span class="n">adiabatic_fermi_hubbard</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
+</pre></div>
+</div>
+</section>
+<section id="background">
+<h2>Background<a class="headerlink" href="#background" title="Link to this heading"></a></h2>
+<section id="fermi-hubbard-model">
+<h3>Fermi-Hubbard Model<a class="headerlink" href="#fermi-hubbard-model" title="Link to this heading"></a></h3>
+<p>This package simulates the ground state of the Fermi-Hubbard model, which describes the behavior of electrons (fermions)
+on a lattice. The Hamiltonian is given by:</p>
+<div class="math notranslate nohighlight">
+\[H = -t \sum_{&lt;i,j&gt;,\sigma}(a_{i\sigma}^\dagger a_{j\sigma} + h.c.) + U\sum_{i} n_{i\uparrow}n_{i\downarrow}\]</div>
+<p>where</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\sigma \in \{ \uparrow, \downarrow \}\)</span> is the electron spin</p></li>
+<li><p><span class="math notranslate nohighlight">\(a_{i\sigma} (a_{i\sigma}^\dagger)\)</span> is the annihilation/creation operator corresponding to site <span class="math notranslate nohighlight">\(i\)</span> and spin <span class="math notranslate nohighlight">\(sigma\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(n_{i\sigma} = a_{i\sigma}^\dagger a_{i\sigma}\)</span> is the number operator corresponding to site <span class="math notranslate nohighlight">\(i\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(&lt;i, j&gt;\)</span> denotes neighboring lattice sites</p></li>
+<li><p><span class="math notranslate nohighlight">\(t, ~U\)</span> are energy scales</p></li>
+</ul>
+<p>The first term is the “hopping” term which describes how electrons move from site to site (e.g., for adjacent sites <span class="math notranslate nohighlight">\(i, j\)</span>, an electron hopping from
+<span class="math notranslate nohighlight">\(i\)</span> to <span class="math notranslate nohighlight">\(j\)</span> can be described by the product of an annihilation operator on site <span class="math notranslate nohighlight">\(i\)</span> and creation operator on site <span class="math notranslate nohighlight">\(j\)</span>). The strength of this
+term is controlled by the parameter <span class="math notranslate nohighlight">\(t\)</span>. The second term describes an interaction between two electrons on the same site, with strength <span class="math notranslate nohighlight">\(U\)</span>.
+Depending on the relative strengths of <span class="math notranslate nohighlight">\(t, U\)</span>, the above model captures superconducting, antiferromagnetic (and ferromagnetic), and insulating phases.
+It has been applied to explain phenomena in materials whose properties depend on correlations between electrons, including high-temperature cuprate superconductors <strong>[1]</strong>.</p>
+<p>The above Hamiltonian can be modified to include a chemical potential term with strength <span class="math notranslate nohighlight">\(\mu\)</span> to control the number of electrons in the lattice <strong>[2]</strong>:</p>
+<div class="math notranslate nohighlight">
+\[H = -t \sum_{&lt;i,j&gt;,\sigma}(a_{i\sigma}^\dagger a_{j\sigma} + h.c.) + U\sum_{i} n_{i\uparrow}n_{i\downarrow} + \mu \sum_{i,\sigma} n_{i\sigma}\]</div>
+</section>
+<section id="quantum-computing-and-the-fermi-hubbard-model">
+<h3>Quantum Computing and the Fermi-Hubbard Model<a class="headerlink" href="#quantum-computing-and-the-fermi-hubbard-model" title="Link to this heading"></a></h3>
+<p>The Fermi-Hubbard model has an analytical solution for 1D lattices; however, a more physically relevant case for materials is the 2D case, which cannot
+be solved analytically and must be simulated. Classical simulation approaches have been effective in describing much of the phenomena; however, these techniques
+have limitations <strong>[3]</strong>. Quantum Monte Carlo (QMC) simulations are successful in describing many-electron lattices, provided the Boltzmann factors involved do not
+become negative, which can happen in fermionic systems. For <span class="math notranslate nohighlight">\(U &gt; 0\)</span>, QMC simulations do not converge unless the lattice is “half-filled” due to this sign problem
+<strong>[4]</strong>. “Half-filling” refers to the situation in which the number of lattice sites equals the number of electrons <strong>[5]</strong>. Exact diagonalization techniques, which utilize
+symmetries to reduce the problem to a smaller Hilbert space, are effective for small lattice sizes <strong>[6]</strong>, <strong>[7]</strong>, <strong>[8]</strong>.</p>
+<p>Due to the limitations of classical simulations, there has been significant interest for using quantum computers to simulate the Fermi-Hubbard model. These efforts
+range from quantum emulation, in which evolution under the Hamiltonian is implemented on a representative qubit system (e.g., atomic lattices) <strong>[3]</strong>, to quantum algorithms
+on spin qubits (e.g., variational quantum eigensolvers on superconducting qubits) <strong>[9]</strong>. Another approach to quantum simulation is adiabatic state preparation.</p>
+</section>
+<section id="adiabatic-state-preparation">
+<h3>Adiabatic State Preparation<a class="headerlink" href="#adiabatic-state-preparation" title="Link to this heading"></a></h3>
+<p>A general approach to finding the ground state of a “difficult” Hamiltonian <span class="math notranslate nohighlight">\(H_{final}\)</span> is to initialize a qubit system in the ground state of a known Hamiltonian
+<span class="math notranslate nohighlight">\(H_{initial}\)</span> and evolve the system using evolution operator <span class="math notranslate nohighlight">\(U(s) = exp(-iH(s)\Delta t)\)</span> with Hamiltonian</p>
+<div class="math notranslate nohighlight">
+\[H(s) = (1-s) H_{init} + (s) H_{final} = H_{init} (1- k/M) + H_{final} (k/M)\]</div>
+<p>where <span class="math notranslate nohighlight">\(M\)</span> is the number of interpolating steps and <span class="math notranslate nohighlight">\(k = 0, 1, ... M\)</span> <strong>[10]</strong>, <strong>[11]</strong>. Provided the interpolation between <span class="math notranslate nohighlight">\(H_{initial}\)</span> and <span class="math notranslate nohighlight">\(H_{final}\)</span> is slow,
+the adiabatic principle states the system remains in an energy eigenstate of <span class="math notranslate nohighlight">\(H(s)\)</span> at all times. So, the state of the system following interpolation is
+the ground state of <span class="math notranslate nohighlight">\(H_{final}\)</span>. The total evolution time <span class="math notranslate nohighlight">\(t = M\Delta t\)</span> must satisfy <span class="math notranslate nohighlight">\(t &gt;&gt; 1/(E_0-E_1)^2\)</span> where <span class="math notranslate nohighlight">\(E_0-E_1\)</span> is
+the smallest difference between the first excited state and the ground state of <span class="math notranslate nohighlight">\(H\)</span> for any <span class="math notranslate nohighlight">\(s\)</span> <strong>[10]</strong>.</p>
+<p>This approach has been previously applied to simulate the ground state of Fermi-Hubbard model with chemical potential and magnetic
+field terms, starting from the ground state of a Hamiltonian that describes d-wave electron pairing (a type of superconductivity) <strong>[12]</strong>.
+The adiabatic_fermi_hubbard package uses a different starting point to find the ground state of the Fermi-Hubbard model through adiabatic state preparation
+for small lattices.</p>
+</section>
+</section>
+<section id="implementation">
+<h2>Implementation<a class="headerlink" href="#implementation" title="Link to this heading"></a></h2>
+<p>This package creates Qiskit circuits <strong>[12]</strong> to carry out adiabatic state preparation to find the ground state energy of the Fermi-Hubbard Hamiltonian. The following
+section highlights some details of the implementation.</p>
+<section id="jordan-wigner-transformation">
+<h3>Jordan-Wigner Transformation<a class="headerlink" href="#jordan-wigner-transformation" title="Link to this heading"></a></h3>
+<p>One mapping which takes the fermionic raising/lowering operators in the Fermi-Hubbard Hamiltonian to operations which can be run on a spin-based qubit system is the
+Jordan-Wigner transformation. The transformation is given by</p>
+<div class="math notranslate nohighlight">
+\[a_{i \sigma}\]</div>
+</section>
+<section id="trotterization">
+<h3>Trotterization<a class="headerlink" href="#trotterization" title="Link to this heading"></a></h3>
+<p>Following the Jordan-Wigner transformation, the Fermi-Hubbard Hamiltonian becomes a sum of Pauli strings, each of which has an associated
+coefficient. Symbolically,</p>
+<div class="math notranslate nohighlight">
+\[H_{after JW} = \sum_{j}^{K} \alpha_j P_j\]</div>
+<p>where <span class="math notranslate nohighlight">\(\alpha_i\)</span> are the coefficients and <span class="math notranslate nohighlight">\(P_i\)</span> are Pauli strings of length <span class="math notranslate nohighlight">\(2N\)</span>, where <span class="math notranslate nohighlight">\(N\)</span> is the number of lattice sites.
+Generally, not all of the Pauli strings in <span class="math notranslate nohighlight">\(H_{after JW}\)</span> commute, meaning</p>
+<div class="math notranslate nohighlight">
+\[exp(-i \Delta t \sum_{j} \alpha_j P_j ) \neq exp(-i \Delta t \alpha_1 P_1) exp(-i \Delta t \alpha_2 P_2) ... exp(-i \Delta t \alpha_K P_K)\]</div>
+<p>However, provided <span class="math notranslate nohighlight">\(\Delta t\)</span> is small, the Trotter approximation allows</p>
+<div class="math notranslate nohighlight">
+\[exp(-i \Delta t \sum_{j} \alpha_j P_j ) \approx exp(-i \Delta t \alpha_1 P_1) exp(-i \Delta t \alpha_2 P_2) ... exp(-i \Delta t \alpha_K P_K)\]</div>
+<p>The adiabatic_fermi_hubbard package assumes the Trotter approximation to decompose the Jordan-Wigner transformed Hamiltonian into a sequence
+of rotations about Pauli strings.</p>
+</section>
+<section id="rotation-about-n-dimensional-pauli-strings">
+<h3>Rotation about N-dimensional Pauli strings<a class="headerlink" href="#rotation-about-n-dimensional-pauli-strings" title="Link to this heading"></a></h3>
+<p>Once an evolution operator of the form <span class="math notranslate nohighlight">\(exp(-i \Delta t  \sum_{j}^{K} \alpha_j P_j)`\)</span> is decomposed using the
+Trotter approximation, it becomes necessary to implement rotations about arbitrary Pauli strings of length <span class="math notranslate nohighlight">\(2N\)</span>.
+To accomplish this, the package utilizes the approach discussed in Nielsen and Chuang, Ch 4 <strong>[14]</strong>. The strategy is briefly summarized here.</p>
+<p>A rotation about an arbitrary Pauli string can be turned into a single qubit rotation by mapping the parity of each qubit onto an
+ancilla qubit (or onto the last qubit involved in the rotation) using <span class="math notranslate nohighlight">\(CNOT\)</span> gates and then performing a <span class="math notranslate nohighlight">\(Z\)</span>-rotation on that qubit. Following said
+rotation, <span class="math notranslate nohighlight">\(CNOT\)</span> s are required to “uncompute” the parity. For instance, a circuit which performs the rotation <span class="math notranslate nohighlight">\(exp(-i \pi (ZZZZ))\)</span> is given by</p>
+<a class="reference internal image-reference" href="_images/zzzz.png"><img alt="_images/zzzz.png" src="_images/zzzz.png" style="width: 400px;" /></a>
+<p>If the Pauli string contains <span class="math notranslate nohighlight">\(X\)</span> or <span class="math notranslate nohighlight">\(Y\)</span> gates, they can be transformed into <span class="math notranslate nohighlight">\(Z\)</span> gates for the purpose of the parity encoding by applying a
+<span class="math notranslate nohighlight">\(H\)</span> gate or a <span class="math notranslate nohighlight">\(R_Y(3\pi/2)\)</span> gate before the CNOTs, respectively. The inverse operations are required after the second set of <span class="math notranslate nohighlight">\(CNOT\)</span> s. For example,
+a circuit which perofrms the rotation <span class="math notranslate nohighlight">\(exp(-i \ pi (ZXYZ))\)</span> is</p>
+<a class="reference internal image-reference" href="_images/zxyz.png"><img alt="_images/zxyz.png" src="_images/zxyz.png" style="width: 400px;" /></a>
+<p>Additional details can be found in <strong>[14]</strong>.</p>
+</section>
+<section id="validation">
+<h3>Validation<a class="headerlink" href="#validation" title="Link to this heading"></a></h3>
+</section>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
+<section id="initializing-a-hubbardhamiltonian-object-for-a-4-site-lattice">
+<h3>Initializing a HubbardHamiltonian object for a 4 site lattice<a class="headerlink" href="#initializing-a-hubbardhamiltonian-object-for-a-4-site-lattice" title="Link to this heading"></a></h3>
+<p>This example shows how to create instances of the Lattice and HubbardHamiltonian classes.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">adiabatic_fermi_hubbard</span> <span class="k">as</span> <span class="nn">afh</span>
+<span class="n">lattice1</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">bc</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># no periodic boundary conditions</span>
+
+<span class="c1"># create HubbardHamiltonian with t = 2, U = 4, mu = -2</span>
+<span class="n">hamiltonian1</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">HubbardHamiltonian</span><span class="p">(</span><span class="n">lattice1</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">U</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">mu</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">hamiltonian1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This should produce the following output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">U</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">mu</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
+
+<span class="n">Lattice</span><span class="p">:</span>
+<span class="n">Number</span> <span class="n">of</span> <span class="n">sites</span><span class="p">:</span> <span class="mi">4</span> <span class="n">sites</span><span class="p">,</span>
+<span class="n">Periodic</span> <span class="n">boundary</span> <span class="n">conditions</span><span class="p">:</span> <span class="kc">False</span><span class="o">.</span>
+
+<span class="n">Fermionic</span> <span class="n">Operator</span>
+<span class="n">number</span> <span class="n">spin</span> <span class="n">orbitals</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">number</span> <span class="n">terms</span><span class="o">=</span><span class="mi">24</span>
+<span class="o">-</span><span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span> <span class="o">+</span><span class="n">_0</span> <span class="o">-</span><span class="n">_2</span> <span class="p">)</span>
+<span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span> <span class="o">-</span><span class="n">_0</span> <span class="o">+</span><span class="n">_2</span> <span class="p">)</span>
+<span class="o">+</span> <span class="o">-</span><span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span> <span class="o">+</span><span class="n">_2</span> <span class="o">-</span><span class="n">_4</span> <span class="p">)</span>
+<span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span> <span class="o">-</span><span class="n">_2</span> <span class="o">+</span><span class="n">_4</span> <span class="p">)</span>
+<span class="o">+</span> <span class="o">-</span><span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span> <span class="o">+</span><span class="n">_4</span> <span class="o">-</span><span class="n">_6</span> <span class="p">)</span>
+<span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span> <span class="o">-</span><span class="n">_4</span> <span class="o">+</span><span class="n">_6</span> <span class="p">)</span>
+<span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span> <span class="o">-</span><span class="n">_1</span> <span class="o">+</span><span class="n">_3</span> <span class="p">)</span>
+<span class="o">+</span> <span class="o">-</span><span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span> <span class="o">+</span><span class="n">_1</span> <span class="o">-</span><span class="n">_3</span> <span class="p">)</span>
+<span class="o">+</span> <span class="o">-</span><span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span> <span class="o">+</span><span class="n">_3</span> <span class="o">-</span><span class="n">_5</span> <span class="p">)</span>
+<span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span> <span class="o">-</span><span class="n">_3</span> <span class="o">+</span><span class="n">_5</span> <span class="p">)</span>
+<span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span> <span class="o">-</span><span class="n">_5</span> <span class="o">+</span><span class="n">_7</span> <span class="p">)</span>
+<span class="o">+</span> <span class="o">-</span><span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span> <span class="o">+</span><span class="n">_5</span> <span class="o">-</span><span class="n">_7</span> <span class="p">)</span>
+<span class="o">+</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="p">(</span> <span class="o">+</span><span class="n">_4</span> <span class="o">-</span><span class="n">_4</span> <span class="o">+</span><span class="n">_5</span> <span class="o">-</span><span class="n">_5</span> <span class="p">)</span>
+<span class="o">+</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="p">(</span> <span class="o">+</span><span class="n">_6</span> <span class="o">-</span><span class="n">_6</span> <span class="o">+</span><span class="n">_7</span> <span class="o">-</span><span class="n">_7</span> <span class="p">)</span>
+<span class="o">+</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="p">(</span> <span class="o">+</span><span class="n">_0</span> <span class="o">-</span><span class="n">_0</span> <span class="o">+</span><span class="n">_1</span> <span class="o">-</span><span class="n">_1</span> <span class="p">)</span>
+<span class="o">...</span>
+<span class="o">+</span> <span class="o">-</span><span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span> <span class="o">+</span><span class="n">_1</span> <span class="o">-</span><span class="n">_1</span> <span class="p">)</span>
+<span class="o">+</span> <span class="o">-</span><span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span> <span class="o">+</span><span class="n">_2</span> <span class="o">-</span><span class="n">_2</span> <span class="p">)</span>
+<span class="o">+</span> <span class="o">-</span><span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span> <span class="o">+</span><span class="n">_5</span> <span class="o">-</span><span class="n">_5</span> <span class="p">)</span>
+<span class="o">+</span> <span class="o">-</span><span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span> <span class="o">+</span><span class="n">_7</span> <span class="o">-</span><span class="n">_7</span> <span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="rotating-about-a-pauli-string">
+<h3>Rotating about a Pauli string<a class="headerlink" href="#rotating-about-a-pauli-string" title="Link to this heading"></a></h3>
+<p>This example demonstrates the functionality of the AdiabaticCircuit method pauli_string_rotation.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">adiabatic_fermi_hubbard</span> <span class="k">as</span> <span class="nn">afh</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">from</span> <span class="nn">qiskit.quantum_info</span> <span class="kn">import</span> <span class="n">SparsePauliOp</span>
+
+<span class="n">lattice1</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">bc</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># 2 sites = 4 qubits, no periodic boundary conditions</span>
+
+<span class="c1"># create HubbardHamiltonian with t = 2, U = 4, \mu = -2</span>
+<span class="n">hamiltonian1</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">HubbardHamiltonian</span><span class="p">(</span><span class="n">lattice1</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">U</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">mu</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># create AdiabaticCircuit object</span>
+<span class="n">ad_circ1</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">AdiabaticCircuit</span><span class="p">(</span><span class="n">hamiltonian1</span><span class="p">)</span>
+
+<span class="n">operators</span> <span class="o">=</span> <span class="n">SparsePauliOp</span><span class="p">([</span><span class="s2">&quot;ZYXI&quot;</span><span class="p">,</span> <span class="s2">&quot;ZZII&quot;</span><span class="p">],</span> <span class="n">coeffs</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="c1"># rotation about ZYXI (rightmost gate acts on qubit 0)</span>
+
+<span class="n">circ1</span> <span class="o">=</span> <span class="n">ad_circ1</span><span class="o">.</span><span class="n">pauli_string_rotation</span><span class="p">(</span><span class="n">operators</span><span class="o">.</span><span class="n">paulis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+<span class="c1"># rotation about ZZII (rightmost gate acts on qubit 0)</span>
+<span class="n">circ2</span> <span class="o">=</span> <span class="n">ad_circ1</span><span class="o">.</span><span class="n">pauli_string_rotation</span><span class="p">(</span><span class="n">operators</span><span class="o">.</span><span class="n">paulis</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+<span class="n">circ2</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">output</span> <span class="o">=</span> <span class="s2">&quot;mpl&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This should produce the following two circuits:</p>
+<a class="reference internal image-reference" href="_images/zyxi.png"><img alt="_images/zyxi.png" src="_images/zyxi.png" style="width: 400px;" /></a>
+<a class="reference internal image-reference" href="_images/zzii.png"><img alt="_images/zzii.png" src="_images/zzii.png" style="width: 400px;" /></a>
+</section>
+<section id="building-and-running-an-adiabatic-state-preparation-circuit-for-n-2-lattice-sites">
+<h3>Building and running an adiabatic state preparation circuit for N = 2 lattice sites<a class="headerlink" href="#building-and-running-an-adiabatic-state-preparation-circuit-for-n-2-lattice-sites" title="Link to this heading"></a></h3>
+<p>This example shows how to create and execute a circuit to find the ground state energy of a Fermi-Hubbard Hamiltonian through
+adiabatic state preparation.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">adiabatic_fermi_hubbard</span> <span class="k">as</span> <span class="nn">afh</span>
+
+<span class="n">lattice1</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">bc</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># no periodic boundary conditions</span>
+
+<span class="c1"># create HubbardHamiltonian with t = 2, U = 10, \mu = -5</span>
+<span class="n">hamiltonian1</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">HubbardHamiltonian</span><span class="p">(</span><span class="n">lattice1</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">U</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mu</span><span class="o">=-</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># create AdiabaticCircuit with time_step = 0.01, step_count = 20000</span>
+<span class="n">ad_circ1</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">AdiabaticCircuit</span><span class="p">(</span><span class="n">hamiltonian1</span><span class="p">,</span> <span class="n">time_step</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">step_count</span> <span class="o">=</span> <span class="mi">20000</span><span class="p">)</span>
+
+<span class="n">circ</span> <span class="o">=</span> <span class="n">ad_circ1</span><span class="o">.</span><span class="n">create_circuit</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">ad_circ1</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">circ</span><span class="p">)</span>
+<span class="n">energy</span> <span class="o">=</span> <span class="n">ad_circ</span><span class="o">.</span><span class="n">calc_energy</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ground state energy: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">energy</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>This should result in the following output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Ground</span> <span class="n">state</span> <span class="n">energy</span><span class="p">:</span>
+</pre></div>
+</div>
+</section>
+<section id="using-qiskit-nature-s-eigensolver">
+<h3>Using qiskit-nature’s eigensolver<a class="headerlink" href="#using-qiskit-nature-s-eigensolver" title="Link to this heading"></a></h3>
+<p>This example illustrates the methods in the AdiabaticCircuit class which can be used for validating
+the ground state energy resulting from adiabatic state preparation.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">adiabatic_fermi_hubbard</span> <span class="k">as</span> <span class="nn">afh</span>
+
+<span class="n">lattice1</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">bc</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># no periodic boundary conditions</span>
+
+<span class="c1"># create HubbardHamiltonian with t = 2, U = 10, \mu = -5</span>
+<span class="n">hamiltonian1</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">HubbardHamiltonian</span><span class="p">(</span><span class="n">lattice1</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">U</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mu</span><span class="o">=-</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># create AdiabaticCircuit with time_step = 0.01, step_count = 20000</span>
+<span class="n">ad_circ1</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">AdiabaticCircuit</span><span class="p">(</span><span class="n">hamiltonian1</span><span class="p">,</span> <span class="n">time_step</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">step_count</span> <span class="o">=</span> <span class="mi">20000</span><span class="p">)</span>
+
+<span class="n">comparison_energy</span> <span class="o">=</span> <span class="n">ad_circ1</span><span class="o">.</span><span class="n">run_eigensolver_comparison</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ground state energy from eigensolver: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">comparison_energy</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>This result in the following output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Ground</span> <span class="n">state</span> <span class="n">energy</span> <span class="p">(</span><span class="n">eigensolver</span><span class="p">):</span>
+</pre></div>
+</div>
+</section>
+<section id="error-as-a-function-of-step-count-step-length">
+<h3>Error as a function of step count / step length<a class="headerlink" href="#error-as-a-function-of-step-count-step-length" title="Link to this heading"></a></h3>
+</section>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<p><strong>[1]</strong> Qin, M., T. Schäfer, S. Andergassen, P. Corboz, and E. Gull, 2022, Annu. Rev. Condens. Matter Phys., 13, 275-302, DOI: <a class="reference external" href="https://doi.org/10.1146/annurev-conmatphys-090921-033948">https://doi.org/10.1146/annurev-conmatphys-090921-033948</a>.</p>
+<p><strong>[2]</strong> Jiang, Z., K. J. Sung, K. Kechedzhi, V. N. Smelyanskiy, and S. Boixo, 2018, Phys. Rev. Applied, 9, 044036, DOI: <a class="reference external" href="https://doi.org/10.1103/PhysRevApplied.9.044036">https://doi.org/10.1103/PhysRevApplied.9.044036</a>.</p>
+<p><strong>[3]</strong> Hofstetter, W. and T. Qin, 2018, J. Phys. B: At. Mol. Opt. Phys., 51, 082001, DOI: <a class="reference external" href="https://doi.org/10.1088/1361-6455/aaa31b">https://doi.org/10.1088/1361-6455/aaa31b</a>.</p>
+<p><strong>[4]</strong> Li, Z-X. and H. Yao, 2019, Annu. Rev. Condens. Matter Phys., 10, 337-56, DOI: <a class="reference external" href="https://doi.org/10.1146/annurev-conmatphys-033117-054307">https://doi.org/10.1146/annurev-conmatphys-033117-054307</a>.</p>
+<p><strong>[5]</strong> Arovas, D. P., E. Berg, S. A. Kivelson, and S. Raghu, Annu. Rev. Condens. Matter Phys., 13, 239-74, DOI: <a class="reference external" href="https://doi.org/10.1146/annurev-conmatphys-031620-102024">https://doi.org/10.1146/annurev-conmatphys-031620-102024</a>.</p>
+<p><strong>[6]</strong> Zhang, J. M., and R. X. Dong, 2010, Eur. J. Phys., 31, 591, DOI: <a class="reference external" href="https://doi.org/10.1088/0143-0807/31/3/016">https://doi.org/10.1088/0143-0807/31/3/016</a>.</p>
+<p><strong>[7]</strong> Lin, H. Q., 1990, 42, 6561, DOI: <a class="reference external" href="https://doi.org/10.1103/PhysRevB.42.6561">https://doi.org/10.1103/PhysRevB.42.6561</a>.</p>
+<p><strong>[8]</strong> Lin, H. Q., J. E. Gubernatis, H. Gould, and J. Tobochnik, 1993, Comput. Phys. 7, 400-07, DOI: <a class="reference external" href="https://doi.org/10.1063/1.4823192">https://doi.org/10.1063/1.4823192</a>.</p>
+<p><strong>[9]</strong> Stanisic, S., J. L. Bosse, F. M. Gambetta, R. A. Santos, W. Mruczkiewicz, T. E. O’Brien, E. Ostby, and A. Montanaro, 2022, Nat. Commun., 13, 5743, DOI: <a class="reference external" href="https://doi.org/10.1038/s41467-022-33335-4">https://doi.org/10.1038/s41467-022-33335-4</a>.</p>
+<p><strong>[10]</strong> Albash, T. and D. A. Lidar, 2018, Rev. Mod. Phys., 90, 015002, DOI: <a class="reference external" href="https://doi.org/10.1103/RevModPhys.90.015002">https://doi.org/10.1103/RevModPhys.90.015002</a>.</p>
+<p><strong>[11]</strong> Mayhall, N. Adiabatic Evolution of Ising Hamiltonian with Quantum Circuit. <a class="reference external" href="https://github.com/CHEM-PHYS-X684/AdiabaticPrinciple/blob/main/3_adiabatic.ipynb">https://github.com/CHEM-PHYS-X684/AdiabaticPrinciple/blob/main/3_adiabatic.ipynb</a>.</p>
+<p><strong>[12]</strong> Qiskit contributors. Qiskit: An Open-source Framework for Quantum Computing, 2023, DOI: <a class="reference external" href="https://doi.org/10.5281/zenodo.2573505">https://doi.org/10.5281/zenodo.2573505</a>.</p>
+<p><strong>[14]</strong></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to adiabatic_fermi_hubbard’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api.html" class="btn btn-neutral float-right" title="Class Overview" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Yannick Pleimling. Project structure based on the Computational Molecular Science Python Cookiecutter version 1.1.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

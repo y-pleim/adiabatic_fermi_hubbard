@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>adiabatic_fermi_hubbard.AdiabaticCircuit &mdash; adiabatic_fermi_hubbard  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            adiabatic_fermi_hubbard
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Class Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html#api-documentation">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">adiabatic_fermi_hubbard</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">adiabatic_fermi_hubbard.AdiabaticCircuit</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for adiabatic_fermi_hubbard.AdiabaticCircuit</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">adiabatic_fermi_hubbard</span> <span class="kn">import</span> <span class="n">HubbardHamiltonian</span>
+
+<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">execute</span><span class="p">,</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">transpile</span>
+<span class="kn">from</span> <span class="nn">qiskit.result</span> <span class="kn">import</span> <span class="n">Result</span>
+<span class="kn">from</span> <span class="nn">qiskit.quantum_info</span> <span class="kn">import</span> <span class="n">Pauli</span><span class="p">,</span> <span class="n">SparsePauliOp</span>
+<span class="kn">from</span> <span class="nn">qiskit_aer</span> <span class="kn">import</span> <span class="n">Aer</span>
+<span class="kn">from</span> <span class="nn">qiskit_algorithms</span> <span class="kn">import</span> <span class="n">NumPyMinimumEigensolver</span>
+<span class="kn">from</span> <span class="nn">qiskit_nature.second_q.algorithms</span> <span class="kn">import</span> <span class="n">GroundStateEigensolver</span>
+<span class="kn">from</span> <span class="nn">qiskit_nature.second_q.hamiltonians</span> <span class="kn">import</span> <span class="n">FermiHubbardModel</span>
+<span class="kn">from</span> <span class="nn">qiskit_nature.second_q.problems</span> <span class="kn">import</span> <span class="n">LatticeModelProblem</span>
+<span class="kn">from</span> <span class="nn">qiskit_nature.second_q.mappers</span> <span class="kn">import</span> <span class="n">JordanWignerMapper</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">platform</span>
+
+<div class="viewcode-block" id="AdiabaticCircuit">
+<a class="viewcode-back" href="../../autosummary/adiabatic_fermi_hubbard.AdiabaticCircuit.html#adiabatic_fermi_hubbard.AdiabaticCircuit">[docs]</a>
+<span class="k">class</span> <span class="nc">AdiabaticCircuit</span><span class="p">:</span>
+<div class="viewcode-block" id="AdiabaticCircuit.__init__">
+<a class="viewcode-back" href="../../autosummary/adiabatic_fermi_hubbard.AdiabaticCircuit.html#adiabatic_fermi_hubbard.AdiabaticCircuit.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">ham</span><span class="p">:</span> <span class="n">HubbardHamiltonian</span><span class="p">,</span> <span class="n">time_step</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">step_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A class for building/executing Qiskit circuits for adiabatic state preparation of the Hubbard Hamiltonian ground state through</span>
+<span class="sd">        interpolating between :math:`H_{init}` and :math:`H_{Fermi-Hubbard}` according to</span>
+
+<span class="sd">        .. math:: H(k) = H_{init} (1-k/M) + H_{final} (k/M).</span>
+
+<span class="sd">        where :math:`M` is the number of interpolation steps, :math:`k = 0, 1, ... , M`, and :math:`H_{init} = \\sum_i X_i`</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ham : HubbardHamiltonian</span>
+<span class="sd">            The HubbardHamiltonian object to find the ground state for.</span>
+<span class="sd">        time_step : float</span>
+<span class="sd">            Duration of each interpolating step.</span>
+<span class="sd">        step_count : float</span>
+<span class="sd">            The number of steps to take when interpolating between :math:`H_{init}` and :math:`H_{Fermi-Hubbard}`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">hubbard_hamiltonian</span> <span class="o">=</span> <span class="n">ham</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">ham</span><span class="o">.</span><span class="n">get_lattice</span><span class="p">()</span><span class="o">.</span><span class="n">get_num_sites</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_step</span> <span class="o">=</span> <span class="n">time_step</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step_count</span> <span class="o">=</span> <span class="n">step_count</span></div>
+
+
+<div class="viewcode-block" id="AdiabaticCircuit.__str__">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.__str__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="s2">&quot;Time step: &quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_step</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Number of steps: &quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step_count</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Number of qubits: &quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">HubbardHamiltonian:</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hubbard_hamiltonian</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AdiabaticCircuit.pauli_string_rotation">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.pauli_string_rotation">[docs]</a>
+    <span class="k">def</span> <span class="nf">pauli_string_rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pauli_string</span><span class="p">:</span> <span class="n">Pauli</span><span class="p">,</span> <span class="n">argument</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs a rotation about a specified Pauli string through a specified angle. Based on Nielsen and Chuang, Ch 4.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pauli_string : Pauli</span>
+<span class="sd">            A qiskit Pauli object which contains an n-qubit Pauli string.</span>
+<span class="sd">        argument : float</span>
+<span class="sd">            The angle through which to rotate.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        circ : QuantumCircuit</span>
+<span class="sd">            A qiskit QuantumCircuit object which performs the rotation when executed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">circ</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># extract constituent Pauli gates</span>
+        <span class="n">gates_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pauli_string</span><span class="p">)):</span>
+            <span class="n">gates_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pauli_string</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+        <span class="c1"># list of qubits which participate in the rotation</span>
+        <span class="n">rotation_qubits</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># initial step - converting Y, X gates and assigning rotation qubits</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">gates_list</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">gates_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="s2">&quot;X&quot;</span><span class="p">:</span>
+                <span class="n">circ</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="n">rotation_qubits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">str</span><span class="p">(</span><span class="n">gates_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span><span class="p">:</span>
+                <span class="n">circ</span><span class="o">.</span><span class="n">rx</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+                <span class="n">rotation_qubits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">str</span><span class="p">(</span><span class="n">gates_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="s2">&quot;Z&quot;</span><span class="p">:</span>
+                <span class="n">rotation_qubits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">circ</span><span class="o">.</span><span class="n">id</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="c1"># encode parity onto last qubit in rotation_qubits</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">rotation_qubits</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rotation_qubits</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
+                <span class="n">gates_list</span>
+            <span class="p">):</span>  <span class="c1"># if all qubits participate in the rotation</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pauli_string</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">j</span><span class="p">:</span>
+                    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>  <span class="c1"># encode parity onto last qubit</span>
+            <span class="k">elif</span> <span class="n">i</span> <span class="o">!=</span> <span class="nb">max</span><span class="p">(</span>
+                <span class="n">rotation_qubits</span>
+            <span class="p">):</span>  <span class="c1"># if qubit i isn&#39;t the last one that participates in the rotation</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">rotation_qubits</span><span class="p">)</span>
+                <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>  <span class="c1"># encode parity onto last qubit in rotation_qubits</span>
+
+        <span class="c1"># perform rotation on last qubit</span>
+        <span class="k">if</span> <span class="n">rotation_qubits</span><span class="p">:</span>
+            <span class="n">circ</span><span class="o">.</span><span class="n">rz</span><span class="p">(</span><span class="n">argument</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+
+        <span class="c1"># undoes parity encoding</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span>
+        <span class="k">while</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">rotation_qubits</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">rotation_qubits</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">gates_list</span><span class="p">):</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pauli_string</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">rotation_qubits</span> <span class="ow">and</span> <span class="n">index</span> <span class="o">!=</span> <span class="nb">max</span><span class="p">(</span><span class="n">rotation_qubits</span><span class="p">):</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">rotation_qubits</span><span class="p">)</span>
+                <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+            <span class="n">index</span> <span class="o">-=</span> <span class="mi">1</span>
+
+        <span class="c1"># undoes conversion</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">gates_list</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">gates_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="s2">&quot;X&quot;</span><span class="p">:</span>
+                <span class="n">circ</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">str</span><span class="p">(</span><span class="n">gates_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span><span class="p">:</span>
+                <span class="n">circ</span><span class="o">.</span><span class="n">rx</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">circ</span></div>
+
+
+<div class="viewcode-block" id="AdiabaticCircuit.evolution_operator">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.evolution_operator">[docs]</a>
+    <span class="k">def</span> <span class="nf">evolution_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Implements the operation</span>
+
+<span class="sd">        .. math:: U(k) = \\exp{H_{init} (1-k/M) \\delta t}\\exp{H_{FH} (k/M) \\delta t}</span>
+
+<span class="sd">        where :math:`H_{init} = \\sum_i{X_i}`, :math:`H_{FH}` is the Jordan-Wigner transformed Fermi-Hubbard Hamiltonian and</span>
+<span class="sd">        :math:`M` is the number of interpolation steps.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        k : integer</span>
+<span class="sd">            The index k as defined above.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        circ : QuantumCircuit</span>
+<span class="sd">            A qiskit QuantumCircuit object which implements the evolution.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">delta_s</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_count</span>
+
+        <span class="n">circ</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">final_ham</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hubbard_hamiltonian</span><span class="o">.</span><span class="n">jw_hamiltonian</span><span class="p">()</span>
+        <span class="p">)</span>  <span class="c1"># get SparsePauliOp representation of HubbardHamiltonian</span>
+        <span class="n">final_ham_paulis</span> <span class="o">=</span> <span class="n">final_ham</span><span class="o">.</span><span class="n">paulis</span>  <span class="c1"># paulis list</span>
+        <span class="n">final_ham_coeffs</span> <span class="o">=</span> <span class="n">final_ham</span><span class="o">.</span><span class="n">coeffs</span>  <span class="c1"># weights list</span>
+
+        <span class="c1"># stores qubit indices</span>
+        <span class="n">seq</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">seq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="c1"># first exponential factor: evolution under H_init for step k on qubits in seq</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">circ</span><span class="o">.</span><span class="n">rx</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_step</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">k</span> <span class="o">*</span> <span class="n">delta_s</span><span class="p">),</span> <span class="n">i</span><span class="p">)</span>
+
+        <span class="c1"># second exponential factor: evolution under H_HF for step k on qubits in seq</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">final_ham_paulis</span><span class="p">)):</span>
+            <span class="n">circ</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pauli_string_rotation</span><span class="p">(</span>
+                    <span class="n">final_ham_paulis</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">time_step</span> <span class="o">*</span> <span class="n">k</span> <span class="o">*</span> <span class="n">delta_s</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">final_ham_coeffs</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span>
+                <span class="p">),</span>
+                <span class="n">seq</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">circ</span></div>
+
+
+<div class="viewcode-block" id="AdiabaticCircuit.create_circuit">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.create_circuit">[docs]</a>
+    <span class="k">def</span> <span class="nf">create_circuit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates the circuit which performs the adiabatic state preparation of the ground state of the HubbardHamiltonian associated</span>
+<span class="sd">        with this AdiabaticCircuit.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        circ : QuantumCircuit</span>
+<span class="sd">            The circuit which will carry out the adiabatic state preparation when run.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">circ</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># start system in ground state of H_init (i.e., the all minus state)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">circ</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">circ</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="c1"># store qubit indices</span>
+        <span class="n">seq</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">seq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="c1"># build a circuit of M+1 evolution operators, starting from k = 0 and ending at k = M</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step_count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">circ</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evolution_operator</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">seq</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">circ</span></div>
+
+
+<div class="viewcode-block" id="AdiabaticCircuit.run">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.run">[docs]</a>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">circ</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Executes a quantum circuit using Qiskit&#39;s statevector simulator.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        circ : QuantumCircuit</span>
+<span class="sd">            The circuit to be run.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : Result</span>
+<span class="sd">            A qiskit Result object containing the execution results.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">simulator</span> <span class="o">=</span> <span class="n">Aer</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s2">&quot;statevector_simulator&quot;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">circ</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">simulator</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="AdiabaticCircuit.run_eigensolver_comparison">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.run_eigensolver_comparison">[docs]</a>
+    <span class="k">def</span> <span class="nf">run_eigensolver_comparison</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes the ground state energy for the HubbardHamiltonian associated with the AdiabaticCircuit</span>
+<span class="sd">        through qiskit-nature methods. Based on the example code found in `LatticeModels`_.</span>
+
+<span class="sd">        .. _LatticeModels: https://qiskit-community.github.io/qiskit-nature/tutorials/10_lattice_models.html#The-Fermi-Hubbard-model</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : float</span>
+<span class="sd">            The ground state energy.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">map</span> <span class="o">=</span> <span class="n">JordanWignerMapper</span><span class="p">()</span>
+
+        <span class="n">ham</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hubbard_hamiltonian</span>
+        <span class="n">lattice</span> <span class="o">=</span> <span class="n">ham</span><span class="o">.</span><span class="n">get_lattice</span><span class="p">()</span><span class="o">.</span><span class="n">get_qiskit_object</span><span class="p">()</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">ham</span><span class="o">.</span><span class="n">get_t_value</span><span class="p">()</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">ham</span><span class="o">.</span><span class="n">get_U_value</span><span class="p">()</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">ham</span><span class="o">.</span><span class="n">get_mu_value</span><span class="p">()</span>
+
+        <span class="c1"># create FermiHubbardModel with interaction strength t, onsite interaction strength u, chemical potential mu</span>
+        <span class="n">fh_model</span> <span class="o">=</span> <span class="n">FermiHubbardModel</span><span class="p">(</span>
+            <span class="n">lattice</span><span class="o">.</span><span class="n">uniform_parameters</span><span class="p">(</span>
+                <span class="n">uniform_interaction</span><span class="o">=-</span><span class="n">t</span><span class="p">,</span>
+                <span class="n">uniform_onsite_potential</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">onsite_interaction</span><span class="o">=</span><span class="n">u</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># setting up the problem and solver</span>
+        <span class="n">problem</span> <span class="o">=</span> <span class="n">LatticeModelProblem</span><span class="p">(</span><span class="n">fh_model</span><span class="p">)</span>
+        <span class="n">solver</span> <span class="o">=</span> <span class="n">NumPyMinimumEigensolver</span><span class="p">(</span>
+            <span class="n">filter_criterion</span><span class="o">=</span><span class="n">problem</span><span class="o">.</span><span class="n">get_default_filter_criterion</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="n">gs_solver</span> <span class="o">=</span> <span class="n">GroundStateEigensolver</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="n">solver</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">gs_solver</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">problem</span><span class="p">)</span><span class="o">.</span><span class="n">eigenvalues</span><span class="p">[</span>
+            <span class="mi">0</span>
+        <span class="p">]</span>  <span class="c1"># extracts ground state energy as float</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="AdiabaticCircuit.calc_energy">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.calc_energy">[docs]</a>
+    <span class="k">def</span> <span class="nf">calc_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">Result</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates the energy for the state represented by result using the HubbardHamiltonian associated</span>
+<span class="sd">        with this AdiabaticCircuit object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        result : Result</span>
+<span class="sd">            A qiskit Result containing the state to calculate the energy for.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        energy : float</span>
+<span class="sd">            The energy of the state.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result_statevector</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_statevector</span><span class="p">()</span>
+        <span class="n">ham</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hubbard_hamiltonian</span>
+        <span class="n">jw_ham</span> <span class="o">=</span> <span class="n">ham</span><span class="o">.</span><span class="n">jw_hamiltonian</span><span class="p">()</span>
+        <span class="n">energy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">result_statevector</span><span class="o">.</span><span class="n">expectation_value</span><span class="p">(</span><span class="n">jw_ham</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">energy</span></div>
+
+
+<div class="viewcode-block" id="AdiabaticCircuit.get_num_qubits">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.get_num_qubits">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_num_qubits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Access method to get the number of qubits associated with this AdiabaticCircuit object.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        n : int</span>
+<span class="sd">            The number of qubits.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span></div>
+
+
+<div class="viewcode-block" id="AdiabaticCircuit.get_hubbard_hamiltonian">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.get_hubbard_hamiltonian">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_hubbard_hamiltonian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Access method to get the HubbardHamiltonian associated with this AdiabaticCircuit object.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        hubbard_hamiltonian : HubbardHamiltonian</span>
+<span class="sd">            The HubbardHamiltonian.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hubbard_hamiltonian</span></div>
+
+
+<div class="viewcode-block" id="AdiabaticCircuit.get_time_step">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.get_time_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_time_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Access method to get the time step associated with this AdiabaticCircuit object.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        time_step : float</span>
+<span class="sd">            The time step involved in creating the adiabatic state preparation circuit.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_step</span></div>
+
+
+<div class="viewcode-block" id="AdiabaticCircuit.get_step_count">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.get_step_count">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_step_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Access method to get the step count associated with this AdiabaticCircuit object.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        step_count : int</span>
+<span class="sd">            The number of steps involved in creating the adiabatic state preparation circuit.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_count</span></div>
+
+
+<div class="viewcode-block" id="AdiabaticCircuit.diagonalize_ham">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.diagonalize_ham">[docs]</a>
+    <span class="k">def</span> <span class="nf">diagonalize_ham</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Diagonalize the final Fermi-Hubbard Hamiltonian to validate adiabatic state result and qiskit-nature eigensolver result.&quot;&quot;&quot;</span>
+        <span class="n">ham</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hubbard_hamiltonian</span><span class="o">.</span><span class="n">jw_hamiltonian</span><span class="p">()</span>
+        <span class="n">ham_paulis</span> <span class="o">=</span> <span class="n">ham</span><span class="o">.</span><span class="n">paulis</span>
+        <span class="n">ham_coeffs</span> <span class="o">=</span> <span class="n">ham</span><span class="o">.</span><span class="n">coeffs</span>
+
+        <span class="n">matrices</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">pauli_string</span> <span class="ow">in</span> <span class="n">ham_paulis</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">pauli_string</span><span class="p">)</span>
+            <span class="p">):</span>  <span class="c1"># iterate through all gates in the Pauli string</span>
+                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">pauli_string</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="s2">&quot;X&quot;</span><span class="p">:</span>
+                    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)])</span>  <span class="c1"># numpy implementation of X gate</span>
+                <span class="k">elif</span> <span class="nb">str</span><span class="p">(</span><span class="n">pauli_string</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span><span class="p">:</span>
+                    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+                        <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="n">j</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.0</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
+                    <span class="p">)</span>  <span class="c1"># numpy implementation of Y gate</span>
+                <span class="k">elif</span> <span class="nb">str</span><span class="p">(</span><span class="n">pauli_string</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="s2">&quot;Z&quot;</span><span class="p">:</span>
+                    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)])</span>  <span class="c1"># numpy implementation of Z gate</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># if gate i is the first gate in the Pauli string</span>
+                    <span class="n">b</span> <span class="o">=</span> <span class="mi">1</span>
+
+                <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>  <span class="c1"># take tensor product of gate i with previous gates</span>
+            <span class="n">matrices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+
+        <span class="c1"># sum up all matrices</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">matrices</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">total_matrix</span> <span class="o">=</span> <span class="n">ham_coeffs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">matrices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">total_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">total_matrix</span><span class="p">,</span> <span class="n">ham_coeffs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">matrices</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+        <span class="c1"># find array of eigenvalues</span>
+
+        <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">python_version</span><span class="p">()[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;3.8&#39;</span><span class="p">:</span>
+            <span class="n">eigs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">total_matrix</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">eigs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">total_matrix</span><span class="p">)</span><span class="o">.</span><span class="n">eigenvalues</span>
+
+        <span class="k">return</span> <span class="n">eigs</span></div>
+
+
+<div class="viewcode-block" id="AdiabaticCircuit.ising_setup">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.ising_setup">[docs]</a>
+    <span class="k">def</span> <span class="nf">ising_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exchange</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Support method that assigns an Ising Hamiltonian (for the same number of qubits) to the AdiabaticCircuit object:</span>
+
+<span class="sd">        .. math:: H = J\\sum_{&lt;i,j&gt;} Z_i Z_j</span>
+
+<span class="sd">        where :math:`&lt;i,j&gt;` denotes nearest neighbors on the lattice. Implemented with periodic boundary</span>
+<span class="sd">        conditions if the Lattice associated with the AdiabaticCircuit has periodic boundary conditions.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        exchange : float</span>
+<span class="sd">            value of J parameter</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ising_n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">exchange</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_hubbard_hamiltonian</span><span class="p">()</span><span class="o">.</span><span class="n">get_lattice</span><span class="p">()</span><span class="o">.</span><span class="n">has_pbc</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ising_ham</span> <span class="o">=</span> <span class="n">SparsePauliOp</span><span class="p">(</span>
+                <span class="p">[</span><span class="s2">&quot;ZZII&quot;</span><span class="p">,</span> <span class="s2">&quot;IZZI&quot;</span><span class="p">,</span> <span class="s2">&quot;IIZZ&quot;</span><span class="p">,</span> <span class="s2">&quot;ZIIZ&quot;</span><span class="p">],</span> <span class="n">coeffs</span><span class="o">=</span><span class="p">[</span><span class="n">val</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">val</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ising_ham</span> <span class="o">=</span> <span class="n">SparsePauliOp</span><span class="p">(</span>
+                <span class="p">[</span><span class="s2">&quot;ZZII&quot;</span><span class="p">,</span> <span class="s2">&quot;IZZI&quot;</span><span class="p">,</span> <span class="s2">&quot;IIZZ&quot;</span><span class="p">],</span> <span class="n">coeffs</span><span class="o">=</span><span class="p">[</span><span class="n">val</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">val</span><span class="p">]</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AdiabaticCircuit.ising_evolution_operator">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.ising_evolution_operator">[docs]</a>
+    <span class="k">def</span> <span class="nf">ising_evolution_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Support method that implements the evolution operator</span>
+
+<span class="sd">        .. math:: U(k) = \\exp{H_{init} (1-k/M) \\delta t}\\exp{H_{Ising} (k/M) \\delta t}</span>
+
+<span class="sd">        where :math:`H_{Ising}` is the Ising Hamiltonian created by running the ising_setup method, :math:`M` is the step count,</span>
+<span class="sd">        and :math:`k = 0, 1, ..., M`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        k : integer</span>
+<span class="sd">            The index k as defined above.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        circ : QuantumCircuit</span>
+<span class="sd">            A qiskit QuantumCircuit object which implements the evolution.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">delta_s</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_count</span>
+
+        <span class="n">circ</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ising_n</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">final_ham</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ising_ham</span>
+        <span class="n">final_ham_paulis</span> <span class="o">=</span> <span class="n">final_ham</span><span class="o">.</span><span class="n">paulis</span>  <span class="c1"># paulis list</span>
+        <span class="n">final_ham_coeffs</span> <span class="o">=</span> <span class="n">final_ham</span><span class="o">.</span><span class="n">coeffs</span>  <span class="c1"># weights list</span>
+
+        <span class="c1"># stores qubit indices</span>
+        <span class="n">seq</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ising_n</span><span class="p">):</span>
+            <span class="n">seq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="c1"># first exponential factor: evolution under H_init for step k on qubits in seq</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ising_n</span><span class="p">):</span>
+            <span class="n">circ</span><span class="o">.</span><span class="n">rx</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_step</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">k</span> <span class="o">*</span> <span class="n">delta_s</span><span class="p">),</span> <span class="n">i</span><span class="p">)</span>
+
+        <span class="c1"># second exponential factor: evolution under H_ising for step k on qubits in seq</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">final_ham_paulis</span><span class="p">)):</span>
+            <span class="n">circ</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pauli_string_rotation</span><span class="p">(</span>
+                    <span class="n">final_ham_paulis</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">time_step</span> <span class="o">*</span> <span class="n">k</span> <span class="o">*</span> <span class="n">delta_s</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">final_ham_coeffs</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span>
+                <span class="p">),</span>
+                <span class="n">seq</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">circ</span></div>
+
+
+<div class="viewcode-block" id="AdiabaticCircuit.ising_create_circuit">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.ising_create_circuit">[docs]</a>
+    <span class="k">def</span> <span class="nf">ising_create_circuit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates the circuit which performs the adiabatic state preparation of the ground state of the Ising Hamiltonian associated</span>
+<span class="sd">        with this AdiabaticCircuit (provided the ising_setup method has already been run).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        circ : QuantumCircuit</span>
+<span class="sd">            The circuit which will carry out the adiabatic state preparation when run.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">circ</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ising_n</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># start system in ground state of H_init (i.e., the all minus state)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ising_n</span><span class="p">):</span>
+            <span class="n">circ</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">circ</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="c1"># store qubit indices</span>
+        <span class="n">seq</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ising_n</span><span class="p">):</span>
+            <span class="n">seq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="c1"># build a circuit of M+1 evolution operators with i = 0, 1, ..., M</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step_count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">circ</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ising_evolution_operator</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">seq</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">circ</span></div>
+
+
+<div class="viewcode-block" id="AdiabaticCircuit.ising_calc_energy">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.ising_calc_energy">[docs]</a>
+    <span class="k">def</span> <span class="nf">ising_calc_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">Result</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates the energy for the state represented by result using the Ising Hamiltonian associated</span>
+<span class="sd">        with this AdiabaticCircuit object (provided the ising_setup method has already been run).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        result : Result</span>
+<span class="sd">            A qiskit Result containing the state to calculate the energy for.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        energy : float</span>
+<span class="sd">            The energy of the state.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result_statevector</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_statevector</span><span class="p">()</span>
+        <span class="n">ham</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ising_ham</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">ham</span><span class="p">)</span>
+        <span class="n">energy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">result_statevector</span><span class="o">.</span><span class="n">expectation_value</span><span class="p">(</span><span class="n">ham</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">energy</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Yannick Pleimling. Project structure based on the Computational Molecular Science Python Cookiecutter version 1.1.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

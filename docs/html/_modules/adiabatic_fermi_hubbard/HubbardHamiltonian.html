@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>adiabatic_fermi_hubbard.HubbardHamiltonian &mdash; adiabatic_fermi_hubbard  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            adiabatic_fermi_hubbard
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Class Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html#api-documentation">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">adiabatic_fermi_hubbard</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">adiabatic_fermi_hubbard.HubbardHamiltonian</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for adiabatic_fermi_hubbard.HubbardHamiltonian</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">adiabatic_fermi_hubbard</span> <span class="kn">import</span> <span class="n">Lattice</span>
+<span class="kn">from</span> <span class="nn">qiskit_nature.second_q.operators</span> <span class="kn">import</span> <span class="n">FermionicOp</span>
+<span class="kn">from</span> <span class="nn">qiskit_nature.second_q.mappers</span> <span class="kn">import</span> <span class="n">JordanWignerMapper</span>
+
+
+<div class="viewcode-block" id="HubbardHamiltonian">
+<a class="viewcode-back" href="../../autosummary/adiabatic_fermi_hubbard.HubbardHamiltonian.html#adiabatic_fermi_hubbard.HubbardHamiltonian">[docs]</a>
+<span class="k">class</span> <span class="nc">HubbardHamiltonian</span><span class="p">:</span>
+<div class="viewcode-block" id="HubbardHamiltonian.__init__">
+<a class="viewcode-back" href="../../autosummary/adiabatic_fermi_hubbard.HubbardHamiltonian.html#adiabatic_fermi_hubbard.HubbardHamiltonian.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lattice</span><span class="p">:</span> <span class="n">Lattice</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">U</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">mu</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">5</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A class for constructing the Fermi-Hubbard Hamiltonian for particular lattice, hopping strength :math:`t`, interaction strength :math:`U`,</span>
+<span class="sd">        and chemical potential :math:`\\mu`.</span>
+
+<span class="sd">        .. math ::  H = -t \\sum_{&lt;i,j&gt;,\\sigma}(a_{i\\sigma}^\\dagger a_{j\\sigma} + h.c.) + U\\sum_{i} n_{i\\uparrow}n_{i\\downarrow} + \\mu \\sum_{i,\\sigma} n_{i\\sigma}</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        lattice : Lattice</span>
+<span class="sd">            The Lattice to find the Hamiltonian for.</span>
+<span class="sd">        t : float</span>
+<span class="sd">            The strength of the hopping term.</span>
+<span class="sd">        U : float</span>
+<span class="sd">            The strength of the onsite interaction term.</span>
+<span class="sd">        mu : float</span>
+<span class="sd">            The chemical potential.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">t</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">U</span> <span class="o">=</span> <span class="n">U</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">mu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lattice</span> <span class="o">=</span> <span class="n">lattice</span>
+
+        <span class="c1"># get single fermionic operators</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">lattice</span><span class="o">.</span><span class="n">get_num_sites</span><span class="p">()</span>  <span class="c1"># number of lattice sites</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">creation_operators</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">annihilation_operators</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span>
+            <span class="mi">2</span> <span class="o">*</span> <span class="n">n</span>
+        <span class="p">):</span>  <span class="c1"># make all FermionicOp creation/annihilation operators for 2*n spin orbitals</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">creation_operators</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">FermionicOp</span><span class="p">({</span><span class="s2">&quot;+_&quot;</span> <span class="o">+</span> <span class="n">label</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span> <span class="n">num_spin_orbitals</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">annihilation_operators</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">FermionicOp</span><span class="p">({</span><span class="s2">&quot;-_&quot;</span> <span class="o">+</span> <span class="n">label</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span> <span class="n">num_spin_orbitals</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="c1"># build interaction term</span>
+        <span class="n">number_operators</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">number_operators</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">creation_operators</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+<div class="viewcode-block" id="HubbardHamiltonian.__str__">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.HubbardHamiltonian.__str__">[docs]</a>
+                <span class="o">@</span> <span class="n">annihilation_operators</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="o">@</span> <span class="n">creation_operators</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="o">@</span> <span class="n">annihilation_operators</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interaction_term</span> <span class="o">=</span> <span class="n">U</span> <span class="o">*</span> <span class="nb">sum</span><span class="p">(</span><span class="n">number_operators</span><span class="p">)</span>
+
+        <span class="c1"># build hopping term</span>
+        <span class="n">hopping_operators</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># hopping factors for spin-up fermions (operators with even indices)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">hopping_operators</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">creation_operators</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">@</span> <span class="n">annihilation_operators</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span>
+                <span class="o">+</span> <span class="n">annihilation_operators</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">@</span> <span class="n">creation_operators</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="c1"># hopping factors for spin-down fermions (operators with odd indices)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">hopping_operators</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">creation_operators</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">@</span> <span class="n">annihilation_operators</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span>
+                <span class="o">+</span> <span class="n">annihilation_operators</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">@</span> <span class="n">creation_operators</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="c1"># adds hopping between final and initial sites if lattice has pbc and has num_sites &gt; 2</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">has_pbc</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">get_num_sites</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">hopping_operators</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">creation_operators</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">@</span> <span class="n">annihilation_operators</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="o">+</span> <span class="n">annihilation_operators</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">@</span> <span class="n">creation_operators</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">hopping_operators</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">creation_operators</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">@</span> <span class="n">annihilation_operators</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="o">+</span> <span class="n">annihilation_operators</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">@</span> <span class="n">creation_operators</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">hopping_term</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="nb">sum</span><span class="p">(</span><span class="n">hopping_operators</span><span class="p">)</span>
+
+        <span class="c1"># build chemical potential term</span>
+        <span class="n">chemical_potential_operators</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n</span><span class="p">):</span>
+            <span class="n">chemical_potential_operators</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">creation_operators</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">@</span> <span class="n">annihilation_operators</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">chemical_potential_term</span> <span class="o">=</span> <span class="n">mu</span> <span class="o">*</span> <span class="nb">sum</span><span class="p">(</span><span class="n">chemical_potential_operators</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">hamiltonian</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hopping_term</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">interaction_term</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">chemical_potential_term</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="s2">&quot;t = &quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">U = &quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">U</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">mu = &quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Lattice:</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lattice</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hamiltonian</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HubbardHamiltonian.jw_interaction_term">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.HubbardHamiltonian.jw_interaction_term">[docs]</a>
+    <span class="k">def</span> <span class="nf">jw_interaction_term</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Applies Jordan-Wigner transformation to HubbardHamiltonian interaction term and returns result.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        jw_interaction : SparsePauliOp</span>
+<span class="sd">            The qiskit-nature representation of the Jordan-Wigner transformed interaction term.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">jw</span> <span class="o">=</span> <span class="n">JordanWignerMapper</span><span class="p">()</span>
+        <span class="n">jw_interaction</span> <span class="o">=</span> <span class="n">jw</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interaction_term</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jw_interaction</span></div>
+
+
+<div class="viewcode-block" id="HubbardHamiltonian.jw_hopping_term">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.HubbardHamiltonian.jw_hopping_term">[docs]</a>
+    <span class="k">def</span> <span class="nf">jw_hopping_term</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Applies Jordan-Wigner transformation to HubbardHamiltonian hopping term and returns result.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        jw_hopping : SparsePauliOp</span>
+<span class="sd">            The qiskit-nature representation of the Jordan-Wigner transformed hopping term.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">jw</span> <span class="o">=</span> <span class="n">JordanWignerMapper</span><span class="p">()</span>
+        <span class="n">jw_hopping</span> <span class="o">=</span> <span class="n">jw</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hopping_term</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jw_hopping</span></div>
+
+
+<div class="viewcode-block" id="HubbardHamiltonian.jw_chemical_potential_term">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.HubbardHamiltonian.jw_chemical_potential_term">[docs]</a>
+    <span class="k">def</span> <span class="nf">jw_chemical_potential_term</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Applies Jordan-Wigner transformation to HubbardHamiltonian chemical potential term and returns result.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        jw_hopping : SparsePauliOp</span>
+<span class="sd">            The qiskit-nature representation of the Jordan-Wigner transformed chemical potential term.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">jw</span> <span class="o">=</span> <span class="n">JordanWignerMapper</span><span class="p">()</span>
+        <span class="n">jw_chem</span> <span class="o">=</span> <span class="n">jw</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chemical_potential_term</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jw_chem</span></div>
+
+
+<div class="viewcode-block" id="HubbardHamiltonian.jw_hamiltonian">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.HubbardHamiltonian.jw_hamiltonian">[docs]</a>
+    <span class="k">def</span> <span class="nf">jw_hamiltonian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Applies Jordan-Wigner transformation to HubbardHamiltonian and returns result.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        jw_hamiltonian : SparsePauliOp</span>
+<span class="sd">            The qiskit-nature representation of the Jordan-Wigner transformed Hamiltonian.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">jw</span> <span class="o">=</span> <span class="n">JordanWignerMapper</span><span class="p">()</span>
+        <span class="n">jw_hamiltonian</span> <span class="o">=</span> <span class="n">jw</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hamiltonian</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jw_hamiltonian</span></div>
+
+
+<div class="viewcode-block" id="HubbardHamiltonian.get_t_value">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.HubbardHamiltonian.get_t_value">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_t_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Access method for acquiring the hopping strength of a HubbardHamiltonian.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        t : float</span>
+<span class="sd">            The value of the hopping strength for the HubbardHamiltonian.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span></div>
+
+
+<div class="viewcode-block" id="HubbardHamiltonian.get_U_value">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.HubbardHamiltonian.get_U_value">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_U_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Access method for acquiring the interaction strength of a HubbardHamiltonian.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        U : float</span>
+<span class="sd">            The value of the interaction strength for the HubbardHamiltonian.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">U</span></div>
+
+
+<div class="viewcode-block" id="HubbardHamiltonian.get_mu_value">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.HubbardHamiltonian.get_mu_value">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_mu_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Access method for acquiring the chemical potential of a HubbardHamiltonian.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        mu : float</span>
+<span class="sd">            The value of the chemical potential for the HubbardHamiltonian.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span></div>
+
+
+<div class="viewcode-block" id="HubbardHamiltonian.get_lattice">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.HubbardHamiltonian.get_lattice">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_lattice</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Access method for acquiring the Lattice associated with a HubbardHamiltonian.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        lattice : Lattice</span>
+<span class="sd">            The Lattice object described by the HubbardHamiltonian.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lattice</span></div>
+
+
+<div class="viewcode-block" id="HubbardHamiltonian.get_interaction_term">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.HubbardHamiltonian.get_interaction_term">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_interaction_term</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Access method for acquiring the interaction term of a HubbardHamiltonian in FermionicOp form.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        interaction_term : FermionicOp</span>
+<span class="sd">            The FermionicOp representation of the interaction term.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">interaction_term</span></div>
+
+
+<div class="viewcode-block" id="HubbardHamiltonian.get_hopping_term">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.HubbardHamiltonian.get_hopping_term">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_hopping_term</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Access method for acquiring the hopping term of a HubbardHamiltonian in FermionicOp form.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        hopping_term : FermionicOp</span>
+<span class="sd">            The FermionicOp representation of the hopping term.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hopping_term</span></div>
+
+
+<div class="viewcode-block" id="HubbardHamiltonian.get_chemical_potential_term">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.HubbardHamiltonian.get_chemical_potential_term">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_chemical_potential_term</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Access method for acquiring the chemical potential term of a HubbardHamiltonian in FermionicOp form.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        hopping_term : FermionicOp</span>
+<span class="sd">            The FermionicOp representation of the chemical potential term.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">chemical_potential_term</span></div>
+
+
+<div class="viewcode-block" id="HubbardHamiltonian.get_hamiltonian">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.HubbardHamiltonian.get_hamiltonian">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_hamiltonian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Access method for acquiring the HubbardHamiltonian in FermionicOp form.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        hamiltonian : FermionicOp</span>
+<span class="sd">            The FermionicOp representation of the HubbardHamiltonian.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hamiltonian</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Yannick Pleimling. Project structure based on the Computational Molecular Science Python Cookiecutter version 1.1.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
