@@ -7,6 +7,9 @@ from qiskit_aer import Aer
 import numpy as np
 import platform
 
+import copy as cp
+
+
 def test_str():
     """Test method for str dunder method"""
     lattice1 = afh.Lattice(2, 1)
@@ -194,16 +197,111 @@ def test_diagonalize_ham():
     ham1 = afh.HubbardHamiltonian(lattice1)
     ad_circ = afh.AdiabaticCircuit(ham1, 0.1, 2)
 
-    matrix = ham1.jw_hamiltonian().to_matrix()
+    # build matrix form of initial Hamiltonian (all X's)
+    a = np.array([(0, 1), (1, 0)])  # X gate
 
-    if platform.python_version()[:3] == '3.8':
+    # create array of n = 2N identity gates
+    eyes = []
+    for i in range(2 * lattice1.get_num_sites()):
+        eyes.append(np.eye(2))
+
+    matrices1 = []
+    for i in range(2 * lattice1.get_num_sites()):
+        list_2 = cp.copy(eyes)
+        list_2[i] = a  # replace the ith identity gate with an X gate
+
+        # take tensor product of all gates
+        for j in range(len(list_2)):
+            if j == 0:
+                b = 1
+            b = np.kron(list_2[j], b)
+        matrices1.append(b)
+
+    # add together matrices in matrices1 list
+
+    init_matrix = np.zeros(2 ** lattice1.get_num_sites())
+    for i in range(len(matrices1)):
+        if i == 0:
+            init_matrix = matrices1[i]
+        else:
+            init_matrix = np.add(init_matrix, matrices1[i])
+
+    # manual conversion of JW-transformed Fermi-Hubbard Hamiltonian to matrix form
+    ham = ham1.jw_hamiltonian()
+    ham_paulis = ham.paulis
+    ham_coeffs = ham.coeffs
+
+    matrices = []
+
+    for pauli_string in ham_paulis:
+        for i in range(
+            len(pauli_string)
+        ):  # iterate through all gates in the Pauli string
+            if str(pauli_string[i]) == "X":
+                a = np.array([(0, 1), (1, 0)])  # numpy implementation of X gate
+            elif str(pauli_string[i]) == "Y":
+                a = np.asarray(
+                    [(0, -1.0j), (1.0j, 0)]
+                )  # numpy implementation of Y gate
+            elif str(pauli_string[i]) == "Z":
+                a = np.array([(1, 0), (0, -1)])  # numpy implementation of Z gate
+            else:
+                a = np.eye(2)
+
+            if i == 0:  # if gate i is the first gate in the Pauli string
+                b = 1
+
+            b = np.kron(a, b)  # take tensor product of gate i with previous gates
+        matrices.append(b)
+
+    # sum up all matrices
+    for i in range(len(matrices)):
+        if i == 0:
+            final_matrix = ham_coeffs[i] * matrices[i]
+        else:
+            final_matrix = np.add(final_matrix, ham_coeffs[i] * matrices[i])
+
+    k = 0  # all H_{init}
+    matrix = final_matrix * (k / ad_circ.get_step_count()) + init_matrix * (
+        1 - k / ad_circ.get_step_count()
+    )
+
+    if platform.python_version()[:3] == "3.8":
         energies = np.linalg.eig(matrix)
     else:
         energies = np.linalg.eig(matrix).eigenvalues
 
-    energies_from_method = ad_circ.diagonalize_ham()
+    energies_from_method = ad_circ.diagonalize_ham(0)
+
+    k2 = ad_circ.get_step_count() // 2  # H_{init}, H_{final} have equal contributions
+
+    matrix2 = final_matrix * (k2 / ad_circ.get_step_count()) + init_matrix * (
+        1 - k2 / ad_circ.get_step_count()
+    )
+
+    if platform.python_version()[:3] == "3.8":
+        energies_2 = np.linalg.eig(matrix2)
+    else:
+        energies_2 = np.linalg.eig(matrix2).eigenvalues
+
+    energies_from_method_2 = ad_circ.diagonalize_ham(k2)
+
+    k3 = ad_circ.get_step_count()  # all H_{final}
+
+    matrix3 = final_matrix * (k3 / ad_circ.get_step_count()) + init_matrix * (
+        1 - k3 / ad_circ.get_step_count()
+    )
+
+    if platform.python_version()[:3] == "3.8":
+        energies_3 = np.linalg.eig(matrix3)
+    else:
+        energies_3 = np.linalg.eig(matrix3).eigenvalues
+
+    energies_from_method_3 = ad_circ.diagonalize_ham(k3)
 
     assert str(energies) == str(energies_from_method)
+    assert str(energies) == str(energies_from_method)
+    assert str(energies_3) == str(energies_from_method_3)
 
 
 def test_ising_setup():

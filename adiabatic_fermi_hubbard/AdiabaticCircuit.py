@@ -13,6 +13,9 @@ from qiskit_nature.second_q.mappers import JordanWignerMapper
 import numpy as np
 import platform
 
+import copy as cp
+
+
 class AdiabaticCircuit:
     def __init__(
         self, ham: HubbardHamiltonian, time_step: float = 0.01, step_count: int = 1000
@@ -63,7 +66,7 @@ class AdiabaticCircuit:
 
         Returns
         -------
-        circ : QuantumCircuit
+        circ : qiskit.QuantumCircuit
             A qiskit QuantumCircuit object which performs the rotation when executed.
 
         """
@@ -132,7 +135,7 @@ class AdiabaticCircuit:
     def evolution_operator(self, k):
         """Implements the operation
 
-        .. math:: U(k) = \\exp{H_{init} (1-k/M) \\delta t}\\exp{H_{FH} (k/M) \\delta t}
+        .. math:: U(k) = \\exp{H_{init} (1-k/M) \\Delta t}\\exp{H_{FH} (k/M) \\Delta t}
 
         where :math:`H_{init} = \\sum_i{X_i}`, :math:`H_{FH}` is the Jordan-Wigner transformed Fermi-Hubbard Hamiltonian and
         :math:`M` is the number of interpolation steps.
@@ -144,7 +147,7 @@ class AdiabaticCircuit:
 
         Returns
         -------
-        circ : QuantumCircuit
+        circ : qiskit.QuantumCircuit
             A qiskit QuantumCircuit object which implements the evolution.
 
         """
@@ -185,7 +188,7 @@ class AdiabaticCircuit:
 
         Returns
         -------
-        circ : QuantumCircuit
+        circ : qiskit.QuantumCircuit
             The circuit which will carry out the adiabatic state preparation when run.
 
         """
@@ -212,12 +215,12 @@ class AdiabaticCircuit:
 
         Parameters
         ----------
-        circ : QuantumCircuit
+        circ : qiskit.QuantumCircuit
             The circuit to be run.
 
         Returns
         -------
-        result : Result
+        result : qiskit.result.Result
             A qiskit Result object containing the execution results.
         """
         simulator = Aer.get_backend("statevector_simulator")
@@ -271,7 +274,7 @@ class AdiabaticCircuit:
 
         Parameters
         ----------
-        result : Result
+        result : qiskit.result.Result
             A qiskit Result containing the state to calculate the energy for.
 
         Returns
@@ -327,48 +330,63 @@ class AdiabaticCircuit:
         """
         return self.step_count
 
-    def diagonalize_ham(self):
-        """Diagonalize the final Fermi-Hubbard Hamiltonian to validate adiabatic state result and qiskit-nature eigensolver result."""
-        ham = self.hubbard_hamiltonian.jw_hamiltonian()
-        ham_paulis = ham.paulis
-        ham_coeffs = ham.coeffs
+    def diagonalize_ham(self, k):
+        """(for small lattices) Diagonalize the Hamiltonian
+
+        .. math:: H(k) = (1-k/M) H_{init} + (k/M) H_{FH}
+
+        where :math:`k` is any index from 0 to :math:`M` (the step count associated with this AdiabaticCircuit object).
+
+        Parameters
+        ----------
+        k : int
+            The index k as defined above.
+
+        Returns
+        -------
+        eigs : numpy.array
+            A numpy array containing the eigenvalues of the Hamiltonian.
+        """
+
+        s = k / self.step_count
+
+        a = np.array([(0, 1), (1, 0)])  # X gate
+
+        # create list with n identity gates
+        eyes = []
+        for i in range(self.n):
+            eyes.append(np.eye(2))
 
         matrices = []
+        for i in range(self.n):
+            list_2 = cp.copy(eyes)
+            list_2[i] = a  # replace ith identity gate with an X gate
 
-        for pauli_string in ham_paulis:
-            for i in range(
-                len(pauli_string)
-            ):  # iterate through all gates in the Pauli string
-                if str(pauli_string[i]) == "X":
-                    a = np.asarray([(0, 1), (1, 0)])  # numpy implementation of X gate
-                elif str(pauli_string[i]) == "Y":
-                    a = np.asarray(
-                        [(0, -1.0j), (1.0j, 0)]
-                    )  # numpy implementation of Y gate
-                elif str(pauli_string[i]) == "Z":
-                    a = np.array([(1, 0), (0, -1)])  # numpy implementation of Z gate
-                else:
-                    a = np.eye(2)
-
-                if i == 0:  # if gate i is the first gate in the Pauli string
+            # take tensor product of the gates in list_2 and store in matrices
+            for j in range(len(list_2)):
+                if j == 0:
                     b = 1
-
-                b = np.kron(a, b)  # take tensor product of gate i with previous gates
+                b = np.kron(list_2[j], b)
             matrices.append(b)
 
-        # sum up all matrices
+        # add together matrices in matrices list to get matrix form of H_{init}
+        init_matrix = np.zeros(2**self.n)
         for i in range(len(matrices)):
             if i == 0:
-                total_matrix = ham_coeffs[i] * matrices[i]
+                init_matrix = matrices[i]
             else:
-                total_matrix = np.add(total_matrix, ham_coeffs[i] * matrices[i])
+                init_matrix = np.add(init_matrix, matrices[i])
+
+        # Fermi-Hubbard Hamiltonian as a matrix
+        final_matrix = self.hubbard_hamiltonian.jw_hamiltonian().to_matrix()
+
+        matrix_k = s * final_matrix + (1 - s) * init_matrix
 
         # find array of eigenvalues
-
-        if platform.python_version()[:3] == '3.8':
-            eigs = np.linalg.eig(total_matrix)
+        if platform.python_version()[:3] == "3.8":
+            eigs = np.linalg.eig(matrix_k)
         else:
-            eigs = np.linalg.eig(total_matrix).eigenvalues
+            eigs = np.linalg.eig(matrix_k).eigenvalues
 
         return eigs
 
@@ -400,7 +418,7 @@ class AdiabaticCircuit:
     def ising_evolution_operator(self, k):
         """Support method that implements the evolution operator
 
-        .. math:: U(k) = \\exp{H_{init} (1-k/M) \\delta t}\\exp{H_{Ising} (k/M) \\delta t}
+        .. math:: U(k) = \\exp{H_{init} (1-k/M) \\Delta t}\\exp{H_{Ising} (k/M) \\Delta t}
 
         where :math:`H_{Ising}` is the Ising Hamiltonian created by running the ising_setup method, :math:`M` is the step count,
         and :math:`k = 0, 1, ..., M`.
@@ -412,7 +430,7 @@ class AdiabaticCircuit:
 
         Returns
         -------
-        circ : QuantumCircuit
+        circ : qiskit.QuantumCircuit
             A qiskit QuantumCircuit object which implements the evolution.
 
         """
@@ -450,7 +468,7 @@ class AdiabaticCircuit:
 
         Returns
         -------
-        circ : QuantumCircuit
+        circ : qiskit.QuantumCircuit
             The circuit which will carry out the adiabatic state preparation when run.
 
         """
@@ -478,7 +496,7 @@ class AdiabaticCircuit:
 
         Parameters
         ----------
-        result : Result
+        result : qiskit.result.Result
             A qiskit Result containing the state to calculate the energy for.
 
         Returns
