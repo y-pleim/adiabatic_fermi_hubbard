@@ -2,29 +2,24 @@ from qiskit_nature.second_q.hamiltonians.lattices import BoundaryCondition, Line
 
 
 class Lattice:
-    def __init__(self, num_sites: int = 2, bc: int = 1):
+    def __init__(self, num_sites: int = 2, pbc: bool = False):
         """A class for representing a 1D lattice of fermions.
         
         Parameters
         ----------
         num_sites : int, default: 2
             The number of lattice sites.
-        bc : int, default: 1
-            Specifies boundary conditions; 1 for periodic, 0 for open.
+        pbc : bool, default: False
+            Specifies whether boundary conditions are open or periodic. Defaults to open.
         """
-        
+
+        self.pbc = pbc
         self.num_sites = num_sites
 
-        if bc == 0:
-            self.pbc = False
-            self.lattice = LineLattice(num_sites, 1.0, 0.0, BoundaryCondition.OPEN)
-        elif bc == 1:
-            self.pbc = True
+        if pbc:
             self.lattice = LineLattice(num_sites, 1.0, 0.0, BoundaryCondition.PERIODIC)
         else:
-            raise ValueError(
-                "Invalid boundary condition specification. Must be 0 for open boundary conditions or 1 for periodic boundary conditions."
-            )
+            self.lattice = LineLattice(num_sites, 1.0, 0.0, BoundaryCondition.OPEN)
 
     def __str__(self):
         return (
