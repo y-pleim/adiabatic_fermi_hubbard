@@ -10,7 +10,7 @@ This package is designed for Python 3.8-3.12 and requires the following packages
 in the environment:
 
 * `numpy`
-* `qiskit==0.46.1`
+* `qiskit==0.46.0`
 * `qiskit-aer`
 * `qiskit-nature`
 * `qiskit-algorithms`
