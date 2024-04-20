@@ -497,7 +497,7 @@ makes use of the ``diagonalize_hamiltonian`` method.
     # create HubbardHamiltonian with t = 2, U = 10, \mu = -5
     hamiltonian1 = afh.HubbardHamiltonian(lattice1)
 
-        fig, axs = plt.subplots(ncols=2, nrows=2, figsize=(12, 12))
+    fig, axs = plt.subplots(ncols=2, nrows=2, figsize=(12, 12))
 
     steps = [1000, 10000]
 
@@ -511,7 +511,7 @@ makes use of the ``diagonalize_hamiltonian`` method.
         step = []
 
         for j in range(ad_circ1.get_step_count()+1):
-            energies = np.real(ad_circ1.diagonalize_ham(j)) # diagonalize ham at step j
+            energies = np.real(ad_circ1.diagonalize_hamiltonian(j)) # diagonalize hamiltonian at step j
             p = np.partition(energies,(0,1)) # get two lowest values
             gs.append(p[0])
             es.append(p[1])
@@ -552,7 +552,7 @@ This code should produce the following text output and plot after 1 minute of ev
     ====================
 
 .. image:: ./spectralplot.png
- :width: 400
+ :width: 500
 
 
 For both :math:`M=1000` and :math:`M=10000`, the peak value of :math:`1/(E_0-E_1)^2` occurs at around :math:`M/2` and has the same value. The reason for the peak can be seen in the behavior of the two lowest eigenvalues of :math:`H(k)` at each step :math:`k`.
@@ -584,7 +584,7 @@ After an hour of execution time, the following results:
 
     -59.616063058660416
 
-However, for the reasons discussed in the previous two examples, this veracity of this value depends on whether the condition :math:`t >> (E_0-E_1)^2` holds.
+However, for the reasons discussed in the previous two examples, this veracity of this value depends on whether the condition :math:`t >> 1/(E_0-E_1)^2` holds.
 Note that lattices of this size have been solved using exact diagonalization techniques, which may offer a route to validating the above
 result **[7]**.
 

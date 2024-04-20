@@ -544,7 +544,7 @@ makes use of the <code class="docutils literal notranslate"><span class="pre">di
 <span class="c1"># create HubbardHamiltonian with t = 2, U = 10, \mu = -5</span>
 <span class="n">hamiltonian1</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">HubbardHamiltonian</span><span class="p">(</span><span class="n">lattice1</span><span class="p">)</span>
 
-    <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
 
 <span class="n">steps</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">]</span>
 
@@ -558,7 +558,7 @@ makes use of the <code class="docutils literal notranslate"><span class="pre">di
     <span class="n">step</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ad_circ1</span><span class="o">.</span><span class="n">get_step_count</span><span class="p">()</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
-        <span class="n">energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">ad_circ1</span><span class="o">.</span><span class="n">diagonalize_ham</span><span class="p">(</span><span class="n">j</span><span class="p">))</span> <span class="c1"># diagonalize ham at step j</span>
+        <span class="n">energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">ad_circ1</span><span class="o">.</span><span class="n">diagonalize_hamiltonian</span><span class="p">(</span><span class="n">j</span><span class="p">))</span> <span class="c1"># diagonalize hamiltonian at step j</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="n">energies</span><span class="p">,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span> <span class="c1"># get two lowest values</span>
         <span class="n">gs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">es</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
@@ -597,7 +597,7 @@ makes use of the <code class="docutils literal notranslate"><span class="pre">di
 <span class="o">====================</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/spectralplot.png"><img alt="_images/spectralplot.png" src="_images/spectralplot.png" style="width: 400px;" /></a>
+<a class="reference internal image-reference" href="_images/spectralplot.png"><img alt="_images/spectralplot.png" src="_images/spectralplot.png" style="width: 500px;" /></a>
 <p>For both <span class="math notranslate nohighlight">\(M=1000\)</span> and <span class="math notranslate nohighlight">\(M=10000\)</span>, the peak value of <span class="math notranslate nohighlight">\(1/(E_0-E_1)^2\)</span> occurs at around <span class="math notranslate nohighlight">\(M/2\)</span> and has the same value. The reason for the peak can be seen in the behavior of the two lowest eigenvalues of <span class="math notranslate nohighlight">\(H(k)\)</span> at each step <span class="math notranslate nohighlight">\(k\)</span>.
 So, <span class="math notranslate nohighlight">\(M\)</span> is not involved in setting the condition on the total evolution time <span class="math notranslate nohighlight">\(t = M \Delta t\)</span>. However, increasing <span class="math notranslate nohighlight">\(M\)</span> brings <span class="math notranslate nohighlight">\(t\)</span> closer to fulfilling the condition on the two site lattice, which is why the error/energy difference
 explored in the previous section generally improved for increasing evolution time (excluding the cases where <span class="math notranslate nohighlight">\(\Delta t\)</span> being too large questioned the validity of the Trotter approximation).</p>
@@ -623,7 +623,7 @@ can be “solved” with adiabatic state preparation.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mf">59.616063058660416</span>
 </pre></div>
 </div>
-<p>However, for the reasons discussed in the previous two examples, this veracity of this value depends on whether the condition <span class="math notranslate nohighlight">\(t &gt;&gt; (E_0-E_1)^2\)</span> holds.
+<p>However, for the reasons discussed in the previous two examples, this veracity of this value depends on whether the condition <span class="math notranslate nohighlight">\(t &gt;&gt; 1/(E_0-E_1)^2\)</span> holds.
 Note that lattices of this size have been solved using exact diagonalization techniques, which may offer a route to validating the above
 result <strong>[7]</strong>.</p>
 </section>
