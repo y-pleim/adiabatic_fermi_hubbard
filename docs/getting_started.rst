@@ -13,7 +13,7 @@ in the environment:
 * `qiskit==0.46.0`
 * `qiskit-aer`
 * `qiskit-nature`
-* `qiskit-algorithms`
+* `pylatexenc`
 * `matplotlib` (optional)
 
 To install `adiabatic_fermi_hubbard` in an environment with the above dependencies, run the following
@@ -386,10 +386,10 @@ the ground state energy resulting from adiabatic state preparation.
     lattice = afh.Lattice(3, pbc=False)
 
     # create HubbardHamiltonian with t = 2, U = 10, \mu = -5
-    hamiltonian = afh.HubbardHamiltonian(lattice1, t = 2, U = 10, mu = -5)
+    hamiltonian = afh.HubbardHamiltonian(lattice, t = 2, U = 10, mu = -5)
 
     # create AdiabaticCircuit with time_step = 0.01, step_count = 10000
-    ad_circ = afh.AdiabaticCircuit(hamiltonian1, time_step = 0.01, step_count = 10000)
+    ad_circ = afh.AdiabaticCircuit(hamiltonian, time_step = 0.01, step_count = 10000)
 
     comparison_energy = ad_circ.run_eigensolver_comparison()
 

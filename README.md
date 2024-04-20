@@ -14,8 +14,8 @@ This package has the following dependencies:
 - numpy
 - qiskit==0.46.0
 - qiskit-nature
-- qiskit-algorithms
 - qiskit-aer
+- pylatexenc
 - matplotlib (optional)
 
 
