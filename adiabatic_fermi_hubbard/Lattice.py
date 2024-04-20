@@ -55,7 +55,7 @@ class Lattice:
 
         Returns
         -------
-        lattice : LineLattice
+        lattice : qiskit_nature.second_q.hamiltonians.lattice.LineLattice
             qiskit-nature LineLattice object with the same number of sites and periodic boundary conditions stored in Lattice instance.
         """
         return self.lattice

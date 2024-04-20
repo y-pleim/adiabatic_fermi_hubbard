@@ -136,11 +136,11 @@ def test_get_t_value():
     assert ham1.get_t_value() == 2.0
 
 
-def test_get_U_value():
-    """Test for get_U_value() access method."""
+def test_get_u_value():
+    """Test for get_u_value() access method."""
     lattice1 = afh.Lattice(4, 1)
     ham1 = afh.HubbardHamiltonian(lattice1, 2, 2, 2)
-    assert ham1.get_U_value() == 2.0
+    assert ham1.get_u_value() == 2.0
 
 
 def test_get_mu_value():

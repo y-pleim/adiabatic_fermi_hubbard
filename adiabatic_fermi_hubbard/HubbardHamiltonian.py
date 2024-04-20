@@ -8,7 +8,7 @@ class HubbardHamiltonian:
         """A class for constructing the Fermi-Hubbard Hamiltonian for particular lattice, hopping strength :math:`t`, interaction strength :math:`U`,
         and chemical potential :math:`\\mu`.
 
-        .. math ::  H = -t \\sum_{<i,j>,\\sigma}(a_{i\\sigma}^\\dagger a_{j\\sigma} + h.c.) + U\\sum_{i} n_{i\\uparrow}n_{i\\downarrow} + \\mu \\sum_{i,\\sigma} n_{i\\sigma}
+        .. math ::  H = -t \\sum_{<i,j>,\\sigma}(a_{i\\sigma}^\\dagger a_{j\\sigma} + a_{j\\sigma}^\\dagger a_{i\\sigma}) + U\\sum_{i} n_{i\\uparrow}n_{i\\downarrow} + \\mu \\sum_{i,\\sigma} n_{i\\sigma}
 
         Parameters
         ----------
@@ -118,7 +118,7 @@ class HubbardHamiltonian:
 
         Returns
         -------
-        jw_interaction : SparsePauliOp
+        jw_interaction : qiskit.quantum_info.SparsePauliOp
             The qiskit-nature representation of the Jordan-Wigner transformed interaction term.
 
         """
@@ -131,7 +131,7 @@ class HubbardHamiltonian:
 
         Returns
         -------
-        jw_hopping : SparsePauliOp
+        jw_hopping : qiskit.quantum_info.SparsePauliOp
             The qiskit-nature representation of the Jordan-Wigner transformed hopping term.
 
         """
@@ -144,7 +144,7 @@ class HubbardHamiltonian:
 
         Returns
         -------
-        jw_hopping : SparsePauliOp
+        jw_hopping : qiskit.quantum_info.SparsePauliOp
             The qiskit-nature representation of the Jordan-Wigner transformed chemical potential term.
 
         """
@@ -157,7 +157,7 @@ class HubbardHamiltonian:
 
         Returns
         -------
-        jw_hamiltonian : SparsePauliOp
+        jw_hamiltonian : qiskit.quantum_info.SparsePauliOp
             The qiskit-nature representation of the Jordan-Wigner transformed Hamiltonian.
 
         """
@@ -175,7 +175,7 @@ class HubbardHamiltonian:
         """
         return self.t
 
-    def get_U_value(self):
+    def get_u_value(self):
         """Access method for acquiring the interaction strength of a HubbardHamiltonian.
 
         Returns
@@ -210,7 +210,7 @@ class HubbardHamiltonian:
 
         Returns
         -------
-        interaction_term : FermionicOp
+        interaction_term : qiskit_nature.second_q.operators.FermionicOp
             The FermionicOp representation of the interaction term.
         """
         return self.interaction_term
@@ -220,7 +220,7 @@ class HubbardHamiltonian:
 
         Returns
         -------
-        hopping_term : FermionicOp
+        hopping_term : qiskit_nature.second_q.operators.FermionicOp
             The FermionicOp representation of the hopping term.
         """
         return self.hopping_term
@@ -230,7 +230,7 @@ class HubbardHamiltonian:
 
         Returns
         -------
-        hopping_term : FermionicOp
+        hopping_term : qiskit_nature.second_q.operators.FermionicOp
             The FermionicOp representation of the chemical potential term.
         """
 
@@ -241,7 +241,7 @@ class HubbardHamiltonian:
 
         Returns
         -------
-        hamiltonian : FermionicOp
+        hamiltonian : qiskit_nature.second_q.operators.FermionicOp
             The FermionicOp representation of the HubbardHamiltonian.
         """
         return self.hamiltonian

@@ -304,13 +304,13 @@ def test_diagonalize_ham():
     assert str(energies_3) == str(energies_from_method_3)
 
 
-def test_ising_setup():
-    """Test method for ising_setup"""
-    lattice1 = afh.Lattice(4, 0)
+def test_initialize_ising():
+    """Test method for initialize_ising"""
+    lattice1 = afh.Lattice(2, 0)
     ham1 = afh.HubbardHamiltonian(lattice1)
     ad_circ = afh.AdiabaticCircuit(ham1, 0.1, 2)
 
-    ad_circ.ising_setup(1)
+    ad_circ.initialize_ising(1)
 
     assert ad_circ.ising_ham == SparsePauliOp(
         ["ZZII", "IZZI", "IIZZ"], coeffs=[1 + 0.0j, 1 + 0.0j, 1 + 0.0j]
@@ -321,7 +321,7 @@ def test_ising_setup():
     ham2 = afh.HubbardHamiltonian(lattice2)
     ad_circ1 = afh.AdiabaticCircuit(ham2, 0.1, 2)
 
-    ad_circ1.ising_setup(1)
+    ad_circ1.initialize_ising(1)
 
     assert ad_circ1.ising_ham == SparsePauliOp(
         ["ZZII", "IZZI", "IIZZ", "ZIIZ"],
@@ -335,7 +335,7 @@ def test_ising_evolution_operator():
     ham1 = afh.HubbardHamiltonian(lattice1)
     ad_circ = afh.AdiabaticCircuit(ham1, 0.1, 2)
 
-    ad_circ.ising_setup(1)
+    ad_circ.initialize_ising(1)
 
     circ = ad_circ.ising_evolution_operator(0)
     circ1 = QuantumCircuit(4, 0)
@@ -360,7 +360,7 @@ def test_ising_create_circuit():
     ham1 = afh.HubbardHamiltonian(lattice1)
     ad_circ = afh.AdiabaticCircuit(ham1, 0.1, 2)
 
-    ad_circ.ising_setup(1)
+    ad_circ.initialize_ising(1)
 
     circ = ad_circ.ising_create_circuit()
     circ1 = QuantumCircuit(4, 0)
@@ -380,11 +380,11 @@ def test_ising_create_circuit():
 
 def test_ising_calc_energy():
     """Test method for ising_calc_energy"""
-    lattice1 = afh.Lattice(4, 1)
+    lattice1 = afh.Lattice(2, 1)
     ham1 = afh.HubbardHamiltonian(lattice1)
     ad_circ = afh.AdiabaticCircuit(ham1, 0.01, 100)
 
-    ad_circ.ising_setup(1)
+    ad_circ.initialize_ising(1)
 
     circuit = ad_circ.ising_create_circuit()
     result = ad_circ.run(circuit)
@@ -392,11 +392,11 @@ def test_ising_calc_energy():
 
     assert np.isclose(ising_energy, -0.30494050361526925)
 
-    lattice2 = afh.Lattice(4, 0)
+    lattice2 = afh.Lattice(2, 0)
     ham2 = afh.HubbardHamiltonian(lattice2)
     ad_circ2 = afh.AdiabaticCircuit(ham2, 0.01, 100)
 
-    ad_circ2.ising_setup(1)
+    ad_circ2.initialize_ising(1)
 
     circuit2 = ad_circ2.ising_create_circuit()
     result2 = ad_circ2.run(circuit2)

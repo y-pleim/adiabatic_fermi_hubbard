@@ -81,29 +81,24 @@
 <span class="k">class</span> <span class="nc">Lattice</span><span class="p">:</span>
 <div class="viewcode-block" id="Lattice.__init__">
 <a class="viewcode-back" href="../../autosummary/adiabatic_fermi_hubbard.Lattice.html#adiabatic_fermi_hubbard.Lattice.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_sites</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">bc</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_sites</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">pbc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A class for representing a 1D lattice of fermions.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        num_sites : int, default: 2</span>
 <span class="sd">            The number of lattice sites.</span>
-<span class="sd">        bc : int, default: 1</span>
-<span class="sd">            Specifies boundary conditions; 1 for periodic, 0 for open.</span>
+<span class="sd">        pbc : bool, default: False</span>
+<span class="sd">            Specifies whether boundary conditions are open or periodic. Defaults to open.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pbc</span> <span class="o">=</span> <span class="n">pbc</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_sites</span> <span class="o">=</span> <span class="n">num_sites</span>
 
-        <span class="k">if</span> <span class="n">bc</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pbc</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">lattice</span> <span class="o">=</span> <span class="n">LineLattice</span><span class="p">(</span><span class="n">num_sites</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">BoundaryCondition</span><span class="o">.</span><span class="n">OPEN</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">bc</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pbc</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">pbc</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">lattice</span> <span class="o">=</span> <span class="n">LineLattice</span><span class="p">(</span><span class="n">num_sites</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">BoundaryCondition</span><span class="o">.</span><span class="n">PERIODIC</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Invalid boundary condition specification. Must be 0 for open boundary conditions or 1 for periodic boundary conditions.&quot;</span>
-            <span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lattice</span> <span class="o">=</span> <span class="n">LineLattice</span><span class="p">(</span><span class="n">num_sites</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">BoundaryCondition</span><span class="o">.</span><span class="n">OPEN</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Lattice.__str__">
@@ -151,7 +146,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        lattice : LineLattice</span>
+<span class="sd">        lattice : qiskit_nature.second_q.hamiltonians.lattice.LineLattice</span>
 <span class="sd">            qiskit-nature LineLattice object with the same number of sites and periodic boundary conditions stored in Lattice instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lattice</span></div>

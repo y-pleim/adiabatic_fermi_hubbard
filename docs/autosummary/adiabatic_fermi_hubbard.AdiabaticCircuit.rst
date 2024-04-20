@@ -22,10 +22,10 @@
       ~AdiabaticCircuit.get_num_qubits
       ~AdiabaticCircuit.get_step_count
       ~AdiabaticCircuit.get_time_step
+      ~AdiabaticCircuit.initialize_ising
       ~AdiabaticCircuit.ising_calc_energy
       ~AdiabaticCircuit.ising_create_circuit
       ~AdiabaticCircuit.ising_evolution_operator
-      ~AdiabaticCircuit.ising_setup
       ~AdiabaticCircuit.pauli_string_rotation
       ~AdiabaticCircuit.run
       ~AdiabaticCircuit.run_eigensolver_comparison

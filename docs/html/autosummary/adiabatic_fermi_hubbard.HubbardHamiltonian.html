@@ -99,7 +99,7 @@
 <dd><p>A class for constructing the Fermi-Hubbard Hamiltonian for particular lattice, hopping strength <span class="math notranslate nohighlight">\(t\)</span>, interaction strength <span class="math notranslate nohighlight">\(U\)</span>,
 and chemical potential <span class="math notranslate nohighlight">\(\mu\)</span>.</p>
 <div class="math notranslate nohighlight">
-\[H = -t \sum_{&lt;i,j&gt;,\sigma}(a_{i\sigma}^\dagger a_{j\sigma} + h.c.) + U\sum_{i} n_{i\uparrow}n_{i\downarrow} + \mu \sum_{i,\sigma} n_{i\sigma}\]</div>
+\[H = -t \sum_{&lt;i,j&gt;,\sigma}(a_{i\sigma}^\dagger a_{j\sigma} + a_{j\sigma}^\dagger a_{i\sigma}) + U\sum_{i} n_{i\uparrow}n_{i\downarrow} + \mu \sum_{i,\sigma} n_{i\sigma}\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -118,29 +118,29 @@ and chemical potential <span class="math notranslate nohighlight">\(\mu\)</span>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code>(lattice[, t, U, mu])</p></td>
 <td><p>A class for constructing the Fermi-Hubbard Hamiltonian for particular lattice, hopping strength <span class="math notranslate nohighlight">\(t\)</span>, interaction strength <span class="math notranslate nohighlight">\(U\)</span>, and chemical potential <span class="math notranslate nohighlight">\(\mu\)</span>.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_U_value</span></code>()</p></td>
-<td><p>Access method for acquiring the interaction strength of a HubbardHamiltonian.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_chemical_potential_term</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_chemical_potential_term</span></code>()</p></td>
 <td><p>Access method for acquiring the chemical potential term of a HubbardHamiltonian in FermionicOp form.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hamiltonian</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hamiltonian</span></code>()</p></td>
 <td><p>Access method for acquiring the HubbardHamiltonian in FermionicOp form.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hopping_term</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hopping_term</span></code>()</p></td>
 <td><p>Access method for acquiring the hopping term of a HubbardHamiltonian in FermionicOp form.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_interaction_term</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_interaction_term</span></code>()</p></td>
 <td><p>Access method for acquiring the interaction term of a HubbardHamiltonian in FermionicOp form.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_lattice</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_lattice</span></code>()</p></td>
 <td><p>Access method for acquiring the Lattice associated with a HubbardHamiltonian.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_mu_value</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_mu_value</span></code>()</p></td>
 <td><p>Access method for acquiring the chemical potential of a HubbardHamiltonian.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_t_value</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_t_value</span></code>()</p></td>
 <td><p>Access method for acquiring the hopping strength of a HubbardHamiltonian.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_u_value</span></code>()</p></td>
+<td><p>Access method for acquiring the interaction strength of a HubbardHamiltonian.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">jw_chemical_potential_term</span></code>()</p></td>
 <td><p>Applies Jordan-Wigner transformation to HubbardHamiltonian chemical potential term and returns result.</p></td>

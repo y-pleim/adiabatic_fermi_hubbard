@@ -18,14 +18,15 @@ import copy as cp
 
 class AdiabaticCircuit:
     def __init__(
-        self, ham: HubbardHamiltonian, time_step: float = 0.01, step_count: int = 1000
+        self, ham: HubbardHamiltonian, time_step: float = 0.01, step_count: int = 10000
     ):
-        """A class for building/executing Qiskit circuits for adiabatic state preparation of the Hubbard Hamiltonian ground state through
-        interpolating between :math:`H_{init}` and :math:`H_{Fermi-Hubbard}` according to
+        """A class for building/executing Qiskit circuits for adiabatic state preparation of the Fermi-Hubbard Hamiltonian ground state through
+        interpolating between :math:`H_{initial}` and :math:`H_{final} = H_{Fermi-Hubbard}` according to
 
-        .. math:: H(k) = H_{init} (1-k/M) + H_{final} (k/M).
+        .. math:: H(k) = H_{initial} (1-k/M) + H_{final} (k/M).
 
-        where :math:`M` is the number of interpolation steps, :math:`k = 0, 1, ... , M`, and :math:`H_{init} = \\sum_i X_i`
+        where :math:`M` is the number of interpolation steps, :math:`k = 0, 1, ... , M`, and :math:`H_{initial} = \\sum_i^{2N} X_i`. :math:`N`
+        is the number of lattice sites.
 
         Parameters
         ----------
@@ -34,7 +35,7 @@ class AdiabaticCircuit:
         time_step : float
             Duration of each interpolating step.
         step_count : float
-            The number of steps to take when interpolating between :math:`H_{init}` and :math:`H_{Fermi-Hubbard}`.
+            The number of steps to take when interpolating between :math:`H_{initial}` and :math:`H_{Fermi-Hubbard}`.
         """
 
         self.hubbard_hamiltonian = ham
@@ -55,7 +56,9 @@ class AdiabaticCircuit:
         )
 
     def pauli_string_rotation(self, pauli_string: Pauli, argument: float):
-        """Performs a rotation about a specified Pauli string through a specified angle. Based on Nielsen and Chuang, Ch 4.
+        """Performs a rotation about a specified Pauli string through a specified angle. Based on **[17]** on the `Getting Started`_ page.
+
+        .. _Getting Started: https://adiabatic-fermi-hubbard.readthedocs.io/en/latest/getting_started.html 
 
         Parameters
         ----------
@@ -135,9 +138,10 @@ class AdiabaticCircuit:
     def evolution_operator(self, k):
         """Implements the operation
 
-        .. math:: U(k) = \\exp{H_{init} (1-k/M) \\Delta t}\\exp{H_{FH} (k/M) \\Delta t}
+        .. math:: U(k) = exp(-i \\Delta t (1-k/M) H_{initial})exp(-i \\Delta t (k/M) H_{final,~JW})
 
-        where :math:`H_{init} = \\sum_i{X_i}`, :math:`H_{FH}` is the Jordan-Wigner transformed Fermi-Hubbard Hamiltonian and
+        where :math:`H_{initial} = \\sum_i^{2N}{X_i}` with :math:`N` the number of lattice sites,
+        :math:`H_{final, ~JW}` is the Jordan-Wigner transformed Fermi-Hubbard Hamiltonian, and
         :math:`M` is the number of interpolation steps.
 
         Parameters
@@ -229,9 +233,9 @@ class AdiabaticCircuit:
 
     def run_eigensolver_comparison(self):
         """Computes the ground state energy for the HubbardHamiltonian associated with the AdiabaticCircuit
-        through qiskit-nature methods. Based on the example code found in `LatticeModels`_.
+        through qiskit-nature methods. Based on the example code found in **[15]** on the `Getting Started`_ page.
 
-        .. _LatticeModels: https://qiskit-community.github.io/qiskit-nature/tutorials/10_lattice_models.html#The-Fermi-Hubbard-model
+        .. _Getting Started: https://adiabatic-fermi-hubbard.readthedocs.io/en/latest/getting_started.html 
 
         Returns
         -------
@@ -243,7 +247,7 @@ class AdiabaticCircuit:
         ham = self.hubbard_hamiltonian
         lattice = ham.get_lattice().get_qiskit_object()
         t = ham.get_t_value()
-        u = ham.get_U_value()
+        u = ham.get_u_value()
         mu = ham.get_mu_value()
 
         # create FermiHubbardModel with interaction strength t, onsite interaction strength u, chemical potential mu
@@ -270,7 +274,7 @@ class AdiabaticCircuit:
 
     def calc_energy(self, result: Result):
         """Calculates the energy for the state represented by result using the HubbardHamiltonian associated
-        with this AdiabaticCircuit object.
+        with an AdiabaticCircuit object.
 
         Parameters
         ----------
@@ -291,7 +295,7 @@ class AdiabaticCircuit:
         return energy
 
     def get_num_qubits(self):
-        """Access method to get the number of qubits associated with this AdiabaticCircuit object.
+        """Access method to get the number of qubits associated with an AdiabaticCircuit object.
 
         Returns
         -------
@@ -301,7 +305,7 @@ class AdiabaticCircuit:
         return self.n
 
     def get_hubbard_hamiltonian(self):
-        """Access method to get the HubbardHamiltonian associated with this AdiabaticCircuit object.
+        """Access method to get the HubbardHamiltonian associated with an AdiabaticCircuit object.
 
         Returns
         -------
@@ -311,7 +315,7 @@ class AdiabaticCircuit:
         return self.hubbard_hamiltonian
 
     def get_time_step(self):
-        """Access method to get the time step associated with this AdiabaticCircuit object.
+        """Access method to get the time step associated with an AdiabaticCircuit object.
 
         Returns
         -------
@@ -321,7 +325,7 @@ class AdiabaticCircuit:
         return self.time_step
 
     def get_step_count(self):
-        """Access method to get the step count associated with this AdiabaticCircuit object.
+        """Access method to get the step count associated with an AdiabaticCircuit object.
 
         Returns
         -------
@@ -331,11 +335,12 @@ class AdiabaticCircuit:
         return self.step_count
 
     def diagonalize_ham(self, k):
-        """(for small lattices) Diagonalize the Hamiltonian
+        """Diagonalize the matrix representing the Hamiltonian
 
-        .. math:: H(k) = (1-k/M) H_{init} + (k/M) H_{FH}
+        .. math:: H(k) = (1-k/M) H_{initial} + (k/M) H_{Fermi-Hubbard}
 
         where :math:`k` is any index from 0 to :math:`M` (the step count associated with this AdiabaticCircuit object).
+        This method works only for small lattice sizes (:math:`N \\leq 6`) and is intended for demonstration purposes.
 
         Parameters
         ----------
@@ -390,13 +395,19 @@ class AdiabaticCircuit:
 
         return eigs
 
-    def ising_setup(self, exchange):
-        """Support method that assigns an Ising Hamiltonian (for the same number of qubits) to the AdiabaticCircuit object:
+    def initialize_ising(self, exchange):
+        """Support method that assigns an Ising Hamiltonian for four qubits to an AdiabaticCircuit object:
 
-        .. math:: H = J\\sum_{<i,j>} Z_i Z_j
+        .. math:: H_{ising} = J(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3)
 
-        where :math:`<i,j>` denotes nearest neighbors on the lattice. Implemented with periodic boundary
-        conditions if the Lattice associated with the AdiabaticCircuit has periodic boundary conditions.
+        If the Lattice associated with the AdiabaticCircuit object has periodic boundary conditions, this method implmements
+
+        .. math:: H_{ising} = J(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3 + Z_3 Z_0)
+
+        See **[11]** on the `Getting Started`_ page. This was created during development to test the implementation of the `evolution_operator` and 
+        `create_circuit` methods for a Hamiltonian whose adiabatic state preparation results are shown in **[11]**.
+
+        .. _Getting Started: https://adiabatic-fermi-hubbard.readthedocs.io/en/latest/getting_started.html 
 
         Parameters
         ----------
@@ -404,7 +415,7 @@ class AdiabaticCircuit:
             value of J parameter
 
         """
-        self.ising_n = self.n
+        self.ising_n = 4
         val = exchange
         if self.get_hubbard_hamiltonian().get_lattice().has_pbc():
             self.ising_ham = SparsePauliOp(
@@ -415,12 +426,13 @@ class AdiabaticCircuit:
                 ["ZZII", "IZZI", "IIZZ"], coeffs=[val, val, val]
             )
 
+
     def ising_evolution_operator(self, k):
-        """Support method that implements the evolution operator
+        """Support method used with the `initialize_ising` method. Support method that implements the evolution operator
 
-        .. math:: U(k) = \\exp{H_{init} (1-k/M) \\Delta t}\\exp{H_{Ising} (k/M) \\Delta t}
+        .. math:: exp(-i \\Delta t (1-k/M) H_{initial})exp(-i \\Delta t (k/M) H_{Ising})
 
-        where :math:`H_{Ising}` is the Ising Hamiltonian created by running the ising_setup method, :math:`M` is the step count,
+        where :math:`H_{Ising}` is the Ising Hamiltonian created by running the initialize_ising method, :math:`M` is the step count,
         and :math:`k = 0, 1, ..., M`.
 
         Parameters
@@ -463,8 +475,8 @@ class AdiabaticCircuit:
         return circ
 
     def ising_create_circuit(self):
-        """Creates the circuit which performs the adiabatic state preparation of the ground state of the Ising Hamiltonian associated
-        with this AdiabaticCircuit (provided the ising_setup method has already been run).
+        """Support method used with the `initialize_ising` method. Creates the circuit which performs the adiabatic state preparation of the ground state of the Ising Hamiltonian associated
+        with an AdiabaticCircuit (provided the `initialize_ising` method has already been run).
 
         Returns
         -------
@@ -491,8 +503,8 @@ class AdiabaticCircuit:
         return circ
 
     def ising_calc_energy(self, result: Result):
-        """Calculates the energy for the state represented by result using the Ising Hamiltonian associated
-        with this AdiabaticCircuit object (provided the ising_setup method has already been run).
+        """Support method used with the `initialize_ising` method. Calculates the energy for the state represented by result using the Ising Hamiltonian associated
+        with an AdiabaticCircuit object (provided the `initialize_ising` method has already been run).
 
         Parameters
         ----------

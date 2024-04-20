@@ -87,7 +87,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A class for constructing the Fermi-Hubbard Hamiltonian for particular lattice, hopping strength :math:`t`, interaction strength :math:`U`,</span>
 <span class="sd">        and chemical potential :math:`\\mu`.</span>
 
-<span class="sd">        .. math ::  H = -t \\sum_{&lt;i,j&gt;,\\sigma}(a_{i\\sigma}^\\dagger a_{j\\sigma} + h.c.) + U\\sum_{i} n_{i\\uparrow}n_{i\\downarrow} + \\mu \\sum_{i,\\sigma} n_{i\\sigma}</span>
+<span class="sd">        .. math ::  H = -t \\sum_{&lt;i,j&gt;,\\sigma}(a_{i\\sigma}^\\dagger a_{j\\sigma} + a_{j\\sigma}^\\dagger a_{i\\sigma}) + U\\sum_{i} n_{i\\uparrow}n_{i\\downarrow} + \\mu \\sum_{i,\\sigma} n_{i\\sigma}</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -203,7 +203,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        jw_interaction : SparsePauliOp</span>
+<span class="sd">        jw_interaction : qiskit.quantum_info.SparsePauliOp</span>
 <span class="sd">            The qiskit-nature representation of the Jordan-Wigner transformed interaction term.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -219,7 +219,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        jw_hopping : SparsePauliOp</span>
+<span class="sd">        jw_hopping : qiskit.quantum_info.SparsePauliOp</span>
 <span class="sd">            The qiskit-nature representation of the Jordan-Wigner transformed hopping term.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -235,7 +235,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        jw_hopping : SparsePauliOp</span>
+<span class="sd">        jw_hopping : qiskit.quantum_info.SparsePauliOp</span>
 <span class="sd">            The qiskit-nature representation of the Jordan-Wigner transformed chemical potential term.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -251,7 +251,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        jw_hamiltonian : SparsePauliOp</span>
+<span class="sd">        jw_hamiltonian : qiskit.quantum_info.SparsePauliOp</span>
 <span class="sd">            The qiskit-nature representation of the Jordan-Wigner transformed Hamiltonian.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -273,9 +273,9 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span></div>
 
 
-<div class="viewcode-block" id="HubbardHamiltonian.get_U_value">
-<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.HubbardHamiltonian.get_U_value">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_U_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="HubbardHamiltonian.get_u_value">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.HubbardHamiltonian.get_u_value">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_u_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Access method for acquiring the interaction strength of a HubbardHamiltonian.</span>
 
 <span class="sd">        Returns</span>
@@ -319,7 +319,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        interaction_term : FermionicOp</span>
+<span class="sd">        interaction_term : qiskit_nature.second_q.operators.FermionicOp</span>
 <span class="sd">            The FermionicOp representation of the interaction term.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">interaction_term</span></div>
@@ -332,7 +332,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        hopping_term : FermionicOp</span>
+<span class="sd">        hopping_term : qiskit_nature.second_q.operators.FermionicOp</span>
 <span class="sd">            The FermionicOp representation of the hopping term.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hopping_term</span></div>
@@ -345,7 +345,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        hopping_term : FermionicOp</span>
+<span class="sd">        hopping_term : qiskit_nature.second_q.operators.FermionicOp</span>
 <span class="sd">            The FermionicOp representation of the chemical potential term.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -359,7 +359,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        hamiltonian : FermionicOp</span>
+<span class="sd">        hamiltonian : qiskit_nature.second_q.operators.FermionicOp</span>
 <span class="sd">            The FermionicOp representation of the HubbardHamiltonian.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hamiltonian</span></div>

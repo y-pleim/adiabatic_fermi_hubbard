@@ -91,21 +91,22 @@
 <h1>adiabatic_fermi_hubbard.AdiabaticCircuit<a class="headerlink" href="#adiabatic-fermi-hubbard-adiabaticcircuit" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="adiabatic_fermi_hubbard.AdiabaticCircuit">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">adiabatic_fermi_hubbard.</span></span><span class="sig-name descname"><span class="pre">AdiabaticCircuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ham</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="adiabatic_fermi_hubbard.HubbardHamiltonian.html#adiabatic_fermi_hubbard.HubbardHamiltonian" title="adiabatic_fermi_hubbard.HubbardHamiltonian.HubbardHamiltonian"><span class="pre">HubbardHamiltonian</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/adiabatic_fermi_hubbard/AdiabaticCircuit.html#AdiabaticCircuit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#adiabatic_fermi_hubbard.AdiabaticCircuit" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">adiabatic_fermi_hubbard.</span></span><span class="sig-name descname"><span class="pre">AdiabaticCircuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ham</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="adiabatic_fermi_hubbard.HubbardHamiltonian.html#adiabatic_fermi_hubbard.HubbardHamiltonian" title="adiabatic_fermi_hubbard.HubbardHamiltonian.HubbardHamiltonian"><span class="pre">HubbardHamiltonian</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/adiabatic_fermi_hubbard/AdiabaticCircuit.html#AdiabaticCircuit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#adiabatic_fermi_hubbard.AdiabaticCircuit" title="Link to this definition"></a></dt>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="adiabatic_fermi_hubbard.AdiabaticCircuit.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ham</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="adiabatic_fermi_hubbard.HubbardHamiltonian.html#adiabatic_fermi_hubbard.HubbardHamiltonian" title="adiabatic_fermi_hubbard.HubbardHamiltonian.HubbardHamiltonian"><span class="pre">HubbardHamiltonian</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/adiabatic_fermi_hubbard/AdiabaticCircuit.html#AdiabaticCircuit.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#adiabatic_fermi_hubbard.AdiabaticCircuit.__init__" title="Link to this definition"></a></dt>
-<dd><p>A class for building/executing Qiskit circuits for adiabatic state preparation of the Hubbard Hamiltonian ground state through
-interpolating between <span class="math notranslate nohighlight">\(H_{init}\)</span> and <span class="math notranslate nohighlight">\(H_{Fermi-Hubbard}\)</span> according to</p>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ham</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="adiabatic_fermi_hubbard.HubbardHamiltonian.html#adiabatic_fermi_hubbard.HubbardHamiltonian" title="adiabatic_fermi_hubbard.HubbardHamiltonian.HubbardHamiltonian"><span class="pre">HubbardHamiltonian</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/adiabatic_fermi_hubbard/AdiabaticCircuit.html#AdiabaticCircuit.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#adiabatic_fermi_hubbard.AdiabaticCircuit.__init__" title="Link to this definition"></a></dt>
+<dd><p>A class for building/executing Qiskit circuits for adiabatic state preparation of the Fermi-Hubbard Hamiltonian ground state through
+interpolating between <span class="math notranslate nohighlight">\(H_{initial}\)</span> and <span class="math notranslate nohighlight">\(H_{final} = H_{Fermi-Hubbard}\)</span> according to</p>
 <div class="math notranslate nohighlight">
-\[H(k) = H_{init} (1-k/M) + H_{final} (k/M).\]</div>
-<p>where <span class="math notranslate nohighlight">\(M\)</span> is the number of interpolation steps, <span class="math notranslate nohighlight">\(k = 0, 1, ... , M\)</span>, and <span class="math notranslate nohighlight">\(H_{init} = \sum_i X_i\)</span></p>
+\[H(k) = H_{initial} (1-k/M) + H_{final} (k/M).\]</div>
+<p>where <span class="math notranslate nohighlight">\(M\)</span> is the number of interpolation steps, <span class="math notranslate nohighlight">\(k = 0, 1, ... , M\)</span>, and <span class="math notranslate nohighlight">\(H_{initial} = \sum_i^{2N} X_i\)</span>. <span class="math notranslate nohighlight">\(N\)</span>
+is the number of lattice sites.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ham</strong> (<em>HubbardHamiltonian</em>) – The HubbardHamiltonian object to find the ground state for.</p></li>
 <li><p><strong>time_step</strong> (<em>float</em>) – Duration of each interpolating step.</p></li>
-<li><p><strong>step_count</strong> (<em>float</em>) – The number of steps to take when interpolating between <span class="math notranslate nohighlight">\(H_{init}\)</span> and <span class="math notranslate nohighlight">\(H_{Fermi-Hubbard}\)</span>.</p></li>
+<li><p><strong>step_count</strong> (<em>float</em>) – The number of steps to take when interpolating between <span class="math notranslate nohighlight">\(H_{initial}\)</span> and <span class="math notranslate nohighlight">\(H_{Fermi-Hubbard}\)</span>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -115,43 +116,43 @@ interpolating between <span class="math notranslate nohighlight">\(H_{init}\)</s
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code>(ham[, time_step, step_count])</p></td>
-<td><p>A class for building/executing Qiskit circuits for adiabatic state preparation of the Hubbard Hamiltonian ground state through interpolating between <span class="math notranslate nohighlight">\(H_{init}\)</span> and <span class="math notranslate nohighlight">\(H_{Fermi-Hubbard}\)</span> according to</p></td>
+<td><p>A class for building/executing Qiskit circuits for adiabatic state preparation of the Fermi-Hubbard Hamiltonian ground state through interpolating between <span class="math notranslate nohighlight">\(H_{initial}\)</span> and <span class="math notranslate nohighlight">\(H_{final} = H_{Fermi-Hubbard}\)</span> according to</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_energy</span></code>(result)</p></td>
-<td><p>Calculates the energy for the state represented by result using the HubbardHamiltonian associated with this AdiabaticCircuit object.</p></td>
+<td><p>Calculates the energy for the state represented by result using the HubbardHamiltonian associated with an AdiabaticCircuit object.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_circuit</span></code>()</p></td>
 <td><p>Creates the circuit which performs the adiabatic state preparation of the ground state of the HubbardHamiltonian associated with this AdiabaticCircuit.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">diagonalize_ham</span></code>()</p></td>
-<td><p>Diagonalize the final Fermi-Hubbard Hamiltonian to validate adiabatic state result and qiskit-nature eigensolver result.</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">diagonalize_ham</span></code>(k)</p></td>
+<td><p>Diagonalize the matrix representing the Hamiltonian</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">evolution_operator</span></code>(k)</p></td>
 <td><p>Implements the operation</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hubbard_hamiltonian</span></code>()</p></td>
-<td><p>Access method to get the HubbardHamiltonian associated with this AdiabaticCircuit object.</p></td>
+<td><p>Access method to get the HubbardHamiltonian associated with an AdiabaticCircuit object.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_num_qubits</span></code>()</p></td>
-<td><p>Access method to get the number of qubits associated with this AdiabaticCircuit object.</p></td>
+<td><p>Access method to get the number of qubits associated with an AdiabaticCircuit object.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_step_count</span></code>()</p></td>
-<td><p>Access method to get the step count associated with this AdiabaticCircuit object.</p></td>
+<td><p>Access method to get the step count associated with an AdiabaticCircuit object.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_time_step</span></code>()</p></td>
-<td><p>Access method to get the time step associated with this AdiabaticCircuit object.</p></td>
+<td><p>Access method to get the time step associated with an AdiabaticCircuit object.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ising_calc_energy</span></code>(result)</p></td>
-<td><p>Calculates the energy for the state represented by result using the Ising Hamiltonian associated with this AdiabaticCircuit object (provided the ising_setup method has already been run).</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize_ising</span></code>(exchange)</p></td>
+<td><p>Support method that assigns an Ising Hamiltonian for four qubits to an AdiabaticCircuit object:</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ising_create_circuit</span></code>()</p></td>
-<td><p>Creates the circuit which performs the adiabatic state preparation of the ground state of the Ising Hamiltonian associated with this AdiabaticCircuit (provided the ising_setup method has already been run).</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ising_calc_energy</span></code>(result)</p></td>
+<td><p>Support method used with the <cite>initialize_ising</cite> method.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ising_evolution_operator</span></code>(k)</p></td>
-<td><p>Support method that implements the evolution operator</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ising_create_circuit</span></code>()</p></td>
+<td><p>Support method used with the <cite>initialize_ising</cite> method.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ising_setup</span></code>(exchange)</p></td>
-<td><p>Support method that assigns an Ising Hamiltonian (for the same number of qubits) to the AdiabaticCircuit object:</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ising_evolution_operator</span></code>(k)</p></td>
+<td><p>Support method used with the <cite>initialize_ising</cite> method.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pauli_string_rotation</span></code>(pauli_string, argument)</p></td>
 <td><p>Performs a rotation about a specified Pauli string through a specified angle.</p></td>
