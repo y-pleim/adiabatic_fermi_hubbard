@@ -16,7 +16,7 @@
       ~AdiabaticCircuit.__init__
       ~AdiabaticCircuit.calc_energy
       ~AdiabaticCircuit.create_circuit
-      ~AdiabaticCircuit.diagonalize_ham
+      ~AdiabaticCircuit.diagonalize_hamiltonian
       ~AdiabaticCircuit.evolution_operator
       ~AdiabaticCircuit.get_hubbard_hamiltonian
       ~AdiabaticCircuit.get_num_qubits

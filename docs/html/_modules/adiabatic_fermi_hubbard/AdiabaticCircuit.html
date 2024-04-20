@@ -86,8 +86,8 @@
 <span class="kn">from</span> <span class="nn">qiskit_nature.second_q.mappers</span> <span class="kn">import</span> <span class="n">JordanWignerMapper</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">platform</span>
 
+<span class="kn">import</span> <span class="nn">platform</span>
 <span class="kn">import</span> <span class="nn">copy</span> <span class="k">as</span> <span class="nn">cp</span>
 
 
@@ -447,9 +447,9 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_count</span></div>
 
 
-<div class="viewcode-block" id="AdiabaticCircuit.diagonalize_ham">
-<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.diagonalize_ham">[docs]</a>
-    <span class="k">def</span> <span class="nf">diagonalize_ham</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+<div class="viewcode-block" id="AdiabaticCircuit.diagonalize_hamiltonian">
+<a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.diagonalize_hamiltonian">[docs]</a>
+    <span class="k">def</span> <span class="nf">diagonalize_hamiltonian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Diagonalize the matrix representing the Hamiltonian</span>
 
 <span class="sd">        .. math:: H(k) = (1-k/M) H_{initial} + (k/M) H_{Fermi-Hubbard}</span>

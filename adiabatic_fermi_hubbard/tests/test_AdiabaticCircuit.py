@@ -191,8 +191,8 @@ def test_get_step_count():
     assert ad_circ.get_step_count() == 2
 
 
-def test_diagonalize_ham():
-    """Test method for diagonalize_ham"""
+def test_diagonalize_hamiltonian():
+    """Test method for diagonalize_hamiltonian"""
     lattice1 = afh.Lattice(2, 0)
     ham1 = afh.HubbardHamiltonian(lattice1)
     ad_circ = afh.AdiabaticCircuit(ham1, 0.1, 2)
@@ -271,7 +271,7 @@ def test_diagonalize_ham():
     else:
         energies = np.linalg.eig(matrix).eigenvalues
 
-    energies_from_method = ad_circ.diagonalize_ham(0)
+    energies_from_method = ad_circ.diagonalize_hamiltonian(0)
 
     k2 = ad_circ.get_step_count() // 2  # H_{init}, H_{final} have equal contributions
 
@@ -284,7 +284,7 @@ def test_diagonalize_ham():
     else:
         energies_2 = np.linalg.eig(matrix2).eigenvalues
 
-    energies_from_method_2 = ad_circ.diagonalize_ham(k2)
+    energies_from_method_2 = ad_circ.diagonalize_hamiltonian(k2)
 
     k3 = ad_circ.get_step_count()  # all H_{final}
 
@@ -297,7 +297,7 @@ def test_diagonalize_ham():
     else:
         energies_3 = np.linalg.eig(matrix3).eigenvalues
 
-    energies_from_method_3 = ad_circ.diagonalize_ham(k3)
+    energies_from_method_3 = ad_circ.diagonalize_hamiltonian(k3)
 
     assert str(energies) == str(energies_from_method)
     assert str(energies) == str(energies_from_method)

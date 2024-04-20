@@ -422,7 +422,7 @@ the reference ground state energy found using `qiskit-nature` for different :mat
     import numpy as np
     import matplotlib.pyplot as plt
 
-    counts_list = [100, 250, 500, 750, 1000, 2500, 5000, 7500] # step counts
+    counts_list = [100, 250, 500, 750, 1000, 2500, 5000, 10000] # step counts
     steps_list = [0.001, 0.01, 0.1, 1, 10] # time steps
 
     lattice1 = afh.Lattice(2, pbc=False) # 2 sites = 4 qubits
@@ -450,7 +450,7 @@ the reference ground state energy found using `qiskit-nature` for different :mat
             energy = ad_circ1.calc_energy(result)
 
             row.append(energy-ref_energy)
-    energy_diffs.append(row)
+        energy_diffs.append(row)
 
     plt.plot(counts_list, energy_diffs[0], "-r",
             counts_list, energy_diffs[1], "-b",
@@ -471,12 +471,13 @@ This will produce the following after an evaluation time of approximately 25 min
 There are a few trends to pick out from the above plot:
 
 * First, as the step count :math:`M` increases, the error or difference between the adiabatic solution and the qiskit-nature reference generally improves. This can be understood from the fact that as the total evolution time :math:`t = M \Delta t` increases, :math:`t` becomes larger relative to :math:`1/(E_0-E_1)^2`.
-* For short time steps, the total evolution time becomes small, in which case the condition :math:`t >> 1/(E_0-E_1)^2` may no longer be fulfilled.
+* For short time steps, the total evolution time becomes small, in which case the condition :math:`t >> 1/(E_0-E_1)^2` is likely unfulfilled.
 * For long time steps (e.g., 1 and 10) the evolution time is longer; however, the Trotter approximation becomes worse since :math:`\Delta t` is no longer considered a small argument.
 
 Validating the "slow" evolution condition for :math:`N = 2`
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-This example aims to quantify the quantity :math:`1/(E_0 - E_1)^2` to quantify the condition :math:`t >> 1/(E_0 - E_1)^2` discussed in the above example.
+This example aims to quantify the quantity :math:`1/(E_0 - E_1)^2` to investigate the condition :math:`t >> 1/(E_0 - E_1)^2` discussed in the above example. This example
+makes use of the `diagonalize_hamiltonian` method.
 
 ::
 
@@ -484,54 +485,73 @@ This example aims to quantify the quantity :math:`1/(E_0 - E_1)^2` to quantify t
     import numpy as np
     import matplotlib.pyplot as plt
 
-    lattice1 = afh.Lattice(2, bc=0) # 2 sites = 4 qubits, no periodic boundary conditions
+    lattice1 = afh.Lattice(2, pbc=False) # 2 sites = 4 qubits, no periodic boundary conditions
 
     # create HubbardHamiltonian with t = 2, U = 10, \mu = -5
     hamiltonian1 = afh.HubbardHamiltonian(lattice1)
-    ad_circ1 = afh.AdiabaticCircuit(hamiltonian1, time_step=0.01, step_count=10000)
 
+        fig, axs = plt.subplots(ncols=2, nrows=2, figsize=(12, 12))
 
-    vals = []
-    gs = []
-    es = []
-    step = []
+    steps = [1000, 10000]
 
-    for i in range(ad_circ1.get_step_count()+1):
-        energies = np.real(ad_circ1.diagonalize_ham(i)) # diagonalize ham at step i
-        p = np.partition(energies,(0,1)) # get two lowest values
-        gs.append(p[0])
-        es.append(p[1])
-        vals.append(1/(p[0]-p[1])**2)
-        step.append(i)
+    for i in range(len(steps)):
+        ad_circ1 = afh.AdiabaticCircuit(hamiltonian1, time_step=0.01, step_count=steps[i])
 
-    print("maximum value of 1/(E_0 - E_1)^2 occurs at step " + str(vals.index(max(vals))))
-    print("condition: t >> " + str(max(vals)))
+        # lists to store computed quantities
+        vals = []
+        gs = []
+        es = []
+        step = []
 
-    fig, axs = plt.subplots(ncols=2, nrows=1, figsize=(15,5))
+        for j in range(ad_circ1.get_step_count()+1):
+            energies = np.real(ad_circ1.diagonalize_ham(j)) # diagonalize ham at step j
+            p = np.partition(energies,(0,1)) # get two lowest values
+            gs.append(p[0])
+            es.append(p[1])
+            vals.append(1/(p[0]-p[1])**2) # compute square of inverse energy gap
+            step.append(j)
 
-    axs[0].plot(step, gs, '-r', label="Minimum eigenvalue (E0)")
-    axs[0].plot(step, es, '-b', label="Next highest eigenvalue (E1)")
-    axs[0].legend()
-    axs[0].set_xlabel("Step")
-    axs[0].set_ylabel("Energy")
-    axs[0].set_title("H(k/M) Eigenvalues vs. Step k")
+        print("For M = " + str(steps[i]) + ":")
+        print("maximum value of 1/(E_0 - E_1)^2 occurs at step " + str(vals.index(max(vals))))
+        print("condition: t >> " + str(max(vals)) +"\n====================")
 
-    axs[1].plot(step, vals, '-k')
-    axs[1].set_xlabel("Step")
-    axs[1].set_ylabel("(E0 - E1)^(-2)")
-    axs[1].set_title("Square of the Inverse Energy Gap vs. Step k")
+        # produce eigenvalues as a function of step
+        axs[i][0].plot(step, gs, '-r', label="Minimum eigenvalue (E0)")
+        axs[i][0].plot(step, es, '-b', label="Next highest eigenvalue (E1)")
+        axs[i][0].legend()
+        axs[i][0].set_xlabel("Step")
+        axs[i][0].set_ylabel("Energy")
+        axs[i][0].set_title("H(k/M) Eigenvalues vs. Step k for M: " + str(steps[i]))
+
+        # produce plot of 1/(E_0-E_1)^2 as a function of step
+        axs[i][1].plot(step, vals, '-k')
+        axs[i][1].set_xlabel("Step")
+        axs[i][1].set_ylabel("(E0 - E1)^(-2)")
+        axs[i][1].set_title("Square of the Inverse Energy Gap vs. Step k for M: " + str(steps[i]))
+
+    plt.show()
 
 This code should produce the following text output and plot after 1 minute of evaluation time:
 
 ::
 
+    For M = 1000:
+    maximum value of 1/(E_0 - E_1)^2 occurs at step 457
+    condition: t >> 9.022007382020929
+    ====================
+    For M = 10000:
     maximum value of 1/(E_0 - E_1)^2 occurs at step 4566
     condition: t >> 9.022185674914688
+    ====================
 
 .. image:: ./spectralplot.png
  :width: 400
 
-Given this information, the plot
+
+For both :math:`M=1000` and :math:`M=10000`, the peak value of :math:`1/(E_0-E_1)^2` occurs at around :math:`M/2` and has the same value. The reason for the peak can be seen in the behavior of the two lowest eigenvalues of :math:`H(k)` at each step :math:`k`.
+So, :math:`M` is not involved in setting the condition on the total evolution time :math:`t = M \Delta t`. However, increasing :math:`M` brings :math:`t` closer to fulfilling the condition on the two site lattice, which is why the error/energy difference
+explored in the previous section generally improved for increasing evolution time (excluding the cases where :math:`\Delta t` being too large questioned the validity of the Trotter approximation).
+
 
 A larger lattice (:math:`N = 12`)
 '''''''''''''''''''''''''''''''''
@@ -557,10 +577,9 @@ After an hour of execution time, the following results:
 
     -59.616063058660416
 
-However, for the reasons discussed in the previous two examples, this value is likely inaccurate since the totale evolution time
-:math:`t = M \Delta t` is :math:`t = 10` in this case, which does not fulfill the condition :math:`t >> 9` derived in the previous example.
+However, for the reasons discussed in the previous two examples, this veracity of this value depends on whether the condition :math:`t >> (E_0-E_1)^2`
 Note that lattices of this size have been solved using exact diagonalization techniques, which may offer a route to validating the above
-value **[7]**.
+result **[7]**.
 
 References
 ----------

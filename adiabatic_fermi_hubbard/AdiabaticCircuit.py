@@ -11,8 +11,8 @@ from qiskit_nature.second_q.problems import LatticeModelProblem
 from qiskit_nature.second_q.mappers import JordanWignerMapper
 
 import numpy as np
-import platform
 
+import platform
 import copy as cp
 
 
@@ -334,7 +334,7 @@ class AdiabaticCircuit:
         """
         return self.step_count
 
-    def diagonalize_ham(self, k):
+    def diagonalize_hamiltonian(self, k):
         """Diagonalize the matrix representing the Hamiltonian
 
         .. math:: H(k) = (1-k/M) H_{initial} + (k/M) H_{Fermi-Hubbard}
