@@ -92,7 +92,7 @@ This package creates Qiskit circuits **[12]** to carry out adiabatic state prepa
 
 Representing Fermionic Operators
 ''''''''''''''''''''''''''''''''
-This package relies heavily on methods in `qiskit-nature` a part of the Qiskit ecosystem **[13]**, to create and manipulate fermionic raising/lowering operators. This
+This package relies heavily on methods in `qiskit-nature`, a part of the Qiskit ecosystem **[13]**, to create and manipulate fermionic raising/lowering operators. This
 is accomplished through the use of `qiskit-nature`'s `FermionicOp` objects **[14]**. The `adiabatic_fermi_hubbard` package adopts `qiskit-nature`'s convention for representing 
 creation/annihilation operators for up and down spins, where `FermionicOp` objects with even (odd) indices correspond to spin up (down) electrons. For example, the
 four creation/annilhilation operators for the first site in a 8-site 1D lattice are
@@ -105,7 +105,7 @@ four creation/annilhilation operators for the first site in a 8-site 1D lattice 
 The above example shows that the fermionic operators for a single lattice site are represented by two spin orbitals (in this case, 0 and 1). For an :math:`N = 8` lattice, the
 total number of spin orbitals is :math:`2N = 16` (hence the value of ``num_spin_orbitals`` in the above constructors) **[15]**.
 
-For a specified lattice size and :math:`t, U, \mu` parameters, the `adiabatic_fermi_hubbard` constructs the Fermi-Hubbard Hamiltonian :eq:`ham_with_mu` out of these FermionicOp objects.
+For a specified lattice size and :math:`t, U, \mu` parameters, the `adiabatic_fermi_hubbard` package constructs the Fermi-Hubbard Hamiltonian :eq:`ham_with_mu` out of these FermionicOp objects.
 
 Jordan-Wigner Transformation
 ''''''''''''''''''''''''''''
@@ -577,7 +577,7 @@ After an hour of execution time, the following results:
 
     -59.616063058660416
 
-However, for the reasons discussed in the previous two examples, this veracity of this value depends on whether the condition :math:`t >> (E_0-E_1)^2`
+However, for the reasons discussed in the previous two examples, this veracity of this value depends on whether the condition :math:`t >> (E_0-E_1)^2` holds.
 Note that lattices of this size have been solved using exact diagonalization techniques, which may offer a route to validating the above
 result **[7]**.
 

@@ -185,7 +185,7 @@ for small lattices.</p>
 1D lattices. The following section highlights some details of the implementation.</p>
 <section id="representing-fermionic-operators">
 <h3>Representing Fermionic Operators<a class="headerlink" href="#representing-fermionic-operators" title="Link to this heading"></a></h3>
-<p>This package relies heavily on methods in <cite>qiskit-nature</cite> a part of the Qiskit ecosystem <strong>[13]</strong>, to create and manipulate fermionic raising/lowering operators. This
+<p>This package relies heavily on methods in <cite>qiskit-nature</cite>, a part of the Qiskit ecosystem <strong>[13]</strong>, to create and manipulate fermionic raising/lowering operators. This
 is accomplished through the use of <cite>qiskit-nature</cite>’s <cite>FermionicOp</cite> objects <strong>[14]</strong>. The <cite>adiabatic_fermi_hubbard</cite> package adopts <cite>qiskit-nature</cite>’s convention for representing
 creation/annihilation operators for up and down spins, where <cite>FermionicOp</cite> objects with even (odd) indices correspond to spin up (down) electrons. For example, the
 four creation/annilhilation operators for the first site in a 8-site 1D lattice are</p>
@@ -197,7 +197,7 @@ four creation/annilhilation operators for the first site in a 8-site 1D lattice 
 </ul>
 <p>The above example shows that the fermionic operators for a single lattice site are represented by two spin orbitals (in this case, 0 and 1). For an <span class="math notranslate nohighlight">\(N = 8\)</span> lattice, the
 total number of spin orbitals is <span class="math notranslate nohighlight">\(2N = 16\)</span> (hence the value of <code class="docutils literal notranslate"><span class="pre">num_spin_orbitals</span></code> in the above constructors) <strong>[15]</strong>.</p>
-<p>For a specified lattice size and <span class="math notranslate nohighlight">\(t, U, \mu\)</span> parameters, the <cite>adiabatic_fermi_hubbard</cite> constructs the Fermi-Hubbard Hamiltonian <a class="reference internal" href="#equation-ham-with-mu">(2)</a> out of these FermionicOp objects.</p>
+<p>For a specified lattice size and <span class="math notranslate nohighlight">\(t, U, \mu\)</span> parameters, the <cite>adiabatic_fermi_hubbard</cite> package constructs the Fermi-Hubbard Hamiltonian <a class="reference internal" href="#equation-ham-with-mu">(2)</a> out of these FermionicOp objects.</p>
 </section>
 <section id="jordan-wigner-transformation">
 <h3>Jordan-Wigner Transformation<a class="headerlink" href="#jordan-wigner-transformation" title="Link to this heading"></a></h3>
@@ -620,7 +620,7 @@ can be “solved” with adiabatic state preparation.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mf">59.616063058660416</span>
 </pre></div>
 </div>
-<p>However, for the reasons discussed in the previous two examples, this veracity of this value depends on whether the condition <span class="math notranslate nohighlight">\(t &gt;&gt; (E_0-E_1)^2\)</span>
+<p>However, for the reasons discussed in the previous two examples, this veracity of this value depends on whether the condition <span class="math notranslate nohighlight">\(t &gt;&gt; (E_0-E_1)^2\)</span> holds.
 Note that lattices of this size have been solved using exact diagonalization techniques, which may offer a route to validating the above
 result <strong>[7]</strong>.</p>
 </section>
