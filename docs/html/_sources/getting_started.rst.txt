@@ -9,14 +9,14 @@ Installation
 This package is designed for Python 3.8-3.12 and requires the following packages to be installed
 in the environment:
 
-* `numpy`
-* `qiskit==0.46.0`
-* `qiskit-aer`
-* `qiskit-nature`
-* `pylatexenc`
-* `matplotlib` (optional)
+* ``numpy``
+* ``qiskit==0.46.0``
+* ``qiskit-aer``
+* ``qiskit-nature``
+* ``pylatexenc``
+* ``matplotlib`` (optional)
 
-To install `adiabatic_fermi_hubbard` in an environment with the above dependencies, run the following
+To install ``adiabatic_fermi_hubbard`` in an environment with the above dependencies, run the following
 commands:
 
 ::
@@ -24,6 +24,13 @@ commands:
     git clone git@github.com:y-pleim/adiabatic_fermi_hubbard.git
     cd adiabatic_fermi_hubbard
     pip install -e .
+
+**WARNING FOR CONDA USERS USING JUPYTER:** Some of the above packages (e.g., ``qiskit``, ``qiskit-nature``) are ``pip`` installs only. If ``numpy`` is installed using ``conda install``,
+attempting to run the code examples below in ``jupyter`` can result in the kernel crashing (for example, see this `issue`_ in VS Code Jupyter).
+
+.. _`issue`: https://github.com/microsoft/vscode-jupyter/wiki/Kernel-crashes-when-using-numpy
+
+To avoid this, use ``conda`` to install ``python`` in the ``conda`` environment, then use ``pip`` to install all of the above dependencies.
 
 Background
 ----------
@@ -82,7 +89,7 @@ the smallest difference between the first excited state energy and the ground st
 This approach has been previously applied to simulate the ground state of Fermi-Hubbard model with chemical potential and magnetic
 field terms, starting from the ground state of a Hamiltonian that describes d-wave electron pairing (a type of superconductivity) **[2]**. 
 
-The `adiabatic_fermi_hubbard` package uses a different starting point to find the ground state of the Fermi-Hubbard model through adiabatic state preparation
+The ``adiabatic_fermi_hubbard`` package uses a different starting point to find the ground state of the Fermi-Hubbard model through adiabatic state preparation
 for small lattices.
 
 Implementation
@@ -92,9 +99,9 @@ This package creates Qiskit circuits **[12]** to carry out adiabatic state prepa
 
 Representing Fermionic Operators
 ''''''''''''''''''''''''''''''''
-This package relies heavily on methods in `qiskit-nature`, a part of the Qiskit ecosystem **[13]**, to create and manipulate fermionic raising/lowering operators. This
-is accomplished through the use of `qiskit-nature`'s `FermionicOp` objects **[14]**. The `adiabatic_fermi_hubbard` package adopts `qiskit-nature`'s convention for representing 
-creation/annihilation operators for up and down spins, where `FermionicOp` objects with even (odd) indices correspond to spin up (down) electrons. For example, the
+This package relies heavily on methods in ``qiskit-nature``, a part of the Qiskit ecosystem **[13]**, to create and manipulate fermionic raising/lowering operators. This
+is accomplished through the use of ``qiskit-nature``'s ``FermionicOp`` objects **[14]**. The ``adiabatic_fermi_hubbard`` package adopts ``qiskit-nature``'s convention for representing 
+creation/annihilation operators for up and down spins, where ``FermionicOp`` objects with even (odd) indices correspond to spin up (down) electrons. For example, the
 four creation/annilhilation operators for the first site in a 8-site 1D lattice are
 
 * :math:`a_{0 \uparrow}`: ``FermionicOp({“-_0”:1.0}, num_spin_orbitals=16)``
@@ -105,7 +112,7 @@ four creation/annilhilation operators for the first site in a 8-site 1D lattice 
 The above example shows that the fermionic operators for a single lattice site are represented by two spin orbitals (in this case, 0 and 1). For an :math:`N = 8` lattice, the
 total number of spin orbitals is :math:`2N = 16` (hence the value of ``num_spin_orbitals`` in the above constructors) **[15]**.
 
-For a specified lattice size and :math:`t, U, \mu` parameters, the `adiabatic_fermi_hubbard` package constructs the Fermi-Hubbard Hamiltonian :eq:`ham_with_mu` out of these FermionicOp objects.
+For a specified lattice size and :math:`t, U, \mu` parameters, the ``adiabatic_fermi_hubbard`` package constructs the Fermi-Hubbard Hamiltonian :eq:`ham_with_mu` out of these FermionicOp objects.
 
 Jordan-Wigner Transformation
 ''''''''''''''''''''''''''''
@@ -116,7 +123,7 @@ The transformation of the fermionic annihilation/creation operators is given by
 .. math:: a_{i} = \bigotimes_{j=1}^{i} Z_j \otimes (X_i - i Y_i), a_{i}^\dagger = \bigotimes_{j=1}^{i} Z_j \otimes (X_i + i Y_i), 
 
 where :math:`X_k, Y_k, Z_k` are Pauli gates acting on qubit :math:`k` and :math:`i` are the indices assigned by the convention in the previous section **[16]**.
-The `adiabatic_fermi_hubbard` package applies this transformation to express the Hamiltonian as a weighted sum of Pauli strings (e.g., :math:`X \otimes Y \otimes Z \otimes I`)
+The ``adiabatic_fermi_hubbard`` package applies this transformation to express the Hamiltonian as a weighted sum of Pauli strings (e.g., :math:`X \otimes Y \otimes Z \otimes I`)
 of size :math:`2N`, where :math:`N` is the number of lattice sites.
 
 Trotterization
@@ -136,7 +143,7 @@ However, provided :math:`\Delta t` is small, the Trotter approximation allows
 
 .. math:: exp(-i \Delta t \sum_{j} \alpha_j P_j ) \approx exp(-i \Delta t \alpha_1 P_1) exp(-i \Delta t \alpha_2 P_2) ... exp(-i \Delta t \alpha_K P_K)
 
-**[11]**, **[17]**. The `adiabatic_fermi_hubbard` package assumes the Trotter approximation to decompose the Jordan-Wigner transformed Hamiltonian into a sequence
+**[11]**, **[17]**. The ``adiabatic_fermi_hubbard`` package assumes the Trotter approximation to decompose the Jordan-Wigner transformed Hamiltonian into a sequence
 of rotations about Pauli strings.
 
 Rotation about :math:`2N` -dimensional Pauli strings
@@ -165,7 +172,7 @@ Adiabatic Evolution
 '''''''''''''''''''
 With the evolution operator corresponding to the Fermi-Hubbard Hamiltonian written in terms of single- and two-qubit gates, the adiabatic evolution can
 be implemented according to Equation :eq:`adiabatic` provided :math:`H_{initial}` is specified and the system is initialized in the ground state of :math:`H_{initial}`.
-The `adiabatic_fermi_hubbard` package uses
+The ``adiabatic_fermi_hubbard`` package uses
 
 .. math:: H_{initial} = \sum_{i}^{2N} X_i, ~ |\psi_0 \rangle = |--...- \rangle
 
@@ -185,15 +192,15 @@ In this context, :math:`H_{final} = H_{after ~JW}`, the Fermi-Hubbard Hamiltonia
 
 Validation
 ''''''''''
-To verify the ground state energy which results from the adiabatic state preparation circuit, `adiabatic_fermi_hubbard` includes methods which
-utilize `qiskit-nature`'s lattice problem eigensolver **[15]**. Based on tests, this approach works for lattices up to :math:`N = 11` sites. 
+To verify the ground state energy which results from the adiabatic state preparation circuit, ``adiabatic_fermi_hubbard`` includes methods which
+utilize ``qiskit-nature``'s lattice problem eigensolver **[15]**. Based on tests, this approach works for lattices up to :math:`N = 11` sites. 
 
 Examples
 --------
 
-Initializing `Lattice` and `HubbardHamiltonian` objects for a 4 site lattice
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-This example shows how to create instances of the `Lattice` and `HubbardHamiltonian` classes.
+Initializing ``Lattice`` and ``HubbardHamiltonian`` objects for a 4 site lattice
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+This example shows how to create instances of the ``Lattice`` and ``HubbardHamiltonian`` classes.
 
 ::
 
@@ -304,7 +311,7 @@ This should yield the following output:
 
 Rotating about a Pauli string
 '''''''''''''''''''''''''''''
-This example demonstrates the functionality of the `AdiabaticCircuit` method `pauli_string_rotation`.
+This example demonstrates the functionality of the ``AdiabaticCircuit`` method ``pauli_string_rotation``.
 
 ::
     
@@ -374,9 +381,9 @@ This should result in the following output (after approximately 17 minutes, with
     Ground state energy: -16.156581328882908
     Ground state energy (PBC): -15.63070980671954
 
-Using `qiskit-nature`'s eigensolver
-'''''''''''''''''''''''''''''''''''
-This example illustrates the methods in the `AdiabaticCircuit` class which can be used for validating
+Using ``qiskit-nature``'s eigensolver
+'''''''''''''''''''''''''''''''''''''
+This example illustrates the methods in the ``AdiabaticCircuit`` class which can be used for validating
 the ground state energy resulting from adiabatic state preparation.
 
 ::
@@ -402,7 +409,7 @@ the ground state energy resulting from adiabatic state preparation.
 
     comparison_energy_pbc = ad_circ_pbc.run_eigensolver_comparison()
 
-    print("Ground state enregy (eigensolver, PBC): " + str(comparison_energy_pbc))
+    print("Ground state energy (eigensolver, PBC): " + str(comparison_energy_pbc))
 
 This result in the following output:
 
@@ -414,7 +421,7 @@ This result in the following output:
 Error as a function of step count :math:`M` / step duration :math:`\Delta t` for :math:`N = 2`
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 The following code block creates a plot which shows the difference between the ground state energy found through adiabatic state preparation and
-the reference ground state energy found using `qiskit-nature` for different :math:`M` and :math:`\Delta t` values.
+the reference ground state energy found using ``qiskit-nature`` for different :math:`M` and :math:`\Delta t` values.
 
 ::
 
@@ -477,7 +484,7 @@ There are a few trends to pick out from the above plot:
 Validating the "slow" evolution condition for :math:`N = 2`
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 This example aims to quantify the quantity :math:`1/(E_0 - E_1)^2` to investigate the condition :math:`t >> 1/(E_0 - E_1)^2` discussed in the above example. This example
-makes use of the `diagonalize_hamiltonian` method.
+makes use of the ``diagonalize_hamiltonian`` method.
 
 ::
 
@@ -555,7 +562,7 @@ explored in the previous section generally improved for increasing evolution tim
 
 A larger lattice (:math:`N = 12`)
 '''''''''''''''''''''''''''''''''
-The following code block is an example of a large lattice whose ground state cannot be solved using the `qiskit-nature` eigensolver, but
+The following code block is an example of a large lattice whose ground state cannot be solved using the ``qiskit-nature`` eigensolver, but
 can be "solved" with adiabatic state preparation.
 ::
     

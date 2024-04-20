@@ -65,10 +65,10 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#initializing-lattice-and-hubbardhamiltonian-objects-for-a-4-site-lattice">Initializing <cite>Lattice</cite> and <cite>HubbardHamiltonian</cite> objects for a 4 site lattice</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#initializing-lattice-and-hubbardhamiltonian-objects-for-a-4-site-lattice">Initializing <code class="docutils literal notranslate"><span class="pre">Lattice</span></code> and <code class="docutils literal notranslate"><span class="pre">HubbardHamiltonian</span></code> objects for a 4 site lattice</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#rotating-about-a-pauli-string">Rotating about a Pauli string</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#building-and-running-an-adiabatic-state-preparation-circuit-for-n-3-lattice-sites">Building and running an adiabatic state preparation circuit for N = 3 lattice sites</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#using-qiskit-nature-s-eigensolver">Using <cite>qiskit-nature</cite>’s eigensolver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-qiskit-nature-s-eigensolver">Using <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code>’s eigensolver</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#error-as-a-function-of-step-count-m-step-duration-delta-t-for-n-2">Error as a function of step count <span class="math notranslate nohighlight">\(M\)</span> / step duration <span class="math notranslate nohighlight">\(\Delta t\)</span> for <span class="math notranslate nohighlight">\(N = 2\)</span></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#validating-the-slow-evolution-condition-for-n-2">Validating the “slow” evolution condition for <span class="math notranslate nohighlight">\(N = 2\)</span></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#a-larger-lattice-n-12">A larger lattice (<span class="math notranslate nohighlight">\(N = 12\)</span>)</a></li>
@@ -113,20 +113,23 @@
 <p>This package is designed for Python 3.8-3.12 and requires the following packages to be installed
 in the environment:</p>
 <ul class="simple">
-<li><p><cite>numpy</cite></p></li>
-<li><p><cite>qiskit==0.46.0</cite></p></li>
-<li><p><cite>qiskit-aer</cite></p></li>
-<li><p><cite>qiskit-nature</cite></p></li>
-<li><p><cite>pylatexenc</cite></p></li>
-<li><p><cite>matplotlib</cite> (optional)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">numpy</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">qiskit==0.46.0</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">qiskit-aer</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pylatexenc</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> (optional)</p></li>
 </ul>
-<p>To install <cite>adiabatic_fermi_hubbard</cite> in an environment with the above dependencies, run the following
+<p>To install <code class="docutils literal notranslate"><span class="pre">adiabatic_fermi_hubbard</span></code> in an environment with the above dependencies, run the following
 commands:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="nd">@github</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="n">y</span><span class="o">-</span><span class="n">pleim</span><span class="o">/</span><span class="n">adiabatic_fermi_hubbard</span><span class="o">.</span><span class="n">git</span>
 <span class="n">cd</span> <span class="n">adiabatic_fermi_hubbard</span>
 <span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
 </pre></div>
 </div>
+<p><strong>WARNING FOR CONDA USERS USING JUPYTER:</strong> Some of the above packages (e.g., <code class="docutils literal notranslate"><span class="pre">qiskit</span></code>, <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code>) are <code class="docutils literal notranslate"><span class="pre">pip</span></code> installs only. If <code class="docutils literal notranslate"><span class="pre">numpy</span></code> is installed using <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">install</span></code>,
+attempting to run the code examples below in <code class="docutils literal notranslate"><span class="pre">jupyter</span></code> can result in the kernel crashing (for example, see this <a class="reference external" href="https://github.com/microsoft/vscode-jupyter/wiki/Kernel-crashes-when-using-numpy">issue</a> in VS Code Jupyter).</p>
+<p>To avoid this, use <code class="docutils literal notranslate"><span class="pre">conda</span></code> to install <code class="docutils literal notranslate"><span class="pre">python</span></code> in the <code class="docutils literal notranslate"><span class="pre">conda</span></code> environment, then use <code class="docutils literal notranslate"><span class="pre">pip</span></code> to install all of the above dependencies.</p>
 </section>
 <section id="background">
 <h2>Background<a class="headerlink" href="#background" title="Link to this heading"></a></h2>
@@ -175,7 +178,7 @@ the ground state of <span class="math notranslate nohighlight">\(H_{final}\)</sp
 the smallest difference between the first excited state energy and the ground state energy of <span class="math notranslate nohighlight">\(H(s)\)</span> for any <span class="math notranslate nohighlight">\(s\)</span> <strong>[10]</strong>.</p>
 <p>This approach has been previously applied to simulate the ground state of Fermi-Hubbard model with chemical potential and magnetic
 field terms, starting from the ground state of a Hamiltonian that describes d-wave electron pairing (a type of superconductivity) <strong>[2]</strong>.</p>
-<p>The <cite>adiabatic_fermi_hubbard</cite> package uses a different starting point to find the ground state of the Fermi-Hubbard model through adiabatic state preparation
+<p>The <code class="docutils literal notranslate"><span class="pre">adiabatic_fermi_hubbard</span></code> package uses a different starting point to find the ground state of the Fermi-Hubbard model through adiabatic state preparation
 for small lattices.</p>
 </section>
 </section>
@@ -185,9 +188,9 @@ for small lattices.</p>
 1D lattices. The following section highlights some details of the implementation.</p>
 <section id="representing-fermionic-operators">
 <h3>Representing Fermionic Operators<a class="headerlink" href="#representing-fermionic-operators" title="Link to this heading"></a></h3>
-<p>This package relies heavily on methods in <cite>qiskit-nature</cite>, a part of the Qiskit ecosystem <strong>[13]</strong>, to create and manipulate fermionic raising/lowering operators. This
-is accomplished through the use of <cite>qiskit-nature</cite>’s <cite>FermionicOp</cite> objects <strong>[14]</strong>. The <cite>adiabatic_fermi_hubbard</cite> package adopts <cite>qiskit-nature</cite>’s convention for representing
-creation/annihilation operators for up and down spins, where <cite>FermionicOp</cite> objects with even (odd) indices correspond to spin up (down) electrons. For example, the
+<p>This package relies heavily on methods in <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code>, a part of the Qiskit ecosystem <strong>[13]</strong>, to create and manipulate fermionic raising/lowering operators. This
+is accomplished through the use of <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code>’s <code class="docutils literal notranslate"><span class="pre">FermionicOp</span></code> objects <strong>[14]</strong>. The <code class="docutils literal notranslate"><span class="pre">adiabatic_fermi_hubbard</span></code> package adopts <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code>’s convention for representing
+creation/annihilation operators for up and down spins, where <code class="docutils literal notranslate"><span class="pre">FermionicOp</span></code> objects with even (odd) indices correspond to spin up (down) electrons. For example, the
 four creation/annilhilation operators for the first site in a 8-site 1D lattice are</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(a_{0 \uparrow}\)</span>: <code class="docutils literal notranslate"><span class="pre">FermionicOp({“-_0”:1.0},</span> <span class="pre">num_spin_orbitals=16)</span></code></p></li>
@@ -197,7 +200,7 @@ four creation/annilhilation operators for the first site in a 8-site 1D lattice 
 </ul>
 <p>The above example shows that the fermionic operators for a single lattice site are represented by two spin orbitals (in this case, 0 and 1). For an <span class="math notranslate nohighlight">\(N = 8\)</span> lattice, the
 total number of spin orbitals is <span class="math notranslate nohighlight">\(2N = 16\)</span> (hence the value of <code class="docutils literal notranslate"><span class="pre">num_spin_orbitals</span></code> in the above constructors) <strong>[15]</strong>.</p>
-<p>For a specified lattice size and <span class="math notranslate nohighlight">\(t, U, \mu\)</span> parameters, the <cite>adiabatic_fermi_hubbard</cite> package constructs the Fermi-Hubbard Hamiltonian <a class="reference internal" href="#equation-ham-with-mu">(2)</a> out of these FermionicOp objects.</p>
+<p>For a specified lattice size and <span class="math notranslate nohighlight">\(t, U, \mu\)</span> parameters, the <code class="docutils literal notranslate"><span class="pre">adiabatic_fermi_hubbard</span></code> package constructs the Fermi-Hubbard Hamiltonian <a class="reference internal" href="#equation-ham-with-mu">(2)</a> out of these FermionicOp objects.</p>
 </section>
 <section id="jordan-wigner-transformation">
 <h3>Jordan-Wigner Transformation<a class="headerlink" href="#jordan-wigner-transformation" title="Link to this heading"></a></h3>
@@ -207,7 +210,7 @@ The transformation of the fermionic annihilation/creation operators is given by<
 <div class="math notranslate nohighlight">
 \[a_{i} = \bigotimes_{j=1}^{i} Z_j \otimes (X_i - i Y_i), a_{i}^\dagger = \bigotimes_{j=1}^{i} Z_j \otimes (X_i + i Y_i),\]</div>
 <p>where <span class="math notranslate nohighlight">\(X_k, Y_k, Z_k\)</span> are Pauli gates acting on qubit <span class="math notranslate nohighlight">\(k\)</span> and <span class="math notranslate nohighlight">\(i\)</span> are the indices assigned by the convention in the previous section <strong>[16]</strong>.
-The <cite>adiabatic_fermi_hubbard</cite> package applies this transformation to express the Hamiltonian as a weighted sum of Pauli strings (e.g., <span class="math notranslate nohighlight">\(X \otimes Y \otimes Z \otimes I\)</span>)
+The <code class="docutils literal notranslate"><span class="pre">adiabatic_fermi_hubbard</span></code> package applies this transformation to express the Hamiltonian as a weighted sum of Pauli strings (e.g., <span class="math notranslate nohighlight">\(X \otimes Y \otimes Z \otimes I\)</span>)
 of size <span class="math notranslate nohighlight">\(2N\)</span>, where <span class="math notranslate nohighlight">\(N\)</span> is the number of lattice sites.</p>
 </section>
 <section id="trotterization">
@@ -223,7 +226,7 @@ Generally, not all of the Pauli strings in <span class="math notranslate nohighl
 <p>However, provided <span class="math notranslate nohighlight">\(\Delta t\)</span> is small, the Trotter approximation allows</p>
 <div class="math notranslate nohighlight">
 \[exp(-i \Delta t \sum_{j} \alpha_j P_j ) \approx exp(-i \Delta t \alpha_1 P_1) exp(-i \Delta t \alpha_2 P_2) ... exp(-i \Delta t \alpha_K P_K)\]</div>
-<p><strong>[11]</strong>, <strong>[17]</strong>. The <cite>adiabatic_fermi_hubbard</cite> package assumes the Trotter approximation to decompose the Jordan-Wigner transformed Hamiltonian into a sequence
+<p><strong>[11]</strong>, <strong>[17]</strong>. The <code class="docutils literal notranslate"><span class="pre">adiabatic_fermi_hubbard</span></code> package assumes the Trotter approximation to decompose the Jordan-Wigner transformed Hamiltonian into a sequence
 of rotations about Pauli strings.</p>
 </section>
 <section id="rotation-about-2n-dimensional-pauli-strings">
@@ -245,7 +248,7 @@ a circuit which performs the rotation <span class="math notranslate nohighlight"
 <h3>Adiabatic Evolution<a class="headerlink" href="#adiabatic-evolution" title="Link to this heading"></a></h3>
 <p>With the evolution operator corresponding to the Fermi-Hubbard Hamiltonian written in terms of single- and two-qubit gates, the adiabatic evolution can
 be implemented according to Equation <a class="reference internal" href="#equation-adiabatic">(3)</a> provided <span class="math notranslate nohighlight">\(H_{initial}\)</span> is specified and the system is initialized in the ground state of <span class="math notranslate nohighlight">\(H_{initial}\)</span>.
-The <cite>adiabatic_fermi_hubbard</cite> package uses</p>
+The <code class="docutils literal notranslate"><span class="pre">adiabatic_fermi_hubbard</span></code> package uses</p>
 <div class="math notranslate nohighlight">
 \[H_{initial} = \sum_{i}^{2N} X_i, ~ |\psi_0 \rangle = |--...- \rangle\]</div>
 <p>as its starting Hamiltonian, with the ground state <span class="math notranslate nohighlight">\(|\psi_0 \rangle\)</span>, following the approach in <strong>[11]</strong>. For each <span class="math notranslate nohighlight">\(k = 0, 1, ..., M\)</span>, the package builds the evolution operator</p>
@@ -261,15 +264,15 @@ The <cite>adiabatic_fermi_hubbard</cite> package uses</p>
 </section>
 <section id="validation">
 <h3>Validation<a class="headerlink" href="#validation" title="Link to this heading"></a></h3>
-<p>To verify the ground state energy which results from the adiabatic state preparation circuit, <cite>adiabatic_fermi_hubbard</cite> includes methods which
-utilize <cite>qiskit-nature</cite>’s lattice problem eigensolver <strong>[15]</strong>. Based on tests, this approach works for lattices up to <span class="math notranslate nohighlight">\(N = 11\)</span> sites.</p>
+<p>To verify the ground state energy which results from the adiabatic state preparation circuit, <code class="docutils literal notranslate"><span class="pre">adiabatic_fermi_hubbard</span></code> includes methods which
+utilize <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code>’s lattice problem eigensolver <strong>[15]</strong>. Based on tests, this approach works for lattices up to <span class="math notranslate nohighlight">\(N = 11\)</span> sites.</p>
 </section>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
 <section id="initializing-lattice-and-hubbardhamiltonian-objects-for-a-4-site-lattice">
-<h3>Initializing <cite>Lattice</cite> and <cite>HubbardHamiltonian</cite> objects for a 4 site lattice<a class="headerlink" href="#initializing-lattice-and-hubbardhamiltonian-objects-for-a-4-site-lattice" title="Link to this heading"></a></h3>
-<p>This example shows how to create instances of the <cite>Lattice</cite> and <cite>HubbardHamiltonian</cite> classes.</p>
+<h3>Initializing <code class="docutils literal notranslate"><span class="pre">Lattice</span></code> and <code class="docutils literal notranslate"><span class="pre">HubbardHamiltonian</span></code> objects for a 4 site lattice<a class="headerlink" href="#initializing-lattice-and-hubbardhamiltonian-objects-for-a-4-site-lattice" title="Link to this heading"></a></h3>
+<p>This example shows how to create instances of the <code class="docutils literal notranslate"><span class="pre">Lattice</span></code> and <code class="docutils literal notranslate"><span class="pre">HubbardHamiltonian</span></code> classes.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">adiabatic_fermi_hubbard</span> <span class="k">as</span> <span class="nn">afh</span>
 
 <span class="n">lattice1</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">pbc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -372,7 +375,7 @@ utilize <cite>qiskit-nature</cite>’s lattice problem eigensolver <strong>[15]<
 </section>
 <section id="rotating-about-a-pauli-string">
 <h3>Rotating about a Pauli string<a class="headerlink" href="#rotating-about-a-pauli-string" title="Link to this heading"></a></h3>
-<p>This example demonstrates the functionality of the <cite>AdiabaticCircuit</cite> method <cite>pauli_string_rotation</cite>.</p>
+<p>This example demonstrates the functionality of the <code class="docutils literal notranslate"><span class="pre">AdiabaticCircuit</span></code> method <code class="docutils literal notranslate"><span class="pre">pauli_string_rotation</span></code>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">adiabatic_fermi_hubbard</span> <span class="k">as</span> <span class="nn">afh</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
@@ -436,8 +439,8 @@ adiabatic state preparation.</p>
 </div>
 </section>
 <section id="using-qiskit-nature-s-eigensolver">
-<h3>Using <cite>qiskit-nature</cite>’s eigensolver<a class="headerlink" href="#using-qiskit-nature-s-eigensolver" title="Link to this heading"></a></h3>
-<p>This example illustrates the methods in the <cite>AdiabaticCircuit</cite> class which can be used for validating
+<h3>Using <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code>’s eigensolver<a class="headerlink" href="#using-qiskit-nature-s-eigensolver" title="Link to this heading"></a></h3>
+<p>This example illustrates the methods in the <code class="docutils literal notranslate"><span class="pre">AdiabaticCircuit</span></code> class which can be used for validating
 the ground state energy resulting from adiabatic state preparation.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">adiabatic_fermi_hubbard</span> <span class="k">as</span> <span class="nn">afh</span>
 
@@ -460,7 +463,7 @@ the ground state energy resulting from adiabatic state preparation.</p>
 
 <span class="n">comparison_energy_pbc</span> <span class="o">=</span> <span class="n">ad_circ_pbc</span><span class="o">.</span><span class="n">run_eigensolver_comparison</span><span class="p">()</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ground state enregy (eigensolver, PBC): &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">comparison_energy_pbc</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ground state energy (eigensolver, PBC): &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">comparison_energy_pbc</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>This result in the following output:</p>
@@ -472,7 +475,7 @@ the ground state energy resulting from adiabatic state preparation.</p>
 <section id="error-as-a-function-of-step-count-m-step-duration-delta-t-for-n-2">
 <h3>Error as a function of step count <span class="math notranslate nohighlight">\(M\)</span> / step duration <span class="math notranslate nohighlight">\(\Delta t\)</span> for <span class="math notranslate nohighlight">\(N = 2\)</span><a class="headerlink" href="#error-as-a-function-of-step-count-m-step-duration-delta-t-for-n-2" title="Link to this heading"></a></h3>
 <p>The following code block creates a plot which shows the difference between the ground state energy found through adiabatic state preparation and
-the reference ground state energy found using <cite>qiskit-nature</cite> for different <span class="math notranslate nohighlight">\(M\)</span> and <span class="math notranslate nohighlight">\(\Delta t\)</span> values.</p>
+the reference ground state energy found using <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code> for different <span class="math notranslate nohighlight">\(M\)</span> and <span class="math notranslate nohighlight">\(\Delta t\)</span> values.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">adiabatic_fermi_hubbard</span> <span class="k">as</span> <span class="nn">afh</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -531,7 +534,7 @@ the reference ground state energy found using <cite>qiskit-nature</cite> for dif
 <section id="validating-the-slow-evolution-condition-for-n-2">
 <h3>Validating the “slow” evolution condition for <span class="math notranslate nohighlight">\(N = 2\)</span><a class="headerlink" href="#validating-the-slow-evolution-condition-for-n-2" title="Link to this heading"></a></h3>
 <p>This example aims to quantify the quantity <span class="math notranslate nohighlight">\(1/(E_0 - E_1)^2\)</span> to investigate the condition <span class="math notranslate nohighlight">\(t &gt;&gt; 1/(E_0 - E_1)^2\)</span> discussed in the above example. This example
-makes use of the <cite>diagonalize_hamiltonian</cite> method.</p>
+makes use of the <code class="docutils literal notranslate"><span class="pre">diagonalize_hamiltonian</span></code> method.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">adiabatic_fermi_hubbard</span> <span class="k">as</span> <span class="nn">afh</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -601,7 +604,7 @@ explored in the previous section generally improved for increasing evolution tim
 </section>
 <section id="a-larger-lattice-n-12">
 <h3>A larger lattice (<span class="math notranslate nohighlight">\(N = 12\)</span>)<a class="headerlink" href="#a-larger-lattice-n-12" title="Link to this heading"></a></h3>
-<p>The following code block is an example of a large lattice whose ground state cannot be solved using the <cite>qiskit-nature</cite> eigensolver, but
+<p>The following code block is an example of a large lattice whose ground state cannot be solved using the <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code> eigensolver, but
 can be “solved” with adiabatic state preparation.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">lattice1</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">ham1</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">HubbardHamiltonian</span><span class="p">(</span><span class="n">lattice1</span><span class="p">)</span>
