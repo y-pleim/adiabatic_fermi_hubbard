@@ -374,7 +374,7 @@ adiabatic state preparation.
 
     print("Ground state energy (PBC): " + str(energy_pbc))
     
-This should result in the following output (after approximately 17 minutes, with 7 minutes for the no PBC case):
+This should result in the following output (after ~13 minutes, with ~6 minutes for the no PBC case):
 
 ::
 
@@ -576,13 +576,11 @@ can be "solved" with adiabatic state preparation.
 
     print(energy)
 
-    energy2 = ad_circ.run_eigensolver_comparison()
-
 After an hour of execution time, the following results:
 
 ::
 
-    -59.616063058660416
+    -61.788572493820574
 
 However, for the reasons discussed in the previous two examples, this veracity of this value depends on whether the condition :math:`t >> 1/(E_0-E_1)^2` holds.
 Note that lattices of this size have been solved using exact diagonalization techniques, which may offer a route to validating the above
