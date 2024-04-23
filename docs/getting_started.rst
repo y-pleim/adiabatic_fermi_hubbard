@@ -120,7 +120,7 @@ One mapping which takes the fermionic operators in the Fermi-Hubbard Hamiltonian
 Jordan-Wigner transformation. This transformation leverages the fact that spin qubits provide a natural representation of the spin orbitals of the system.
 The transformation of the fermionic annihilation/creation operators is given by
 
-.. math:: a_{i} = \bigotimes_{j=1}^{i} Z_j \otimes (X_i - i Y_i), a_{i}^\dagger = \bigotimes_{j=1}^{i} Z_j \otimes (X_i + i Y_i), 
+.. math:: a_{i} = \bigotimes_{j=1}^{i} Z_j \otimes (X_i - i Y_i), a_{i}^\dagger = \bigotimes_{j=1}^{i} Z_j \otimes (X_i + i Y_i) 
 
 where :math:`X_k, Y_k, Z_k` are Pauli gates acting on qubit :math:`k` and :math:`i` are the indices assigned by the convention in the previous section **[16]**.
 The ``adiabatic_fermi_hubbard`` package applies this transformation to express the Hamiltonian as a weighted sum of Pauli strings (e.g., :math:`X \otimes Y \otimes Z \otimes I`)
@@ -308,6 +308,14 @@ This should yield the following output:
     + -2.0 * ( +_4 -_4 )
     + -2.0 * ( +_1 -_1 )
 
+Note the additional hopping terms between the first and last sites relative to the non-periodic boundary conditions case:
+
+::
+
+    -2.0 * ( +_6 -_0 )
+    + 2.0 * ( -_6 +_0 )
+    + 2.0 * ( -_7 +_1 )
+    + -2.0 * ( +_7 -_1 )
 
 Rotating about a Pauli string
 '''''''''''''''''''''''''''''
@@ -340,7 +348,35 @@ This should produce the following circuit:
 .. image:: ./circuit_example.png
  :width: 400
 
-Building and running an adiabatic state preparation circuit for N = 3 lattice sites
+Visualizing an AdiabaticCircuit
+'''''''''''''''''''''''''''''''
+The following code shows how to draw a (small) adiabatic state preparation circuit for :math:`N = 2` sites and :math:`M = 2` steps.
+
+::
+
+    import adiabatic_fermi_hubbard as afh
+    import matplotlib as mpl
+
+    lattice = afh.Lattice(2, pbc=False) # 2 sites = 4 qubits
+
+    # create HubbardHamiltonian with t = 2, U = 10, \mu = -5
+    hamiltonian = afh.HubbardHamiltonian(lattice, t=2, U=10, mu=-5)
+
+    # create AdiabaticCircuit with time_step = 0.1, step_count = 2
+    ad_circ = afh.AdiabaticCircuit(hamiltonian, time_step = 0.1, step_count = 2)
+
+    # make circuit
+    circ = ad_circ.create_circuit()
+
+    # draw circuit, decomposing into unitary gates
+    circ.decompose().decompose().draw(output = "mpl")
+
+This should produce the following circuit:
+
+.. image:: ./visualize_circuit.png
+ :width: 500
+
+Building and running an adiabatic state preparation circuit for N = 2 lattice sites
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 This example shows how to create and execute a circuit to find the ground state energy of a Fermi-Hubbard Hamiltonian through
 adiabatic state preparation.
@@ -349,40 +385,28 @@ adiabatic state preparation.
 
     import adiabatic_fermi_hubbard as afh
 
-    lattice = afh.Lattice(3, pbc=False)
+    lattice = afh.Lattice(2, pbc=False) # 2 sites = 4 qubits
 
     # create HubbardHamiltonian with t = 2, U = 10, \mu = -5
     hamiltonian = afh.HubbardHamiltonian(lattice, t=2, U=10, mu=-5)
 
-    # create AdiabaticCircuit with time_step = 0.01, step_count = 10000
-    ad_circ = afh.AdiabaticCircuit(hamiltonian, time_step = 0.01, step_count = 10000)
+    # create AdiabaticCircuit with time_step = 0.1, step_count = 10000
+    ad_circ = afh.AdiabaticCircuit(hamiltonian, time_step = 0.1, step_count = 10000)
 
     circ = ad_circ.create_circuit()
     result = ad_circ.run(circ)
     energy = ad_circ.calc_energy(result)
 
     print("Ground state energy: " + str(energy))
-
-    # with periodic boundary conditions
-    lattice_pbc = afh.Lattice(3, pbc=True)
-    hamiltonian_pbc = afh.HubbardHamiltonian(lattice_pbc, t=2, U=10, mu=-5)
-    ad_circ_pbc = afh.AdiabaticCircuit(hamiltonian_pbc, time_step = 0.01, step_count = 10000)
-
-    circ_pbc = ad_circ_pbc.create_circuit()
-    result_pbc = ad_circ_pbc.run(circ_pbc)
-    energy_pbc = ad_circ_pbc.calc_energy(result_pbc)
-
-    print("Ground state energy (PBC): " + str(energy_pbc))
     
-This should result in the following output (after ~13 minutes, with ~6 minutes for the no PBC case):
+This should result in the following output (after ~4 minutes):
 
 ::
 
-    Ground state energy: -16.156581328882908
-    Ground state energy (PBC): -15.63070980671954
+    Ground state energy: -11.32386479860698
 
-Using ``qiskit-nature``'s eigensolver
-'''''''''''''''''''''''''''''''''''''
+Using ``qiskit-nature``'s eigensolver for :math:`N = 2`
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''
 This example illustrates the methods in the ``AdiabaticCircuit`` class which can be used for validating
 the ground state energy resulting from adiabatic state preparation.
 
@@ -390,7 +414,7 @@ the ground state energy resulting from adiabatic state preparation.
 
     import adiabatic_fermi_hubbard as afh
 
-    lattice = afh.Lattice(3, pbc=False)
+    lattice = afh.Lattice(2, pbc=False) # 2 sites = 4 qubits
 
     # create HubbardHamiltonian with t = 2, U = 10, \mu = -5
     hamiltonian = afh.HubbardHamiltonian(lattice, t = 2, U = 10, mu = -5)
@@ -402,21 +426,65 @@ the ground state energy resulting from adiabatic state preparation.
 
     print("Ground state energy (eigensolver): " + str(comparison_energy))
 
+This results in the following output:
+
+::
+
+    Ground state energy (eigensolver): -11.403124237432863
+
+Building and running an adiabatic state preparation circuit for N = 3 lattice sites (with eigensolver validation)
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+This example illustrates the difference in the ground state energy when specifying periodic boundary conditions on the smallest applicable lattice (:math:`N=3`).
+
+::
+
+    import adiabatic_fermi_hubbard as afh
+
+    lattice = afh.Lattice(3, pbc=False) # 3 sites = 6 qubits
+
+    # create HubbardHamiltonian with t = 2, U = 10, \mu = -5
+    hamiltonian = afh.HubbardHamiltonian(lattice, t=2, U=10, mu=-5)
+
+    # create AdiabaticCircuit with time_step = 0.1, step_count = 12000
+    ad_circ = afh.AdiabaticCircuit(hamiltonian, time_step = 0.1, step_count = 12000)
+
+    circ = ad_circ.create_circuit()
+    result = ad_circ.run(circ)
+    energy = ad_circ.calc_energy(result)
+
+    print("Ground state energy: " + str(energy))
+
+    comparison_energy = ad_circ.run_eigensolver_comparison()
+
+    print("Ground state energy (eigensolver): " + str(comparison_energy))
+
+    print("===========================")
+
     # with periodic boundary conditions
     lattice_pbc = afh.Lattice(3, pbc=True)
-    hamiltonian_pbc = afh.HubbardHamiltonian(lattice_pbc, t = 2, U = 10, mu = -5)
-    ad_circ_pbc = afh.AdiabaticCircuit(hamiltonian_pbc, time_step = 0.01, step_count = 10000)
+    hamiltonian_pbc = afh.HubbardHamiltonian(lattice_pbc, t=2, U=10, mu=-5)
+    ad_circ_pbc = afh.AdiabaticCircuit(hamiltonian_pbc, time_step = 0.1, step_count = 12000)
+
+    circ_pbc = ad_circ_pbc.create_circuit()
+    result_pbc = ad_circ_pbc.run(circ_pbc)
+    energy_pbc = ad_circ_pbc.calc_energy(result_pbc)
+
+    print("Ground state energy (PBC): " + str(energy_pbc))
 
     comparison_energy_pbc = ad_circ_pbc.run_eigensolver_comparison()
 
     print("Ground state energy (eigensolver, PBC): " + str(comparison_energy_pbc))
 
-This result in the following output:
+When executed, the following should result (after ~ 23 minutes):
 
 ::
 
-    Ground state energy (eigensolver): -17.098419986367492
-    Ground state energy (eigensolver, PBC): -17.150070940649506
+    Ground state energy: -16.984508636808602
+    Ground state energy (eigensolver): -17.098419986367535
+    ===========================
+    Ground state energy (PBC): -16.998635453588186
+    Ground state energy (eigensolver, PBC): -17.150070940649556
+
 
 Error as a function of step count :math:`M` / step duration :math:`\Delta t` for :math:`N = 2`
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -434,7 +502,7 @@ the reference ground state energy found using ``qiskit-nature`` for different :m
 
     lattice1 = afh.Lattice(2, pbc=False) # 2 sites = 4 qubits
 
-    # create HubbardHamiltonian with t = 2, U = 10, \mu = -5
+    # create HubbardHamiltonian with t = 2, U = 10, \mu = -5 (default arguments)
     hamiltonian1 = afh.HubbardHamiltonian(lattice1)
 
     # create AdiabaticCircuit
@@ -468,7 +536,7 @@ the reference ground state energy found using ``qiskit-nature`` for different :m
     plt.legend(["step duration = 0.001", "0.01", "0.1", "1", "10"], loc='best')
     plt.xlabel("Step Count")
     plt.ylabel("Error in Ground State Energy")
-    plt.title("Error in Ground State Energy for N = 2")
+    plt.title("Error in Ground State Energy for N = 3")
 
 This will produce the following after an evaluation time of approximately 25 minutes:
 
@@ -565,22 +633,26 @@ A larger lattice (:math:`N = 12`)
 The following code block is an example of a large lattice whose ground state cannot be solved using the ``qiskit-nature`` eigensolver, but
 can be "solved" with adiabatic state preparation.
 ::
-    
+    # 12 site lattice = 24 qubits
     lattice1 = afh.Lattice(12,0)
+    
+    # create HubbardHamiltonian with t = 2, U = 10, \mu = -5 (default arguments)
     ham1 = afh.HubbardHamiltonian(lattice1)
-    ad_circ = afh.AdiabaticCircuit(ham1,0.01,1000)
+
+    # create AdiabaticCircuit with time_step = 0.1, step_count = 1000
+    ad_circ = afh.AdiabaticCircuit(ham1,0.1,1000)
 
     circuit = ad_circ.create_circuit()
     result = ad_circ.run(circuit)
     energy = ad_circ.calc_energy(result)
 
-    print(energy)
+    print("Ground state energy:" + str(energy))
 
-After an hour of execution time, the following results:
+After ~45 min of execution time, the following results:
 
 ::
 
-    -61.788572493820574
+    Ground state energy:-61.78857249382058
 
 However, for the reasons discussed in the previous two examples, this veracity of this value depends on whether the condition :math:`t >> 1/(E_0-E_1)^2` holds.
 Note that lattices of this size have been solved using exact diagonalization techniques, which may offer a route to validating the above

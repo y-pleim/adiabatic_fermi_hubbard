@@ -18,7 +18,7 @@ import copy as cp
 
 class AdiabaticCircuit:
     def __init__(
-        self, ham: HubbardHamiltonian, time_step: float = 0.01, step_count: int = 10000
+        self, ham: HubbardHamiltonian, time_step: float = 0.1, step_count: int = 10000
     ):
         """A class for building/executing Qiskit circuits for adiabatic state preparation of the Fermi-Hubbard Hamiltonian ground state through
         interpolating between :math:`H_{initial}` and :math:`H_{final} = H_{Fermi-Hubbard}` according to
