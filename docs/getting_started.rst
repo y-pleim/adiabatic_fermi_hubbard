@@ -536,7 +536,7 @@ the reference ground state energy found using ``qiskit-nature`` for different :m
     plt.legend(["step duration = 0.001", "0.01", "0.1", "1", "10"], loc='best')
     plt.xlabel("Step Count")
     plt.ylabel("Error in Ground State Energy")
-    plt.title("Error in Ground State Energy for N = 3")
+    plt.title("Error in Ground State Energy for N = 2")
 
 This will produce the following after an evaluation time of approximately 25 minutes:
 
@@ -632,7 +632,9 @@ A larger lattice (:math:`N = 12`)
 '''''''''''''''''''''''''''''''''
 The following code block is an example of a large lattice whose ground state cannot be solved using the ``qiskit-nature`` eigensolver, but
 can be "solved" with adiabatic state preparation.
+
 ::
+    
     # 12 site lattice = 24 qubits
     lattice1 = afh.Lattice(12,0)
     

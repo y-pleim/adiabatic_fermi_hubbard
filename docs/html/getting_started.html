@@ -67,8 +67,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#initializing-lattice-and-hubbardhamiltonian-objects-for-a-4-site-lattice">Initializing <code class="docutils literal notranslate"><span class="pre">Lattice</span></code> and <code class="docutils literal notranslate"><span class="pre">HubbardHamiltonian</span></code> objects for a 4 site lattice</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#rotating-about-a-pauli-string">Rotating about a Pauli string</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#building-and-running-an-adiabatic-state-preparation-circuit-for-n-3-lattice-sites">Building and running an adiabatic state preparation circuit for N = 3 lattice sites</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#using-qiskit-nature-s-eigensolver">Using <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code>’s eigensolver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#visualizing-an-adiabaticcircuit">Visualizing an AdiabaticCircuit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-and-running-an-adiabatic-state-preparation-circuit-for-n-2-lattice-sites">Building and running an adiabatic state preparation circuit for N = 2 lattice sites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-qiskit-nature-s-eigensolver-for-n-2">Using <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code>’s eigensolver for <span class="math notranslate nohighlight">\(N = 2\)</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-and-running-an-adiabatic-state-preparation-circuit-for-n-3-lattice-sites-with-eigensolver-validation">Building and running an adiabatic state preparation circuit for N = 3 lattice sites (with eigensolver validation)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#error-as-a-function-of-step-count-m-step-duration-delta-t-for-n-2">Error as a function of step count <span class="math notranslate nohighlight">\(M\)</span> / step duration <span class="math notranslate nohighlight">\(\Delta t\)</span> for <span class="math notranslate nohighlight">\(N = 2\)</span></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#validating-the-slow-evolution-condition-for-n-2">Validating the “slow” evolution condition for <span class="math notranslate nohighlight">\(N = 2\)</span></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#a-larger-lattice-n-12">A larger lattice (<span class="math notranslate nohighlight">\(N = 12\)</span>)</a></li>
@@ -154,7 +156,7 @@ Depending on the relative strengths of <span class="math notranslate nohighlight
 It has been applied to explain phenomena in materials whose properties depend on correlated electrons, including high-temperature cuprate superconductors <strong>[1]</strong>.</p>
 <p>The above Hamiltonian can be modified to include a chemical potential term with strength <span class="math notranslate nohighlight">\(\mu\)</span> to control the number of electrons in the lattice <strong>[2]</strong>:</p>
 <div class="math notranslate nohighlight" id="equation-ham-with-mu">
-<span class="eqno">(2)<a class="headerlink" href="#equation-ham-with-mu" title="Link to this equation"></a></span>\[H = -t \sum_{&lt;i,j&gt;,\sigma}(a_{i\sigma}^\dagger a_{j\sigma} + a_{i\sigma}^\dagger a_{j\sigma} + a_{j\sigma}^\dagger a_{i\sigma}) + U\sum_{i} n_{i\uparrow}n_{i\downarrow} + \mu \sum_{i,\sigma} n_{i\sigma}\]</div>
+<span class="eqno">(2)<a class="headerlink" href="#equation-ham-with-mu" title="Link to this equation"></a></span>\[H = -t \sum_{&lt;i,j&gt;,\sigma}(a_{i\sigma}^\dagger a_{j\sigma} + a_{j\sigma}^\dagger a_{i\sigma}) + U\sum_{i} n_{i\uparrow}n_{i\downarrow} + \mu \sum_{i,\sigma} n_{i\sigma}\]</div>
 </section>
 <section id="quantum-computing-and-the-fermi-hubbard-model">
 <h3>Quantum Computing and the Fermi-Hubbard Model<a class="headerlink" href="#quantum-computing-and-the-fermi-hubbard-model" title="Link to this heading"></a></h3>
@@ -208,7 +210,7 @@ total number of spin orbitals is <span class="math notranslate nohighlight">\(2N
 Jordan-Wigner transformation. This transformation leverages the fact that spin qubits provide a natural representation of the spin orbitals of the system.
 The transformation of the fermionic annihilation/creation operators is given by</p>
 <div class="math notranslate nohighlight">
-\[a_{i} = \bigotimes_{j=1}^{i} Z_j \otimes (X_i - i Y_i), a_{i}^\dagger = \bigotimes_{j=1}^{i} Z_j \otimes (X_i + i Y_i),\]</div>
+\[a_{i} = \bigotimes_{j=1}^{i} Z_j \otimes (X_i - i Y_i), a_{i}^\dagger = \bigotimes_{j=1}^{i} Z_j \otimes (X_i + i Y_i)\]</div>
 <p>where <span class="math notranslate nohighlight">\(X_k, Y_k, Z_k\)</span> are Pauli gates acting on qubit <span class="math notranslate nohighlight">\(k\)</span> and <span class="math notranslate nohighlight">\(i\)</span> are the indices assigned by the convention in the previous section <strong>[16]</strong>.
 The <code class="docutils literal notranslate"><span class="pre">adiabatic_fermi_hubbard</span></code> package applies this transformation to express the Hamiltonian as a weighted sum of Pauli strings (e.g., <span class="math notranslate nohighlight">\(X \otimes Y \otimes Z \otimes I\)</span>)
 of size <span class="math notranslate nohighlight">\(2N\)</span>, where <span class="math notranslate nohighlight">\(N\)</span> is the number of lattice sites.</p>
@@ -372,6 +374,13 @@ utilize <code class="docutils literal notranslate"><span class="pre">qiskit-natu
 <span class="o">+</span> <span class="o">-</span><span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span> <span class="o">+</span><span class="n">_1</span> <span class="o">-</span><span class="n">_1</span> <span class="p">)</span>
 </pre></div>
 </div>
+<p>Note the additional hopping terms between the first and last sites relative to the non-periodic boundary conditions case:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span> <span class="o">+</span><span class="n">_6</span> <span class="o">-</span><span class="n">_0</span> <span class="p">)</span>
+<span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span> <span class="o">-</span><span class="n">_6</span> <span class="o">+</span><span class="n">_0</span> <span class="p">)</span>
+<span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span> <span class="o">-</span><span class="n">_7</span> <span class="o">+</span><span class="n">_1</span> <span class="p">)</span>
+<span class="o">+</span> <span class="o">-</span><span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span> <span class="o">+</span><span class="n">_7</span> <span class="o">-</span><span class="n">_1</span> <span class="p">)</span>
+</pre></div>
+</div>
 </section>
 <section id="rotating-about-a-pauli-string">
 <h3>Rotating about a Pauli string<a class="headerlink" href="#rotating-about-a-pauli-string" title="Link to this heading"></a></h3>
@@ -400,51 +409,63 @@ utilize <code class="docutils literal notranslate"><span class="pre">qiskit-natu
 <p>This should produce the following circuit:</p>
 <a class="reference internal image-reference" href="_images/circuit_example.png"><img alt="_images/circuit_example.png" src="_images/circuit_example.png" style="width: 400px;" /></a>
 </section>
-<section id="building-and-running-an-adiabatic-state-preparation-circuit-for-n-3-lattice-sites">
-<h3>Building and running an adiabatic state preparation circuit for N = 3 lattice sites<a class="headerlink" href="#building-and-running-an-adiabatic-state-preparation-circuit-for-n-3-lattice-sites" title="Link to this heading"></a></h3>
-<p>This example shows how to create and execute a circuit to find the ground state energy of a Fermi-Hubbard Hamiltonian through
-adiabatic state preparation.</p>
+<section id="visualizing-an-adiabaticcircuit">
+<h3>Visualizing an AdiabaticCircuit<a class="headerlink" href="#visualizing-an-adiabaticcircuit" title="Link to this heading"></a></h3>
+<p>The following code shows how to draw a (small) adiabatic state preparation circuit for <span class="math notranslate nohighlight">\(N = 2\)</span> sites and <span class="math notranslate nohighlight">\(M = 2\)</span> steps.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">adiabatic_fermi_hubbard</span> <span class="k">as</span> <span class="nn">afh</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
 
-<span class="n">lattice</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">pbc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">lattice</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">pbc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># 2 sites = 4 qubits</span>
 
 <span class="c1"># create HubbardHamiltonian with t = 2, U = 10, \mu = -5</span>
 <span class="n">hamiltonian</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">HubbardHamiltonian</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">U</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mu</span><span class="o">=-</span><span class="mi">5</span><span class="p">)</span>
 
-<span class="c1"># create AdiabaticCircuit with time_step = 0.01, step_count = 10000</span>
-<span class="n">ad_circ</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">AdiabaticCircuit</span><span class="p">(</span><span class="n">hamiltonian</span><span class="p">,</span> <span class="n">time_step</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">step_count</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">)</span>
+<span class="c1"># create AdiabaticCircuit with time_step = 0.1, step_count = 2</span>
+<span class="n">ad_circ</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">AdiabaticCircuit</span><span class="p">(</span><span class="n">hamiltonian</span><span class="p">,</span> <span class="n">time_step</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">step_count</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># make circuit</span>
+<span class="n">circ</span> <span class="o">=</span> <span class="n">ad_circ</span><span class="o">.</span><span class="n">create_circuit</span><span class="p">()</span>
+
+<span class="c1"># draw circuit, decomposing into unitary gates</span>
+<span class="n">circ</span><span class="o">.</span><span class="n">decompose</span><span class="p">()</span><span class="o">.</span><span class="n">decompose</span><span class="p">()</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">output</span> <span class="o">=</span> <span class="s2">&quot;mpl&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This should produce the following circuit:</p>
+<a class="reference internal image-reference" href="_images/visualize_circuit.png"><img alt="_images/visualize_circuit.png" src="_images/visualize_circuit.png" style="width: 500px;" /></a>
+</section>
+<section id="building-and-running-an-adiabatic-state-preparation-circuit-for-n-2-lattice-sites">
+<h3>Building and running an adiabatic state preparation circuit for N = 2 lattice sites<a class="headerlink" href="#building-and-running-an-adiabatic-state-preparation-circuit-for-n-2-lattice-sites" title="Link to this heading"></a></h3>
+<p>This example shows how to create and execute a circuit to find the ground state energy of a Fermi-Hubbard Hamiltonian through
+adiabatic state preparation.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">adiabatic_fermi_hubbard</span> <span class="k">as</span> <span class="nn">afh</span>
+
+<span class="n">lattice</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">pbc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># 2 sites = 4 qubits</span>
+
+<span class="c1"># create HubbardHamiltonian with t = 2, U = 10, \mu = -5</span>
+<span class="n">hamiltonian</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">HubbardHamiltonian</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">U</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mu</span><span class="o">=-</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># create AdiabaticCircuit with time_step = 0.1, step_count = 10000</span>
+<span class="n">ad_circ</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">AdiabaticCircuit</span><span class="p">(</span><span class="n">hamiltonian</span><span class="p">,</span> <span class="n">time_step</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">step_count</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">)</span>
 
 <span class="n">circ</span> <span class="o">=</span> <span class="n">ad_circ</span><span class="o">.</span><span class="n">create_circuit</span><span class="p">()</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">ad_circ</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">circ</span><span class="p">)</span>
 <span class="n">energy</span> <span class="o">=</span> <span class="n">ad_circ</span><span class="o">.</span><span class="n">calc_energy</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ground state energy: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">energy</span><span class="p">))</span>
-
-<span class="c1"># with periodic boundary conditions</span>
-<span class="n">lattice_pbc</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">pbc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">hamiltonian_pbc</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">HubbardHamiltonian</span><span class="p">(</span><span class="n">lattice_pbc</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">U</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mu</span><span class="o">=-</span><span class="mi">5</span><span class="p">)</span>
-<span class="n">ad_circ_pbc</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">AdiabaticCircuit</span><span class="p">(</span><span class="n">hamiltonian_pbc</span><span class="p">,</span> <span class="n">time_step</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">step_count</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">)</span>
-
-<span class="n">circ_pbc</span> <span class="o">=</span> <span class="n">ad_circ_pbc</span><span class="o">.</span><span class="n">create_circuit</span><span class="p">()</span>
-<span class="n">result_pbc</span> <span class="o">=</span> <span class="n">ad_circ_pbc</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">circ_pbc</span><span class="p">)</span>
-<span class="n">energy_pbc</span> <span class="o">=</span> <span class="n">ad_circ_pbc</span><span class="o">.</span><span class="n">calc_energy</span><span class="p">(</span><span class="n">result_pbc</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ground state energy (PBC): &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">energy_pbc</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>This should result in the following output (after approximately 17 minutes, with 7 minutes for the no PBC case):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Ground</span> <span class="n">state</span> <span class="n">energy</span><span class="p">:</span> <span class="o">-</span><span class="mf">16.156581328882908</span>
-<span class="n">Ground</span> <span class="n">state</span> <span class="n">energy</span> <span class="p">(</span><span class="n">PBC</span><span class="p">):</span> <span class="o">-</span><span class="mf">15.63070980671954</span>
+<p>This should result in the following output (after ~4 minutes):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Ground</span> <span class="n">state</span> <span class="n">energy</span><span class="p">:</span> <span class="o">-</span><span class="mf">11.32386479860698</span>
 </pre></div>
 </div>
 </section>
-<section id="using-qiskit-nature-s-eigensolver">
-<h3>Using <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code>’s eigensolver<a class="headerlink" href="#using-qiskit-nature-s-eigensolver" title="Link to this heading"></a></h3>
+<section id="using-qiskit-nature-s-eigensolver-for-n-2">
+<h3>Using <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code>’s eigensolver for <span class="math notranslate nohighlight">\(N = 2\)</span><a class="headerlink" href="#using-qiskit-nature-s-eigensolver-for-n-2" title="Link to this heading"></a></h3>
 <p>This example illustrates the methods in the <code class="docutils literal notranslate"><span class="pre">AdiabaticCircuit</span></code> class which can be used for validating
 the ground state energy resulting from adiabatic state preparation.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">adiabatic_fermi_hubbard</span> <span class="k">as</span> <span class="nn">afh</span>
 
-<span class="n">lattice</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">pbc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">lattice</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">pbc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># 2 sites = 4 qubits</span>
 
 <span class="c1"># create HubbardHamiltonian with t = 2, U = 10, \mu = -5</span>
 <span class="n">hamiltonian</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">HubbardHamiltonian</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">U</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">mu</span> <span class="o">=</span> <span class="o">-</span><span class="mi">5</span><span class="p">)</span>
@@ -455,20 +476,60 @@ the ground state energy resulting from adiabatic state preparation.</p>
 <span class="n">comparison_energy</span> <span class="o">=</span> <span class="n">ad_circ</span><span class="o">.</span><span class="n">run_eigensolver_comparison</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ground state energy (eigensolver): &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">comparison_energy</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>This results in the following output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Ground</span> <span class="n">state</span> <span class="n">energy</span> <span class="p">(</span><span class="n">eigensolver</span><span class="p">):</span> <span class="o">-</span><span class="mf">11.403124237432863</span>
+</pre></div>
+</div>
+</section>
+<section id="building-and-running-an-adiabatic-state-preparation-circuit-for-n-3-lattice-sites-with-eigensolver-validation">
+<h3>Building and running an adiabatic state preparation circuit for N = 3 lattice sites (with eigensolver validation)<a class="headerlink" href="#building-and-running-an-adiabatic-state-preparation-circuit-for-n-3-lattice-sites-with-eigensolver-validation" title="Link to this heading"></a></h3>
+<p>This example illustrates the difference in the ground state energy when specifying periodic boundary conditions on the smallest applicable lattice (<span class="math notranslate nohighlight">\(N=3\)</span>).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">adiabatic_fermi_hubbard</span> <span class="k">as</span> <span class="nn">afh</span>
+
+<span class="n">lattice</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">pbc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># 3 sites = 6 qubits</span>
+
+<span class="c1"># create HubbardHamiltonian with t = 2, U = 10, \mu = -5</span>
+<span class="n">hamiltonian</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">HubbardHamiltonian</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">U</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mu</span><span class="o">=-</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># create AdiabaticCircuit with time_step = 0.1, step_count = 12000</span>
+<span class="n">ad_circ</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">AdiabaticCircuit</span><span class="p">(</span><span class="n">hamiltonian</span><span class="p">,</span> <span class="n">time_step</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">step_count</span> <span class="o">=</span> <span class="mi">12000</span><span class="p">)</span>
+
+<span class="n">circ</span> <span class="o">=</span> <span class="n">ad_circ</span><span class="o">.</span><span class="n">create_circuit</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">ad_circ</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">circ</span><span class="p">)</span>
+<span class="n">energy</span> <span class="o">=</span> <span class="n">ad_circ</span><span class="o">.</span><span class="n">calc_energy</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ground state energy: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">energy</span><span class="p">))</span>
+
+<span class="n">comparison_energy</span> <span class="o">=</span> <span class="n">ad_circ</span><span class="o">.</span><span class="n">run_eigensolver_comparison</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ground state energy (eigensolver): &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">comparison_energy</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;===========================&quot;</span><span class="p">)</span>
 
 <span class="c1"># with periodic boundary conditions</span>
 <span class="n">lattice_pbc</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">pbc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">hamiltonian_pbc</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">HubbardHamiltonian</span><span class="p">(</span><span class="n">lattice_pbc</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">U</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">mu</span> <span class="o">=</span> <span class="o">-</span><span class="mi">5</span><span class="p">)</span>
-<span class="n">ad_circ_pbc</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">AdiabaticCircuit</span><span class="p">(</span><span class="n">hamiltonian_pbc</span><span class="p">,</span> <span class="n">time_step</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">step_count</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">)</span>
+<span class="n">hamiltonian_pbc</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">HubbardHamiltonian</span><span class="p">(</span><span class="n">lattice_pbc</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">U</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mu</span><span class="o">=-</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">ad_circ_pbc</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">AdiabaticCircuit</span><span class="p">(</span><span class="n">hamiltonian_pbc</span><span class="p">,</span> <span class="n">time_step</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">step_count</span> <span class="o">=</span> <span class="mi">12000</span><span class="p">)</span>
+
+<span class="n">circ_pbc</span> <span class="o">=</span> <span class="n">ad_circ_pbc</span><span class="o">.</span><span class="n">create_circuit</span><span class="p">()</span>
+<span class="n">result_pbc</span> <span class="o">=</span> <span class="n">ad_circ_pbc</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">circ_pbc</span><span class="p">)</span>
+<span class="n">energy_pbc</span> <span class="o">=</span> <span class="n">ad_circ_pbc</span><span class="o">.</span><span class="n">calc_energy</span><span class="p">(</span><span class="n">result_pbc</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ground state energy (PBC): &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">energy_pbc</span><span class="p">))</span>
 
 <span class="n">comparison_energy_pbc</span> <span class="o">=</span> <span class="n">ad_circ_pbc</span><span class="o">.</span><span class="n">run_eigensolver_comparison</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ground state energy (eigensolver, PBC): &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">comparison_energy_pbc</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>This result in the following output:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Ground</span> <span class="n">state</span> <span class="n">energy</span> <span class="p">(</span><span class="n">eigensolver</span><span class="p">):</span> <span class="o">-</span><span class="mf">17.098419986367492</span>
-<span class="n">Ground</span> <span class="n">state</span> <span class="n">energy</span> <span class="p">(</span><span class="n">eigensolver</span><span class="p">,</span> <span class="n">PBC</span><span class="p">):</span> <span class="o">-</span><span class="mf">17.150070940649506</span>
+<p>When executed, the following should result (after ~ 23 minutes):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Ground</span> <span class="n">state</span> <span class="n">energy</span><span class="p">:</span> <span class="o">-</span><span class="mf">16.984508636808602</span>
+<span class="n">Ground</span> <span class="n">state</span> <span class="n">energy</span> <span class="p">(</span><span class="n">eigensolver</span><span class="p">):</span> <span class="o">-</span><span class="mf">17.098419986367535</span>
+<span class="o">===========================</span>
+<span class="n">Ground</span> <span class="n">state</span> <span class="n">energy</span> <span class="p">(</span><span class="n">PBC</span><span class="p">):</span> <span class="o">-</span><span class="mf">16.998635453588186</span>
+<span class="n">Ground</span> <span class="n">state</span> <span class="n">energy</span> <span class="p">(</span><span class="n">eigensolver</span><span class="p">,</span> <span class="n">PBC</span><span class="p">):</span> <span class="o">-</span><span class="mf">17.150070940649556</span>
 </pre></div>
 </div>
 </section>
@@ -485,7 +546,7 @@ the reference ground state energy found using <code class="docutils literal notr
 
 <span class="n">lattice1</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">pbc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># 2 sites = 4 qubits</span>
 
-<span class="c1"># create HubbardHamiltonian with t = 2, U = 10, \mu = -5</span>
+<span class="c1"># create HubbardHamiltonian with t = 2, U = 10, \mu = -5 (default arguments)</span>
 <span class="n">hamiltonian1</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">HubbardHamiltonian</span><span class="p">(</span><span class="n">lattice1</span><span class="p">)</span>
 
 <span class="c1"># create AdiabaticCircuit</span>
@@ -606,21 +667,24 @@ explored in the previous section generally improved for increasing evolution tim
 <h3>A larger lattice (<span class="math notranslate nohighlight">\(N = 12\)</span>)<a class="headerlink" href="#a-larger-lattice-n-12" title="Link to this heading"></a></h3>
 <p>The following code block is an example of a large lattice whose ground state cannot be solved using the <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code> eigensolver, but
 can be “solved” with adiabatic state preparation.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">lattice1</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 12 site lattice = 24 qubits</span>
+<span class="n">lattice1</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># create HubbardHamiltonian with t = 2, U = 10, \mu = -5 (default arguments)</span>
 <span class="n">ham1</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">HubbardHamiltonian</span><span class="p">(</span><span class="n">lattice1</span><span class="p">)</span>
-<span class="n">ad_circ</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">AdiabaticCircuit</span><span class="p">(</span><span class="n">ham1</span><span class="p">,</span><span class="mf">0.01</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span>
+
+<span class="c1"># create AdiabaticCircuit with time_step = 0.1, step_count = 1000</span>
+<span class="n">ad_circ</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">AdiabaticCircuit</span><span class="p">(</span><span class="n">ham1</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span>
 
 <span class="n">circuit</span> <span class="o">=</span> <span class="n">ad_circ</span><span class="o">.</span><span class="n">create_circuit</span><span class="p">()</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">ad_circ</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">circuit</span><span class="p">)</span>
 <span class="n">energy</span> <span class="o">=</span> <span class="n">ad_circ</span><span class="o">.</span><span class="n">calc_energy</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">energy</span><span class="p">)</span>
-
-<span class="n">energy2</span> <span class="o">=</span> <span class="n">ad_circ</span><span class="o">.</span><span class="n">run_eigensolver_comparison</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ground state energy:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">energy</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>After an hour of execution time, the following results:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mf">59.616063058660416</span>
+<p>After ~45 min of execution time, the following results:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Ground</span> <span class="n">state</span> <span class="n">energy</span><span class="p">:</span><span class="o">-</span><span class="mf">61.78857249382058</span>
 </pre></div>
 </div>
 <p>However, for the reasons discussed in the previous two examples, this veracity of this value depends on whether the condition <span class="math notranslate nohighlight">\(t &gt;&gt; 1/(E_0-E_1)^2\)</span> holds.
