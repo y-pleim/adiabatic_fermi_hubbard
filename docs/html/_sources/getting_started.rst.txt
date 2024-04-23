@@ -637,6 +637,8 @@ can be "solved" with adiabatic state preparation.
 
 ::
 
+    import adiabatic_fermi_hubbard as afh
+
     # 12 site lattice = 24 qubits
     lattice1 = afh.Lattice(12,0)
     

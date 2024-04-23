@@ -669,7 +669,9 @@ explored in the previous section generally improved for increasing evolution tim
 <h3>A larger lattice (<span class="math notranslate nohighlight">\(N = 12\)</span>)<a class="headerlink" href="#a-larger-lattice-n-12" title="Link to this heading"></a></h3>
 <p>The following code block is an example of a large lattice whose ground state cannot be solved using the <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code> eigensolver, but
 can be “solved” with adiabatic state preparation.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 12 site lattice = 24 qubits</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">adiabatic_fermi_hubbard</span> <span class="k">as</span> <span class="nn">afh</span>
+
+<span class="c1"># 12 site lattice = 24 qubits</span>
 <span class="n">lattice1</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
 
 <span class="c1"># create HubbardHamiltonian with t = 2, U = 10, \mu = -5 (default arguments)</span>
