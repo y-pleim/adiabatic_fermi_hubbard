@@ -25,7 +25,7 @@ commands:
     cd adiabatic_fermi_hubbard
     pip install -e .
 
-**WARNING FOR CONDA USERS USING JUPYTER:** Some of the above packages (e.g., ``qiskit``, ``qiskit-nature``) are ``pip`` installs only. If ``numpy`` is installed using ``conda install``,
+**WARNING FOR CONDA USERS USING JUPYTER:** Some of the above packages (e.g., ``qiskit``, ``qiskit-nature``) are ``pip`` installs only. If both types of installations are present,
 attempting to run the code examples below in ``jupyter`` can result in the kernel crashing (for example, see this `issue`_ in VS Code Jupyter).
 
 .. _`issue`: https://github.com/microsoft/vscode-jupyter/wiki/Kernel-crashes-when-using-numpy
@@ -197,6 +197,8 @@ utilize ``qiskit-nature``'s lattice problem eigensolver **[15]**. Based on tests
 
 Examples
 --------
+This section demonstrates the use of the ``adiabatic_fermi_hubbard`` package. Where applicable, approximate execution times have
+been indicated. These estimates come from running the examples in a ``jupyter`` notebook which uses an environment prepared according to the note in the Installation section.
 
 Initializing ``Lattice`` and ``HubbardHamiltonian`` objects for a 4 site lattice
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -399,7 +401,7 @@ adiabatic state preparation.
 
     print("Ground state energy: " + str(energy))
     
-This should result in the following output (after ~4 minutes):
+This should result in the following output (after ~3 minutes):
 
 ::
 
@@ -475,7 +477,7 @@ This example illustrates the difference in the ground state energy when specifyi
 
     print("Ground state energy (eigensolver, PBC): " + str(comparison_energy_pbc))
 
-When executed, the following should result (after ~ 23 minutes):
+When executed, the following should result (after ~ 15 minutes):
 
 ::
 
@@ -531,14 +533,14 @@ the reference ground state energy found using ``qiskit-nature`` for different :m
             counts_list, energy_diffs[1], "-b",
             counts_list, energy_diffs[2], "-g",
             counts_list, energy_diffs[3], "-y",
-             counts_list, energy_diffs[4], "-k")
+            counts_list, energy_diffs[4], "-k")
 
     plt.legend(["step duration = 0.001", "0.01", "0.1", "1", "10"], loc='best')
     plt.xlabel("Step Count")
     plt.ylabel("Error in Ground State Energy")
     plt.title("Error in Ground State Energy for N = 2")
 
-This will produce the following after an evaluation time of approximately 25 minutes:
+This will produce the following after an evaluation time of approximately 27 minutes:
 
 .. image:: ./errorplot.png
  :width: 400
@@ -634,7 +636,7 @@ The following code block is an example of a large lattice whose ground state can
 can be "solved" with adiabatic state preparation.
 
 ::
-    
+
     # 12 site lattice = 24 qubits
     lattice1 = afh.Lattice(12,0)
     
@@ -650,7 +652,7 @@ can be "solved" with adiabatic state preparation.
 
     print("Ground state energy:" + str(energy))
 
-After ~45 min of execution time, the following results:
+After ~42 min of execution time, the following results:
 
 ::
 

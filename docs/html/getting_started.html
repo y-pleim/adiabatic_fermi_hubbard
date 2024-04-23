@@ -129,7 +129,7 @@ commands:</p>
 <span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
 </pre></div>
 </div>
-<p><strong>WARNING FOR CONDA USERS USING JUPYTER:</strong> Some of the above packages (e.g., <code class="docutils literal notranslate"><span class="pre">qiskit</span></code>, <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code>) are <code class="docutils literal notranslate"><span class="pre">pip</span></code> installs only. If <code class="docutils literal notranslate"><span class="pre">numpy</span></code> is installed using <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">install</span></code>,
+<p><strong>WARNING FOR CONDA USERS USING JUPYTER:</strong> Some of the above packages (e.g., <code class="docutils literal notranslate"><span class="pre">qiskit</span></code>, <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code>) are <code class="docutils literal notranslate"><span class="pre">pip</span></code> installs only. If both types of installations are present,
 attempting to run the code examples below in <code class="docutils literal notranslate"><span class="pre">jupyter</span></code> can result in the kernel crashing (for example, see this <a class="reference external" href="https://github.com/microsoft/vscode-jupyter/wiki/Kernel-crashes-when-using-numpy">issue</a> in VS Code Jupyter).</p>
 <p>To avoid this, use <code class="docutils literal notranslate"><span class="pre">conda</span></code> to install <code class="docutils literal notranslate"><span class="pre">python</span></code> in the <code class="docutils literal notranslate"><span class="pre">conda</span></code> environment, then use <code class="docutils literal notranslate"><span class="pre">pip</span></code> to install all of the above dependencies.</p>
 </section>
@@ -272,6 +272,8 @@ utilize <code class="docutils literal notranslate"><span class="pre">qiskit-natu
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
+<p>This section demonstrates the use of the <code class="docutils literal notranslate"><span class="pre">adiabatic_fermi_hubbard</span></code> package. Where applicable, approximate execution times have
+been indicated. These estimates come from running the examples in a <code class="docutils literal notranslate"><span class="pre">jupyter</span></code> notebook which uses an environment prepared according to the note in the Installation section.</p>
 <section id="initializing-lattice-and-hubbardhamiltonian-objects-for-a-4-site-lattice">
 <h3>Initializing <code class="docutils literal notranslate"><span class="pre">Lattice</span></code> and <code class="docutils literal notranslate"><span class="pre">HubbardHamiltonian</span></code> objects for a 4 site lattice<a class="headerlink" href="#initializing-lattice-and-hubbardhamiltonian-objects-for-a-4-site-lattice" title="Link to this heading"></a></h3>
 <p>This example shows how to create instances of the <code class="docutils literal notranslate"><span class="pre">Lattice</span></code> and <code class="docutils literal notranslate"><span class="pre">HubbardHamiltonian</span></code> classes.</p>
@@ -454,7 +456,7 @@ adiabatic state preparation.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ground state energy: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">energy</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>This should result in the following output (after ~4 minutes):</p>
+<p>This should result in the following output (after ~3 minutes):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Ground</span> <span class="n">state</span> <span class="n">energy</span><span class="p">:</span> <span class="o">-</span><span class="mf">11.32386479860698</span>
 </pre></div>
 </div>
@@ -524,7 +526,7 @@ the ground state energy resulting from adiabatic state preparation.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ground state energy (eigensolver, PBC): &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">comparison_energy_pbc</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>When executed, the following should result (after ~ 23 minutes):</p>
+<p>When executed, the following should result (after ~ 15 minutes):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Ground</span> <span class="n">state</span> <span class="n">energy</span><span class="p">:</span> <span class="o">-</span><span class="mf">16.984508636808602</span>
 <span class="n">Ground</span> <span class="n">state</span> <span class="n">energy</span> <span class="p">(</span><span class="n">eigensolver</span><span class="p">):</span> <span class="o">-</span><span class="mf">17.098419986367535</span>
 <span class="o">===========================</span>
@@ -575,7 +577,7 @@ the reference ground state energy found using <code class="docutils literal notr
         <span class="n">counts_list</span><span class="p">,</span> <span class="n">energy_diffs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;-b&quot;</span><span class="p">,</span>
         <span class="n">counts_list</span><span class="p">,</span> <span class="n">energy_diffs</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="s2">&quot;-g&quot;</span><span class="p">,</span>
         <span class="n">counts_list</span><span class="p">,</span> <span class="n">energy_diffs</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="s2">&quot;-y&quot;</span><span class="p">,</span>
-         <span class="n">counts_list</span><span class="p">,</span> <span class="n">energy_diffs</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="s2">&quot;-k&quot;</span><span class="p">)</span>
+        <span class="n">counts_list</span><span class="p">,</span> <span class="n">energy_diffs</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="s2">&quot;-k&quot;</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s2">&quot;step duration = 0.001&quot;</span><span class="p">,</span> <span class="s2">&quot;0.01&quot;</span><span class="p">,</span> <span class="s2">&quot;0.1&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;10&quot;</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Step Count&quot;</span><span class="p">)</span>
@@ -583,7 +585,7 @@ the reference ground state energy found using <code class="docutils literal notr
 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Error in Ground State Energy for N = 2&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>This will produce the following after an evaluation time of approximately 25 minutes:</p>
+<p>This will produce the following after an evaluation time of approximately 27 minutes:</p>
 <a class="reference internal image-reference" href="_images/errorplot.png"><img alt="_images/errorplot.png" src="_images/errorplot.png" style="width: 400px;" /></a>
 <p>There are a few trends to pick out from the above plot:</p>
 <ul class="simple">
@@ -683,7 +685,7 @@ can be “solved” with adiabatic state preparation.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ground state energy:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">energy</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>After ~45 min of execution time, the following results:</p>
+<p>After ~42 min of execution time, the following results:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Ground</span> <span class="n">state</span> <span class="n">energy</span><span class="p">:</span><span class="o">-</span><span class="mf">61.78857249382058</span>
 </pre></div>
 </div>
