@@ -18,6 +18,8 @@ This package has the following dependencies:
 - pylatexenc
 - matplotlib (optional)
 
+Some of the above are pip-only installs; if you are using conda, please install all of the packages in your conda environment using pip. Please check the documentation for more details.
+
 
 ### Copyright
 
