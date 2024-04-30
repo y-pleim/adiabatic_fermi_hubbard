@@ -178,7 +178,7 @@
 <dd><dl class="py method">
 <dt class="sig sig-object py">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lattice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="autosummary/adiabatic_fermi_hubbard.Lattice.html#adiabatic_fermi_hubbard.Lattice" title="adiabatic_fermi_hubbard.Lattice.Lattice"><span class="pre">Lattice</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/adiabatic_fermi_hubbard/HubbardHamiltonian.html#HubbardHamiltonian.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>A class for constructing the Fermi-Hubbard Hamiltonian for particular lattice, hopping strength <span class="math notranslate nohighlight">\(t\)</span>, interaction strength <span class="math notranslate nohighlight">\(U\)</span>,
+<dd><p>A class for constructing the Fermi-Hubbard Hamiltonian for a particular lattice, hopping strength <span class="math notranslate nohighlight">\(t\)</span>, interaction strength <span class="math notranslate nohighlight">\(U\)</span>,
 and chemical potential <span class="math notranslate nohighlight">\(\mu\)</span>.</p>
 <div class="math notranslate nohighlight">
 \[H = -t \sum_{&lt;i,j&gt;,\sigma}(a_{i\sigma}^\dagger a_{j\sigma} + a_{j\sigma}^\dagger a_{i\sigma}) + U\sum_{i} n_{i\uparrow}n_{i\downarrow} + \mu \sum_{i,\sigma} n_{i\sigma}\]</div>
@@ -386,8 +386,8 @@ and chemical potential <span class="math notranslate nohighlight">\(\mu\)</span>
 interpolating between <span class="math notranslate nohighlight">\(H_{initial}\)</span> and <span class="math notranslate nohighlight">\(H_{final} = H_{Fermi-Hubbard}\)</span> according to</p>
 <div class="math notranslate nohighlight">
 \[H(k) = H_{initial} (1-k/M) + H_{final} (k/M).\]</div>
-<p>where <span class="math notranslate nohighlight">\(M\)</span> is the number of interpolation steps, <span class="math notranslate nohighlight">\(k = 0, 1, ... , M\)</span>, and <span class="math notranslate nohighlight">\(H_{initial} = \sum_i^{2N} X_i\)</span>. <span class="math notranslate nohighlight">\(N\)</span>
-is the number of lattice sites.</p>
+<p>where <span class="math notranslate nohighlight">\(M\)</span> is the number of interpolation steps, <span class="math notranslate nohighlight">\(k = 0, 1, ... , M\)</span>, and <span class="math notranslate nohighlight">\(H_{initial} = \sum_i^{2N} X_i\)</span> (<span class="math notranslate nohighlight">\(N\)</span>
+is the number of lattice sites).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -446,7 +446,7 @@ with this AdiabaticCircuit.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">diagonalize_hamiltonian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/adiabatic_fermi_hubbard/AdiabaticCircuit.html#AdiabaticCircuit.diagonalize_hamiltonian"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<span class="sig-name descname"><span class="pre">diagonalize_hamiltonian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/adiabatic_fermi_hubbard/AdiabaticCircuit.html#AdiabaticCircuit.diagonalize_hamiltonian"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Diagonalize the matrix representing the Hamiltonian</p>
 <div class="math notranslate nohighlight">
 \[H(k) = (1-k/M) H_{initial} + (k/M) H_{Fermi-Hubbard}\]</div>
@@ -467,7 +467,7 @@ This method works only for small lattice sizes (<span class="math notranslate no
 
 <dl class="py method">
 <dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">evolution_operator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/adiabatic_fermi_hubbard/AdiabaticCircuit.html#AdiabaticCircuit.evolution_operator"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<span class="sig-name descname"><span class="pre">evolution_operator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/adiabatic_fermi_hubbard/AdiabaticCircuit.html#AdiabaticCircuit.evolution_operator"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Implements the operation</p>
 <div class="math notranslate nohighlight">
 \[U(k) = exp(-i \Delta t (1-k/M) H_{initial})exp(-i \Delta t (k/M) H_{final,~JW})\]</div>
@@ -545,15 +545,15 @@ This method works only for small lattice sizes (<span class="math notranslate no
 
 <dl class="py method">
 <dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">initialize_ising</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exchange</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/adiabatic_fermi_hubbard/AdiabaticCircuit.html#AdiabaticCircuit.initialize_ising"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<span class="sig-name descname"><span class="pre">initialize_ising</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exchange</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/adiabatic_fermi_hubbard/AdiabaticCircuit.html#AdiabaticCircuit.initialize_ising"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Support method that assigns an Ising Hamiltonian for four qubits to an AdiabaticCircuit object:</p>
 <div class="math notranslate nohighlight">
 \[H_{ising} = J(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3)\]</div>
-<p>If the Lattice associated with the AdiabaticCircuit object has periodic boundary conditions, this method implmements</p>
+<p>If the Lattice associated with the AdiabaticCircuit object has periodic boundary conditions, this method implements</p>
 <div class="math notranslate nohighlight">
 \[H_{ising} = J(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3 + Z_3 Z_0)\]</div>
-<p>See <strong>[11]</strong> on the <a class="reference external" href="https://adiabatic-fermi-hubbard.readthedocs.io/en/latest/getting_started.html">Getting Started</a> page. This was created during development to test the implementation of the <cite>evolution_operator</cite> and
-<cite>create_circuit</cite> methods for a Hamiltonian whose adiabatic state preparation results are shown in <strong>[11]</strong>.</p>
+<p>See <strong>[11]</strong> on the <a class="reference external" href="https://adiabatic-fermi-hubbard.readthedocs.io/en/latest/getting_started.html">Getting Started</a> page. This was created during development to test the implementation of the <code class="docutils literal notranslate"><span class="pre">evolution_operator</span></code> and
+<code class="docutils literal notranslate"><span class="pre">create_circuit</span></code> methods for a Hamiltonian whose adiabatic state preparation results are shown in <strong>[11]</strong>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>exchange</strong> (<em>float</em>) – value of J parameter</p>
@@ -596,7 +596,7 @@ with an AdiabaticCircuit (provided the <cite>initialize_ising</cite> method has 
 
 <dl class="py method">
 <dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">ising_evolution_operator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/adiabatic_fermi_hubbard/AdiabaticCircuit.html#AdiabaticCircuit.ising_evolution_operator"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<span class="sig-name descname"><span class="pre">ising_evolution_operator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/adiabatic_fermi_hubbard/AdiabaticCircuit.html#AdiabaticCircuit.ising_evolution_operator"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Support method used with the <cite>initialize_ising</cite> method. Support method that implements the evolution operator</p>
 <div class="math notranslate nohighlight">
 \[exp(-i \Delta t (1-k/M) H_{initial})exp(-i \Delta t (k/M) H_{Ising})\]</div>
@@ -622,7 +622,7 @@ and <span class="math notranslate nohighlight">\(k = 0, 1, ..., M\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>pauli_string</strong> (<em>Pauli</em>) – A qiskit Pauli object which contains an n-qubit Pauli string.</p></li>
+<li><p><strong>pauli_string</strong> (<em>qiskit.quantum_info.Pauli</em>) – A qiskit Pauli object which contains an n-qubit Pauli string.</p></li>
 <li><p><strong>argument</strong> (<em>float</em>) – The angle through which to rotate.</p></li>
 </ul>
 </dd>

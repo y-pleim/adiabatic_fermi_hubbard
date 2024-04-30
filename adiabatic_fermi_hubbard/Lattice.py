@@ -4,7 +4,7 @@ from qiskit_nature.second_q.hamiltonians.lattices import BoundaryCondition, Line
 class Lattice:
     def __init__(self, num_sites: int = 2, pbc: bool = False):
         """A class for representing a 1D lattice of fermions.
-        
+
         Parameters
         ----------
         num_sites : int, default: 2

@@ -5,7 +5,7 @@ from qiskit_nature.second_q.mappers import JordanWignerMapper
 
 class HubbardHamiltonian:
     def __init__(self, lattice: Lattice, t: float = 2, U: float = 10, mu: float = -5):
-        """A class for constructing the Fermi-Hubbard Hamiltonian for particular lattice, hopping strength :math:`t`, interaction strength :math:`U`,
+        """A class for constructing the Fermi-Hubbard Hamiltonian for a particular lattice, hopping strength :math:`t`, interaction strength :math:`U`,
         and chemical potential :math:`\\mu`.
 
         .. math ::  H = -t \\sum_{<i,j>,\\sigma}(a_{i\\sigma}^\\dagger a_{j\\sigma} + a_{j\\sigma}^\\dagger a_{i\\sigma}) + U\\sum_{i} n_{i\\uparrow}n_{i\\downarrow} + \\mu \\sum_{i,\\sigma} n_{i\\sigma}

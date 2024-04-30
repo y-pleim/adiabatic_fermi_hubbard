@@ -104,8 +104,8 @@
 
 <span class="sd">        .. math:: H(k) = H_{initial} (1-k/M) + H_{final} (k/M).</span>
 
-<span class="sd">        where :math:`M` is the number of interpolation steps, :math:`k = 0, 1, ... , M`, and :math:`H_{initial} = \\sum_i^{2N} X_i`. :math:`N`</span>
-<span class="sd">        is the number of lattice sites.</span>
+<span class="sd">        where :math:`M` is the number of interpolation steps, :math:`k = 0, 1, ... , M`, and :math:`H_{initial} = \\sum_i^{2N} X_i` (:math:`N`</span>
+<span class="sd">        is the number of lattice sites).</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -143,11 +143,11 @@
     <span class="k">def</span> <span class="nf">pauli_string_rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pauli_string</span><span class="p">:</span> <span class="n">Pauli</span><span class="p">,</span> <span class="n">argument</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs a rotation about a specified Pauli string through a specified angle. Based on **[17]** on the `Getting Started`_ page.</span>
 
-<span class="sd">        .. _Getting Started: https://adiabatic-fermi-hubbard.readthedocs.io/en/latest/getting_started.html </span>
+<span class="sd">        .. _Getting Started: https://adiabatic-fermi-hubbard.readthedocs.io/en/latest/getting_started.html</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        pauli_string : Pauli</span>
+<span class="sd">        pauli_string : qiskit.quantum_info.Pauli</span>
 <span class="sd">            A qiskit Pauli object which contains an n-qubit Pauli string.</span>
 <span class="sd">        argument : float</span>
 <span class="sd">            The angle through which to rotate.</span>
@@ -223,7 +223,7 @@
 
 <div class="viewcode-block" id="AdiabaticCircuit.evolution_operator">
 <a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.evolution_operator">[docs]</a>
-    <span class="k">def</span> <span class="nf">evolution_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">evolution_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Implements the operation</span>
 
 <span class="sd">        .. math:: U(k) = exp(-i \\Delta t (1-k/M) H_{initial})exp(-i \\Delta t (k/M) H_{final,~JW})</span>
@@ -332,7 +332,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes the ground state energy for the HubbardHamiltonian associated with the AdiabaticCircuit</span>
 <span class="sd">        through qiskit-nature methods. Based on the example code found in **[15]** on the `Getting Started`_ page.</span>
 
-<span class="sd">        .. _Getting Started: https://adiabatic-fermi-hubbard.readthedocs.io/en/latest/getting_started.html </span>
+<span class="sd">        .. _Getting Started: https://adiabatic-fermi-hubbard.readthedocs.io/en/latest/getting_started.html</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -449,7 +449,7 @@
 
 <div class="viewcode-block" id="AdiabaticCircuit.diagonalize_hamiltonian">
 <a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.diagonalize_hamiltonian">[docs]</a>
-    <span class="k">def</span> <span class="nf">diagonalize_hamiltonian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">diagonalize_hamiltonian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Diagonalize the matrix representing the Hamiltonian</span>
 
 <span class="sd">        .. math:: H(k) = (1-k/M) H_{initial} + (k/M) H_{Fermi-Hubbard}</span>
@@ -513,19 +513,19 @@
 
 <div class="viewcode-block" id="AdiabaticCircuit.initialize_ising">
 <a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.initialize_ising">[docs]</a>
-    <span class="k">def</span> <span class="nf">initialize_ising</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exchange</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">initialize_ising</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exchange</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Support method that assigns an Ising Hamiltonian for four qubits to an AdiabaticCircuit object:</span>
 
 <span class="sd">        .. math:: H_{ising} = J(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3)</span>
 
-<span class="sd">        If the Lattice associated with the AdiabaticCircuit object has periodic boundary conditions, this method implmements</span>
+<span class="sd">        If the Lattice associated with the AdiabaticCircuit object has periodic boundary conditions, this method implements</span>
 
 <span class="sd">        .. math:: H_{ising} = J(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3 + Z_3 Z_0)</span>
 
-<span class="sd">        See **[11]** on the `Getting Started`_ page. This was created during development to test the implementation of the `evolution_operator` and </span>
-<span class="sd">        `create_circuit` methods for a Hamiltonian whose adiabatic state preparation results are shown in **[11]**.</span>
+<span class="sd">        See **[11]** on the `Getting Started`_ page. This was created during development to test the implementation of the ``evolution_operator`` and</span>
+<span class="sd">        ``create_circuit`` methods for a Hamiltonian whose adiabatic state preparation results are shown in **[11]**.</span>
 
-<span class="sd">        .. _Getting Started: https://adiabatic-fermi-hubbard.readthedocs.io/en/latest/getting_started.html </span>
+<span class="sd">        .. _Getting Started: https://adiabatic-fermi-hubbard.readthedocs.io/en/latest/getting_started.html</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -545,10 +545,9 @@
             <span class="p">)</span></div>
 
 
-
 <div class="viewcode-block" id="AdiabaticCircuit.ising_evolution_operator">
 <a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.ising_evolution_operator">[docs]</a>
-    <span class="k">def</span> <span class="nf">ising_evolution_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ising_evolution_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Support method used with the `initialize_ising` method. Support method that implements the evolution operator</span>
 
 <span class="sd">        .. math:: exp(-i \\Delta t (1-k/M) H_{initial})exp(-i \\Delta t (k/M) H_{Ising})</span>

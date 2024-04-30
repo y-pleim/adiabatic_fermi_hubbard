@@ -25,8 +25,8 @@ class AdiabaticCircuit:
 
         .. math:: H(k) = H_{initial} (1-k/M) + H_{final} (k/M).
 
-        where :math:`M` is the number of interpolation steps, :math:`k = 0, 1, ... , M`, and :math:`H_{initial} = \\sum_i^{2N} X_i`. :math:`N`
-        is the number of lattice sites.
+        where :math:`M` is the number of interpolation steps, :math:`k = 0, 1, ... , M`, and :math:`H_{initial} = \\sum_i^{2N} X_i` (:math:`N`
+        is the number of lattice sites).
 
         Parameters
         ----------
@@ -58,11 +58,11 @@ class AdiabaticCircuit:
     def pauli_string_rotation(self, pauli_string: Pauli, argument: float):
         """Performs a rotation about a specified Pauli string through a specified angle. Based on **[17]** on the `Getting Started`_ page.
 
-        .. _Getting Started: https://adiabatic-fermi-hubbard.readthedocs.io/en/latest/getting_started.html 
+        .. _Getting Started: https://adiabatic-fermi-hubbard.readthedocs.io/en/latest/getting_started.html
 
         Parameters
         ----------
-        pauli_string : Pauli
+        pauli_string : qiskit.quantum_info.Pauli
             A qiskit Pauli object which contains an n-qubit Pauli string.
         argument : float
             The angle through which to rotate.
@@ -135,7 +135,7 @@ class AdiabaticCircuit:
 
         return circ
 
-    def evolution_operator(self, k):
+    def evolution_operator(self, k: int):
         """Implements the operation
 
         .. math:: U(k) = exp(-i \\Delta t (1-k/M) H_{initial})exp(-i \\Delta t (k/M) H_{final,~JW})
@@ -235,7 +235,7 @@ class AdiabaticCircuit:
         """Computes the ground state energy for the HubbardHamiltonian associated with the AdiabaticCircuit
         through qiskit-nature methods. Based on the example code found in **[15]** on the `Getting Started`_ page.
 
-        .. _Getting Started: https://adiabatic-fermi-hubbard.readthedocs.io/en/latest/getting_started.html 
+        .. _Getting Started: https://adiabatic-fermi-hubbard.readthedocs.io/en/latest/getting_started.html
 
         Returns
         -------
@@ -334,7 +334,7 @@ class AdiabaticCircuit:
         """
         return self.step_count
 
-    def diagonalize_hamiltonian(self, k):
+    def diagonalize_hamiltonian(self, k: int):
         """Diagonalize the matrix representing the Hamiltonian
 
         .. math:: H(k) = (1-k/M) H_{initial} + (k/M) H_{Fermi-Hubbard}
@@ -395,19 +395,19 @@ class AdiabaticCircuit:
 
         return eigs
 
-    def initialize_ising(self, exchange):
+    def initialize_ising(self, exchange: float):
         """Support method that assigns an Ising Hamiltonian for four qubits to an AdiabaticCircuit object:
 
         .. math:: H_{ising} = J(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3)
 
-        If the Lattice associated with the AdiabaticCircuit object has periodic boundary conditions, this method implmements
+        If the Lattice associated with the AdiabaticCircuit object has periodic boundary conditions, this method implements
 
         .. math:: H_{ising} = J(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3 + Z_3 Z_0)
 
-        See **[11]** on the `Getting Started`_ page. This was created during development to test the implementation of the `evolution_operator` and 
-        `create_circuit` methods for a Hamiltonian whose adiabatic state preparation results are shown in **[11]**.
+        See **[11]** on the `Getting Started`_ page. This was created during development to test the implementation of the ``evolution_operator`` and
+        ``create_circuit`` methods for a Hamiltonian whose adiabatic state preparation results are shown in **[11]**.
 
-        .. _Getting Started: https://adiabatic-fermi-hubbard.readthedocs.io/en/latest/getting_started.html 
+        .. _Getting Started: https://adiabatic-fermi-hubbard.readthedocs.io/en/latest/getting_started.html
 
         Parameters
         ----------
@@ -426,8 +426,7 @@ class AdiabaticCircuit:
                 ["ZZII", "IZZI", "IIZZ"], coeffs=[val, val, val]
             )
 
-
-    def ising_evolution_operator(self, k):
+    def ising_evolution_operator(self, k: int):
         """Support method used with the `initialize_ising` method. Support method that implements the evolution operator
 
         .. math:: exp(-i \\Delta t (1-k/M) H_{initial})exp(-i \\Delta t (k/M) H_{Ising})
