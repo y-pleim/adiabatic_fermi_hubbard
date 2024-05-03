@@ -15,22 +15,22 @@ def test_str():
 
 
 def test_get_num_sites():
-    """Test for Lattice get_num_sites method."""
-    lattice1 = afh.Lattice(10, 1)
+    """Test for get_num_sites method."""
+    lattice1 = afh.Lattice(10, pbc=True)
     assert 10 == lattice1.get_num_sites()
 
 
 def test_has_pbc():
-    """Test for Lattice has_pbc method."""
-    lattice1 = afh.Lattice(2, 1)
-    lattice2 = afh.Lattice(2, 0)
+    """Test for has_pbc method."""
+    lattice1 = afh.Lattice(2, pbc=True)
+    lattice2 = afh.Lattice(2, pbc=False)
     assert True == lattice1.has_pbc()
     assert False == lattice2.has_pbc()
 
 
 def test_get_qiskit_object():
-    """Test for Lattice get_qiskit_object method."""
-    lattice1 = afh.Lattice(2, 1)
+    """Test for get_qiskit_object method."""
+    lattice1 = afh.Lattice(2, pbc=True)
     qiskit_from_lattice1 = lattice1.get_qiskit_object()
     qiskit_lattice = LineLattice(2, 1.0, 0.0, BoundaryCondition.PERIODIC)
     assert type(qiskit_lattice) == type(qiskit_from_lattice1)

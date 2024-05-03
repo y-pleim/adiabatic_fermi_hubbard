@@ -1,4 +1,4 @@
-"""Unit tests for HubbardHamiltonian. """
+"""Unit tests for the HubbardHamiltonian class."""
 
 import adiabatic_fermi_hubbard as afh
 from qiskit_nature.second_q.operators import FermionicOp
@@ -9,7 +9,7 @@ from qiskit.quantum_info import SparsePauliOp
 
 def test_str():
     """Test for __str__ method"""
-    lattice1 = afh.Lattice(2, 1)
+    lattice1 = afh.Lattice(2, pbc=True)
     ham1 = afh.HubbardHamiltonian(lattice1, 2, 2, 2)
     test_string = (
         "t = 2\nU = 2\nmu = 2\n\nLattice:\n"
@@ -22,7 +22,7 @@ def test_str():
 
 def test_jw_interaction_term():
     """Test for jw_interaction_term method"""
-    lattice1 = afh.Lattice(2, 1)
+    lattice1 = afh.Lattice(2, pbc=True)
     ham1 = afh.HubbardHamiltonian(lattice1, 2, 2, 2)
     test_pauli_op = SparsePauliOp(
         ["IIII", "IIZI", "IIIZ", "IIZZ", "ZIII", "IZII", "ZZII"],
@@ -41,7 +41,7 @@ def test_jw_interaction_term():
 
 def test_jw_hopping_term():
     """Test for jw_hopping_term method"""
-    lattice1 = afh.Lattice(2, 1)
+    lattice1 = afh.Lattice(2, pbc=True)
     ham1 = afh.HubbardHamiltonian(lattice1, 2, 2, 2)
     test_pauli_op = SparsePauliOp(
         ["IYZY", "IXZX", "YZYI", "XZXI"],
@@ -52,7 +52,7 @@ def test_jw_hopping_term():
 
 def test_jw_chemical_potential_term():
     """Test for jw_chemical_potential_term method"""
-    lattice1 = afh.Lattice(2, 1)
+    lattice1 = afh.Lattice(2, pbc=True)
     ham1 = afh.HubbardHamiltonian(lattice1, 2, 2, 2)
     test_pauli_op = SparsePauliOp(
         ["IIII", "IIIZ", "IIZI", "IZII", "ZIII"],
@@ -63,7 +63,7 @@ def test_jw_chemical_potential_term():
 
 def test_jw_hamiltonian():
     """Test for jw_hamiltonian method"""
-    lattice1 = afh.Lattice(2, 1)
+    lattice1 = afh.Lattice(2, pbc=True)
     ham1 = afh.HubbardHamiltonian(lattice1, 2, 2, 2)
     test_pauli_op = SparsePauliOp(
         [
@@ -94,6 +94,7 @@ def test_jw_hamiltonian():
         ],
     )
 
+    # cover another possible arrangement
     test_pauli_op2 = SparsePauliOp(
         [
             "IYZY",
@@ -131,28 +132,28 @@ def test_jw_hamiltonian():
 
 def test_get_t_value():
     """Test for get_t_value() access method."""
-    lattice1 = afh.Lattice(4, 1)
+    lattice1 = afh.Lattice(4, pbc=True)
     ham1 = afh.HubbardHamiltonian(lattice1, 2, 2, 2)
     assert ham1.get_t_value() == 2.0
 
 
 def test_get_u_value():
     """Test for get_u_value() access method."""
-    lattice1 = afh.Lattice(4, 1)
+    lattice1 = afh.Lattice(4, pbc=True)
     ham1 = afh.HubbardHamiltonian(lattice1, 2, 2, 2)
     assert ham1.get_u_value() == 2.0
 
 
 def test_get_mu_value():
     """Test for get_mu_value() access method."""
-    lattice1 = afh.Lattice(4, 1)
+    lattice1 = afh.Lattice(4, pbc=True)
     ham1 = afh.HubbardHamiltonian(lattice1, 2, 2, 2)
     assert ham1.get_mu_value() == 2.0
 
 
 def test_get_lattice():
     """Test for get_lattice() access method."""
-    lattice1 = afh.Lattice(4, 1)
+    lattice1 = afh.Lattice(4, pbc=True)
     ham1 = afh.HubbardHamiltonian(lattice1, 2, 2, 2)
     lattice_from_ham = ham1.get_lattice()
 
@@ -166,7 +167,7 @@ def test_get_lattice():
 
 def test_get_interaction_term():
     """Test for get_interaction_term() method."""
-    lattice1 = afh.Lattice(2, 1)
+    lattice1 = afh.Lattice(2, pbc=True)
     ham1 = afh.HubbardHamiltonian(lattice1, 2, 2, 2)
     interaction_ham1 = ham1.get_interaction_term()
 
@@ -189,7 +190,7 @@ def test_get_interaction_term():
 
 def test_get_hopping_term():
     """Test for get_hopping_term() method."""
-    lattice1 = afh.Lattice(2, 1)
+    lattice1 = afh.Lattice(2, pbc=True)
     ham1 = afh.HubbardHamiltonian(lattice1, 2, 2, 2)
     hopping_ham1 = ham1.get_hopping_term()
 
@@ -210,7 +211,7 @@ def test_get_hopping_term():
     )
 
     # periodic boundary conditions case
-    lattice2 = afh.Lattice(3, 1)
+    lattice2 = afh.Lattice(3, pbc=True)
     ham2 = afh.HubbardHamiltonian(lattice2, 2, 2)
     hopping_ham2 = ham2.get_hopping_term()
 
@@ -244,7 +245,7 @@ def test_get_hopping_term():
 
 def test_get_chemical_potential_term():
     """Test for get_chemical_potential() method."""
-    lattice1 = afh.Lattice(2, 1)
+    lattice1 = afh.Lattice(2, pbc=True)
     ham1 = afh.HubbardHamiltonian(lattice1, 2, 2, 2)
     chem_ham1 = ham1.get_chemical_potential_term()
 
@@ -267,7 +268,7 @@ def test_get_chemical_potential_term():
 
 def test_get_hamiltonian():
     """Test for get_hamiltonian() method."""
-    lattice1 = afh.Lattice(2, 1)
+    lattice1 = afh.Lattice(2, pbc=True)
     ham1 = afh.HubbardHamiltonian(lattice1, 2, 2, 2)
     assert (
         ham1.get_hopping_term()
@@ -279,7 +280,7 @@ def test_get_hamiltonian():
 
 def test_get_hamiltonian_2():
     """Additional test for get_hamiltonian() based on the qiskit-nature FermiHubbardModel object"""
-    lattice1 = afh.Lattice(2, 1)
+    lattice1 = afh.Lattice(2, pbc=True)
     ham1 = afh.HubbardHamiltonian(lattice1, 2, 2, 2)
     qiskit_lattice = lattice1.get_qiskit_object()
 

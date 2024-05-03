@@ -98,7 +98,7 @@
 <dd><p>A class for building/executing Qiskit circuits for adiabatic state preparation of the Fermi-Hubbard Hamiltonian ground state through
 interpolating between <span class="math notranslate nohighlight">\(H_{initial}\)</span> and <span class="math notranslate nohighlight">\(H_{final} = H_{Fermi-Hubbard}\)</span> according to</p>
 <div class="math notranslate nohighlight">
-\[H(k) = H_{initial} (1-k/M) + H_{final} (k/M).\]</div>
+\[H(k) = (1-k/M) H_{initial} + (k/M) H_{final}.\]</div>
 <p>where <span class="math notranslate nohighlight">\(M\)</span> is the number of interpolation steps, <span class="math notranslate nohighlight">\(k = 0, 1, ... , M\)</span>, and <span class="math notranslate nohighlight">\(H_{initial} = \sum_i^{2N} X_i\)</span> (<span class="math notranslate nohighlight">\(N\)</span>
 is the number of lattice sites).</p>
 <dl class="field-list simple">
@@ -146,13 +146,13 @@ is the number of lattice sites).</p>
 <td><p>Support method that assigns an Ising Hamiltonian for four qubits to an AdiabaticCircuit object:</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ising_calc_energy</span></code>(result)</p></td>
-<td><p>Support method used with the <cite>initialize_ising</cite> method.</p></td>
+<td><p>Support method used with the <code class="docutils literal notranslate"><span class="pre">initialize_ising</span></code> method.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ising_create_circuit</span></code>()</p></td>
-<td><p>Support method used with the <cite>initialize_ising</cite> method.</p></td>
+<td><p>Support method used with the <code class="docutils literal notranslate"><span class="pre">initialize_ising</span></code> method.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ising_evolution_operator</span></code>(k)</p></td>
-<td><p>Support method used with the <cite>initialize_ising</cite> method.</p></td>
+<td><p>Support method used with the <code class="docutils literal notranslate"><span class="pre">initialize_ising</span></code> method.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pauli_string_rotation</span></code>(pauli_string, argument)</p></td>
 <td><p>Performs a rotation about a specified Pauli string through a specified angle.</p></td>

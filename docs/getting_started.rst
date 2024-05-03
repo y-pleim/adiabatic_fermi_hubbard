@@ -551,13 +551,13 @@ This will produce the following after an evaluation time of approximately 27 min
 There are a few trends to pick out from the above plot:
 
 * First, as the step count :math:`M` increases, the error or difference between the adiabatic solution and the qiskit-nature reference generally improves. This can be understood from the fact that as the total evolution time :math:`t = M \Delta t` increases, :math:`t` becomes larger and closer to satisfying Equation :eq:`condition`.
-* For short time steps, the total evolution time becomes small, in which case Equation :eq:`condidion` is likely unfulfilled.
+* For short time steps, the total evolution time becomes small, in which case Equation :eq:`condition` is likely unfulfilled.
 * For long time steps (e.g., 1 and 10) the evolution time is longer; however, the Trotter approximation becomes worse since :math:`\Delta t` is no longer considered a small argument.
 
 Validating the "slow" evolution condition for :math:`N = 2`
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 This example aims to quantify the quantity :math:`1/(E_0 - E_1)^2` to investigate the condition in Equation :eq:`condition`. This example
-makes use of the ``diagonalize_hamiltonian`` method. 
+makes use of the ``diagonalize_hamiltonian`` method.
 
 ::
 
@@ -628,8 +628,8 @@ This code should produce the following text output and plot after 1 minute of ev
  :width: 500
 
 
-For both :math:`M=1000` and :math:`M=10000`, the peak value of :math:`1/(E_0-E_1)^2` occurs at around :math:`M/2` and has the same value. The reason for the peak can be seen in the behavior of the two lowest eigenvalues of :math:`H(k)` at each step :math:`k`.
-So, :math:`M` is not involved in setting the condition on the total evolution time :math:`t = M \Delta t`. However, increasing :math:`M` brings :math:`t` closer to fulfilling the condition on the two site lattice, which is why the error/energy difference
+For both :math:`M=1000` and :math:`M=10000`, the peak value of :math:`1/(E_0-E_1)^2` occurs at around :math:`M/2` and has the same value. The reason for the peak can be seen in how the gap between the two lowest eigenvalues of :math:`H(k)` changes as :math:`k` increases.
+So, :math:`M` is not involved in setting the condition on the total evolution time :math:`t = M \Delta t` (Equation :eq:`condition`). However, increasing :math:`M` brings :math:`t` closer to fulfilling the condition on the two site lattice, which is why the error/energy difference
 explored in the previous section generally improved for increasing evolution time (excluding the cases where :math:`\Delta t` being too large questioned the validity of the Trotter approximation).
 
 

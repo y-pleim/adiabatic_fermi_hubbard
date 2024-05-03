@@ -385,7 +385,7 @@ and chemical potential <span class="math notranslate nohighlight">\(\mu\)</span>
 <dd><p>A class for building/executing Qiskit circuits for adiabatic state preparation of the Fermi-Hubbard Hamiltonian ground state through
 interpolating between <span class="math notranslate nohighlight">\(H_{initial}\)</span> and <span class="math notranslate nohighlight">\(H_{final} = H_{Fermi-Hubbard}\)</span> according to</p>
 <div class="math notranslate nohighlight">
-\[H(k) = H_{initial} (1-k/M) + H_{final} (k/M).\]</div>
+\[H(k) = (1-k/M) H_{initial} + (k/M) H_{final}.\]</div>
 <p>where <span class="math notranslate nohighlight">\(M\)</span> is the number of interpolation steps, <span class="math notranslate nohighlight">\(k = 0, 1, ... , M\)</span>, and <span class="math notranslate nohighlight">\(H_{initial} = \sum_i^{2N} X_i\)</span> (<span class="math notranslate nohighlight">\(N\)</span>
 is the number of lattice sites).</p>
 <dl class="field-list simple">
@@ -470,7 +470,7 @@ This method works only for small lattice sizes (<span class="math notranslate no
 <span class="sig-name descname"><span class="pre">evolution_operator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/adiabatic_fermi_hubbard/AdiabaticCircuit.html#AdiabaticCircuit.evolution_operator"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Implements the operation</p>
 <div class="math notranslate nohighlight">
-\[U(k) = exp(-i \Delta t (1-k/M) H_{initial})exp(-i \Delta t (k/M) H_{final,~JW})\]</div>
+\[U(k) = \exp(-i \Delta t (1-k/M) H_{initial})\exp(-i \Delta t (k/M) H_{final,~JW})\]</div>
 <p>where <span class="math notranslate nohighlight">\(H_{initial} = \sum_i^{2N}{X_i}\)</span> with <span class="math notranslate nohighlight">\(N\)</span> the number of lattice sites,
 <span class="math notranslate nohighlight">\(H_{final, ~JW}\)</span> is the Jordan-Wigner transformed Fermi-Hubbard Hamiltonian, and
 <span class="math notranslate nohighlight">\(M\)</span> is the number of interpolation steps.</p>
@@ -548,10 +548,10 @@ This method works only for small lattice sizes (<span class="math notranslate no
 <span class="sig-name descname"><span class="pre">initialize_ising</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exchange</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/adiabatic_fermi_hubbard/AdiabaticCircuit.html#AdiabaticCircuit.initialize_ising"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Support method that assigns an Ising Hamiltonian for four qubits to an AdiabaticCircuit object:</p>
 <div class="math notranslate nohighlight">
-\[H_{ising} = J(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3)\]</div>
+\[H_{Ising} = J(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3)\]</div>
 <p>If the Lattice associated with the AdiabaticCircuit object has periodic boundary conditions, this method implements</p>
 <div class="math notranslate nohighlight">
-\[H_{ising} = J(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3 + Z_3 Z_0)\]</div>
+\[H_{Ising} = J(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3 + Z_3 Z_0)\]</div>
 <p>See <strong>[11]</strong> on the <a class="reference external" href="https://adiabatic-fermi-hubbard.readthedocs.io/en/latest/getting_started.html">Getting Started</a> page. This was created during development to test the implementation of the <code class="docutils literal notranslate"><span class="pre">evolution_operator</span></code> and
 <code class="docutils literal notranslate"><span class="pre">create_circuit</span></code> methods for a Hamiltonian whose adiabatic state preparation results are shown in <strong>[11]</strong>.</p>
 <dl class="field-list simple">
@@ -564,8 +564,8 @@ This method works only for small lattice sizes (<span class="math notranslate no
 <dl class="py method">
 <dt class="sig sig-object py">
 <span class="sig-name descname"><span class="pre">ising_calc_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Result</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/adiabatic_fermi_hubbard/AdiabaticCircuit.html#AdiabaticCircuit.ising_calc_energy"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Support method used with the <cite>initialize_ising</cite> method. Calculates the energy for the state represented by result using the Ising Hamiltonian associated
-with an AdiabaticCircuit object (provided the <cite>initialize_ising</cite> method has already been run).</p>
+<dd><p>Support method used with the <code class="docutils literal notranslate"><span class="pre">initialize_ising</span></code> method. Calculates the energy for the state represented by result using the Ising Hamiltonian associated
+with an AdiabaticCircuit object (provided the <code class="docutils literal notranslate"><span class="pre">initialize_ising</span></code> method has already been run).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>result</strong> (<em>qiskit.result.Result</em>) – A qiskit Result containing the state to calculate the energy for.</p>
@@ -582,8 +582,8 @@ with an AdiabaticCircuit object (provided the <cite>initialize_ising</cite> meth
 <dl class="py method">
 <dt class="sig sig-object py">
 <span class="sig-name descname"><span class="pre">ising_create_circuit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/adiabatic_fermi_hubbard/AdiabaticCircuit.html#AdiabaticCircuit.ising_create_circuit"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Support method used with the <cite>initialize_ising</cite> method. Creates the circuit which performs the adiabatic state preparation of the ground state of the Ising Hamiltonian associated
-with an AdiabaticCircuit (provided the <cite>initialize_ising</cite> method has already been run).</p>
+<dd><p>Support method used with the <code class="docutils literal notranslate"><span class="pre">initialize_ising</span></code> method. Creates the circuit which performs the adiabatic state preparation of the ground state of the Ising Hamiltonian associated
+with an AdiabaticCircuit (provided the <code class="docutils literal notranslate"><span class="pre">initialize_ising</span></code> method has already been run).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>circ</strong> – The circuit which will carry out the adiabatic state preparation when run.</p>
@@ -597,10 +597,10 @@ with an AdiabaticCircuit (provided the <cite>initialize_ising</cite> method has 
 <dl class="py method">
 <dt class="sig sig-object py">
 <span class="sig-name descname"><span class="pre">ising_evolution_operator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/adiabatic_fermi_hubbard/AdiabaticCircuit.html#AdiabaticCircuit.ising_evolution_operator"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Support method used with the <cite>initialize_ising</cite> method. Support method that implements the evolution operator</p>
+<dd><p>Support method used with the <code class="docutils literal notranslate"><span class="pre">initialize_ising</span></code> method. Support method that implements the evolution operator</p>
 <div class="math notranslate nohighlight">
-\[exp(-i \Delta t (1-k/M) H_{initial})exp(-i \Delta t (k/M) H_{Ising})\]</div>
-<p>where <span class="math notranslate nohighlight">\(H_{Ising}\)</span> is the Ising Hamiltonian created by running the initialize_ising method, <span class="math notranslate nohighlight">\(M\)</span> is the step count,
+\[\exp(-i \Delta t (1-k/M) H_{initial})\exp(-i \Delta t (k/M) H_{Ising})\]</div>
+<p>where <span class="math notranslate nohighlight">\(H_{Ising}\)</span> is the Ising Hamiltonian created by running the <code class="docutils literal notranslate"><span class="pre">initialize_ising</span></code> method, <span class="math notranslate nohighlight">\(M\)</span> is the step count,
 and <span class="math notranslate nohighlight">\(k = 0, 1, ..., M\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

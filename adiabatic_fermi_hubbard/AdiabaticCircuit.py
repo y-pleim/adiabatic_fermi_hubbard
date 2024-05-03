@@ -1,6 +1,6 @@
 from adiabatic_fermi_hubbard import HubbardHamiltonian
 
-from qiskit import QuantumCircuit, execute, QuantumRegister, transpile
+from qiskit import QuantumCircuit, execute
 from qiskit.result import Result
 from qiskit.quantum_info import Pauli, SparsePauliOp
 from qiskit_aer import Aer
@@ -23,7 +23,7 @@ class AdiabaticCircuit:
         """A class for building/executing Qiskit circuits for adiabatic state preparation of the Fermi-Hubbard Hamiltonian ground state through
         interpolating between :math:`H_{initial}` and :math:`H_{final} = H_{Fermi-Hubbard}` according to
 
-        .. math:: H(k) = H_{initial} (1-k/M) + H_{final} (k/M).
+        .. math:: H(k) = (1-k/M) H_{initial} + (k/M) H_{final}.
 
         where :math:`M` is the number of interpolation steps, :math:`k = 0, 1, ... , M`, and :math:`H_{initial} = \\sum_i^{2N} X_i` (:math:`N`
         is the number of lattice sites).
@@ -138,7 +138,7 @@ class AdiabaticCircuit:
     def evolution_operator(self, k: int):
         """Implements the operation
 
-        .. math:: U(k) = exp(-i \\Delta t (1-k/M) H_{initial})exp(-i \\Delta t (k/M) H_{final,~JW})
+        .. math:: U(k) = \\exp(-i \\Delta t (1-k/M) H_{initial})\\exp(-i \\Delta t (k/M) H_{final,~JW})
 
         where :math:`H_{initial} = \\sum_i^{2N}{X_i}` with :math:`N` the number of lattice sites,
         :math:`H_{final, ~JW}` is the Jordan-Wigner transformed Fermi-Hubbard Hamiltonian, and
@@ -170,11 +170,11 @@ class AdiabaticCircuit:
         for i in range(self.n):
             seq.append(i)
 
-        # first exponential factor: evolution under H_init for step k on qubits in seq
+        # first exponential factor: evolution under H_{initial} for step k on qubits in seq
         for i in range(self.n):
             circ.rx(self.time_step * (1 - k * delta_s), i)
 
-        # second exponential factor: evolution under H_HF for step k on qubits in seq
+        # second exponential factor: evolution under H_{final} for step k on qubits in seq
         for i in range(len(final_ham_paulis)):
             circ.append(
                 self.pauli_string_rotation(
@@ -198,7 +198,7 @@ class AdiabaticCircuit:
         """
         circ = QuantumCircuit(self.n, 0)
 
-        # start system in ground state of H_init (i.e., the all minus state)
+        # start system in ground state of H_{initial} (i.e., the all minus state)
         for i in range(self.n):
             circ.x(i)
             circ.h(i)
@@ -357,6 +357,8 @@ class AdiabaticCircuit:
 
         a = np.array([(0, 1), (1, 0)])  # X gate
 
+        # build matrix form of H_{initial}
+
         # create list with n identity gates
         eyes = []
         for i in range(self.n):
@@ -374,7 +376,7 @@ class AdiabaticCircuit:
                 b = np.kron(list_2[j], b)
             matrices.append(b)
 
-        # add together matrices in matrices list to get matrix form of H_{init}
+        # add together matrices in matrices list to get matrix form of H_{initial}
         init_matrix = np.zeros(2**self.n)
         for i in range(len(matrices)):
             if i == 0:
@@ -398,11 +400,11 @@ class AdiabaticCircuit:
     def initialize_ising(self, exchange: float):
         """Support method that assigns an Ising Hamiltonian for four qubits to an AdiabaticCircuit object:
 
-        .. math:: H_{ising} = J(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3)
+        .. math:: H_{Ising} = J(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3)
 
         If the Lattice associated with the AdiabaticCircuit object has periodic boundary conditions, this method implements
 
-        .. math:: H_{ising} = J(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3 + Z_3 Z_0)
+        .. math:: H_{Ising} = J(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3 + Z_3 Z_0)
 
         See **[11]** on the `Getting Started`_ page. This was created during development to test the implementation of the ``evolution_operator`` and
         ``create_circuit`` methods for a Hamiltonian whose adiabatic state preparation results are shown in **[11]**.
@@ -427,11 +429,11 @@ class AdiabaticCircuit:
             )
 
     def ising_evolution_operator(self, k: int):
-        """Support method used with the `initialize_ising` method. Support method that implements the evolution operator
+        """Support method used with the ``initialize_ising`` method. Support method that implements the evolution operator
 
-        .. math:: exp(-i \\Delta t (1-k/M) H_{initial})exp(-i \\Delta t (k/M) H_{Ising})
+        .. math:: \\exp(-i \\Delta t (1-k/M) H_{initial})\\exp(-i \\Delta t (k/M) H_{Ising})
 
-        where :math:`H_{Ising}` is the Ising Hamiltonian created by running the initialize_ising method, :math:`M` is the step count,
+        where :math:`H_{Ising}` is the Ising Hamiltonian created by running the ``initialize_ising`` method, :math:`M` is the step count,
         and :math:`k = 0, 1, ..., M`.
 
         Parameters
@@ -458,11 +460,11 @@ class AdiabaticCircuit:
         for i in range(self.ising_n):
             seq.append(i)
 
-        # first exponential factor: evolution under H_init for step k on qubits in seq
+        # first exponential factor: evolution under H_{initial} for step k on qubits in seq
         for i in range(self.ising_n):
             circ.rx(self.time_step * (1 - k * delta_s), i)
 
-        # second exponential factor: evolution under H_ising for step k on qubits in seq
+        # second exponential factor: evolution under H_{Ising} for step k on qubits in seq
         for i in range(len(final_ham_paulis)):
             circ.append(
                 self.pauli_string_rotation(
@@ -474,8 +476,8 @@ class AdiabaticCircuit:
         return circ
 
     def ising_create_circuit(self):
-        """Support method used with the `initialize_ising` method. Creates the circuit which performs the adiabatic state preparation of the ground state of the Ising Hamiltonian associated
-        with an AdiabaticCircuit (provided the `initialize_ising` method has already been run).
+        """Support method used with the ``initialize_ising`` method. Creates the circuit which performs the adiabatic state preparation of the ground state of the Ising Hamiltonian associated
+        with an AdiabaticCircuit (provided the ``initialize_ising`` method has already been run).
 
         Returns
         -------
@@ -485,7 +487,7 @@ class AdiabaticCircuit:
         """
         circ = QuantumCircuit(self.ising_n, 0)
 
-        # start system in ground state of H_init (i.e., the all minus state)
+        # start system in ground state of H_{initial} (i.e., the all minus state)
         for i in range(self.ising_n):
             circ.x(i)
             circ.h(i)
@@ -495,15 +497,15 @@ class AdiabaticCircuit:
         for i in range(self.ising_n):
             seq.append(i)
 
-        # build a circuit of M+1 evolution operators with i = 0, 1, ..., M
+        # build a circuit of M+1 Ising evolution operators with i = 0, 1, ..., M
         for i in range(self.step_count + 1):
             circ.append(self.ising_evolution_operator(i), seq)
 
         return circ
 
     def ising_calc_energy(self, result: Result):
-        """Support method used with the `initialize_ising` method. Calculates the energy for the state represented by result using the Ising Hamiltonian associated
-        with an AdiabaticCircuit object (provided the `initialize_ising` method has already been run).
+        """Support method used with the ``initialize_ising`` method. Calculates the energy for the state represented by result using the Ising Hamiltonian associated
+        with an AdiabaticCircuit object (provided the ``initialize_ising`` method has already been run).
 
         Parameters
         ----------

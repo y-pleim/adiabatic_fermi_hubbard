@@ -75,7 +75,7 @@
   <h1>Source code for adiabatic_fermi_hubbard.AdiabaticCircuit</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">adiabatic_fermi_hubbard</span> <span class="kn">import</span> <span class="n">HubbardHamiltonian</span>
 
-<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">execute</span><span class="p">,</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">transpile</span>
+<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">execute</span>
 <span class="kn">from</span> <span class="nn">qiskit.result</span> <span class="kn">import</span> <span class="n">Result</span>
 <span class="kn">from</span> <span class="nn">qiskit.quantum_info</span> <span class="kn">import</span> <span class="n">Pauli</span><span class="p">,</span> <span class="n">SparsePauliOp</span>
 <span class="kn">from</span> <span class="nn">qiskit_aer</span> <span class="kn">import</span> <span class="n">Aer</span>
@@ -102,7 +102,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A class for building/executing Qiskit circuits for adiabatic state preparation of the Fermi-Hubbard Hamiltonian ground state through</span>
 <span class="sd">        interpolating between :math:`H_{initial}` and :math:`H_{final} = H_{Fermi-Hubbard}` according to</span>
 
-<span class="sd">        .. math:: H(k) = H_{initial} (1-k/M) + H_{final} (k/M).</span>
+<span class="sd">        .. math:: H(k) = (1-k/M) H_{initial} + (k/M) H_{final}.</span>
 
 <span class="sd">        where :math:`M` is the number of interpolation steps, :math:`k = 0, 1, ... , M`, and :math:`H_{initial} = \\sum_i^{2N} X_i` (:math:`N`</span>
 <span class="sd">        is the number of lattice sites).</span>
@@ -226,7 +226,7 @@
     <span class="k">def</span> <span class="nf">evolution_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Implements the operation</span>
 
-<span class="sd">        .. math:: U(k) = exp(-i \\Delta t (1-k/M) H_{initial})exp(-i \\Delta t (k/M) H_{final,~JW})</span>
+<span class="sd">        .. math:: U(k) = \\exp(-i \\Delta t (1-k/M) H_{initial})\\exp(-i \\Delta t (k/M) H_{final,~JW})</span>
 
 <span class="sd">        where :math:`H_{initial} = \\sum_i^{2N}{X_i}` with :math:`N` the number of lattice sites,</span>
 <span class="sd">        :math:`H_{final, ~JW}` is the Jordan-Wigner transformed Fermi-Hubbard Hamiltonian, and</span>
@@ -258,11 +258,11 @@
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
             <span class="n">seq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
-        <span class="c1"># first exponential factor: evolution under H_init for step k on qubits in seq</span>
+        <span class="c1"># first exponential factor: evolution under H_{initial} for step k on qubits in seq</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
             <span class="n">circ</span><span class="o">.</span><span class="n">rx</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_step</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">k</span> <span class="o">*</span> <span class="n">delta_s</span><span class="p">),</span> <span class="n">i</span><span class="p">)</span>
 
-        <span class="c1"># second exponential factor: evolution under H_HF for step k on qubits in seq</span>
+        <span class="c1"># second exponential factor: evolution under H_{final} for step k on qubits in seq</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">final_ham_paulis</span><span class="p">)):</span>
             <span class="n">circ</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">pauli_string_rotation</span><span class="p">(</span>
@@ -289,7 +289,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">circ</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
-        <span class="c1"># start system in ground state of H_init (i.e., the all minus state)</span>
+        <span class="c1"># start system in ground state of H_{initial} (i.e., the all minus state)</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
             <span class="n">circ</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
             <span class="n">circ</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
@@ -472,6 +472,8 @@
 
         <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)])</span>  <span class="c1"># X gate</span>
 
+        <span class="c1"># build matrix form of H_{initial}</span>
+
         <span class="c1"># create list with n identity gates</span>
         <span class="n">eyes</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
@@ -489,7 +491,7 @@
                 <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">list_2</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">b</span><span class="p">)</span>
             <span class="n">matrices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 
-        <span class="c1"># add together matrices in matrices list to get matrix form of H_{init}</span>
+        <span class="c1"># add together matrices in matrices list to get matrix form of H_{initial}</span>
         <span class="n">init_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">matrices</span><span class="p">)):</span>
             <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -516,11 +518,11 @@
     <span class="k">def</span> <span class="nf">initialize_ising</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exchange</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Support method that assigns an Ising Hamiltonian for four qubits to an AdiabaticCircuit object:</span>
 
-<span class="sd">        .. math:: H_{ising} = J(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3)</span>
+<span class="sd">        .. math:: H_{Ising} = J(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3)</span>
 
 <span class="sd">        If the Lattice associated with the AdiabaticCircuit object has periodic boundary conditions, this method implements</span>
 
-<span class="sd">        .. math:: H_{ising} = J(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3 + Z_3 Z_0)</span>
+<span class="sd">        .. math:: H_{Ising} = J(Z_0 Z_1 + Z_1 Z_2 + Z_2 Z_3 + Z_3 Z_0)</span>
 
 <span class="sd">        See **[11]** on the `Getting Started`_ page. This was created during development to test the implementation of the ``evolution_operator`` and</span>
 <span class="sd">        ``create_circuit`` methods for a Hamiltonian whose adiabatic state preparation results are shown in **[11]**.</span>
@@ -548,11 +550,11 @@
 <div class="viewcode-block" id="AdiabaticCircuit.ising_evolution_operator">
 <a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.ising_evolution_operator">[docs]</a>
     <span class="k">def</span> <span class="nf">ising_evolution_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Support method used with the `initialize_ising` method. Support method that implements the evolution operator</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Support method used with the ``initialize_ising`` method. Support method that implements the evolution operator</span>
 
-<span class="sd">        .. math:: exp(-i \\Delta t (1-k/M) H_{initial})exp(-i \\Delta t (k/M) H_{Ising})</span>
+<span class="sd">        .. math:: \\exp(-i \\Delta t (1-k/M) H_{initial})\\exp(-i \\Delta t (k/M) H_{Ising})</span>
 
-<span class="sd">        where :math:`H_{Ising}` is the Ising Hamiltonian created by running the initialize_ising method, :math:`M` is the step count,</span>
+<span class="sd">        where :math:`H_{Ising}` is the Ising Hamiltonian created by running the ``initialize_ising`` method, :math:`M` is the step count,</span>
 <span class="sd">        and :math:`k = 0, 1, ..., M`.</span>
 
 <span class="sd">        Parameters</span>
@@ -579,11 +581,11 @@
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ising_n</span><span class="p">):</span>
             <span class="n">seq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
-        <span class="c1"># first exponential factor: evolution under H_init for step k on qubits in seq</span>
+        <span class="c1"># first exponential factor: evolution under H_{initial} for step k on qubits in seq</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ising_n</span><span class="p">):</span>
             <span class="n">circ</span><span class="o">.</span><span class="n">rx</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_step</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">k</span> <span class="o">*</span> <span class="n">delta_s</span><span class="p">),</span> <span class="n">i</span><span class="p">)</span>
 
-        <span class="c1"># second exponential factor: evolution under H_ising for step k on qubits in seq</span>
+        <span class="c1"># second exponential factor: evolution under H_{Ising} for step k on qubits in seq</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">final_ham_paulis</span><span class="p">)):</span>
             <span class="n">circ</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">pauli_string_rotation</span><span class="p">(</span>
@@ -598,8 +600,8 @@
 <div class="viewcode-block" id="AdiabaticCircuit.ising_create_circuit">
 <a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.ising_create_circuit">[docs]</a>
     <span class="k">def</span> <span class="nf">ising_create_circuit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Support method used with the `initialize_ising` method. Creates the circuit which performs the adiabatic state preparation of the ground state of the Ising Hamiltonian associated</span>
-<span class="sd">        with an AdiabaticCircuit (provided the `initialize_ising` method has already been run).</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Support method used with the ``initialize_ising`` method. Creates the circuit which performs the adiabatic state preparation of the ground state of the Ising Hamiltonian associated</span>
+<span class="sd">        with an AdiabaticCircuit (provided the ``initialize_ising`` method has already been run).</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -609,7 +611,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">circ</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ising_n</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
-        <span class="c1"># start system in ground state of H_init (i.e., the all minus state)</span>
+        <span class="c1"># start system in ground state of H_{initial} (i.e., the all minus state)</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ising_n</span><span class="p">):</span>
             <span class="n">circ</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
             <span class="n">circ</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
@@ -619,7 +621,7 @@
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ising_n</span><span class="p">):</span>
             <span class="n">seq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
-        <span class="c1"># build a circuit of M+1 evolution operators with i = 0, 1, ..., M</span>
+        <span class="c1"># build a circuit of M+1 Ising evolution operators with i = 0, 1, ..., M</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step_count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
             <span class="n">circ</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ising_evolution_operator</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">seq</span><span class="p">)</span>
 
@@ -629,8 +631,8 @@
 <div class="viewcode-block" id="AdiabaticCircuit.ising_calc_energy">
 <a class="viewcode-back" href="../../api.html#adiabatic_fermi_hubbard.AdiabaticCircuit.ising_calc_energy">[docs]</a>
     <span class="k">def</span> <span class="nf">ising_calc_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">Result</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Support method used with the `initialize_ising` method. Calculates the energy for the state represented by result using the Ising Hamiltonian associated</span>
-<span class="sd">        with an AdiabaticCircuit object (provided the `initialize_ising` method has already been run).</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Support method used with the ``initialize_ising`` method. Calculates the energy for the state represented by result using the Ising Hamiltonian associated</span>
+<span class="sd">        with an AdiabaticCircuit object (provided the ``initialize_ising`` method has already been run).</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>

@@ -1,3 +1,4 @@
+'''Unit tests for theAdiabaticCircuit class.'''
 import adiabatic_fermi_hubbard as afh
 
 from qiskit import QuantumCircuit, execute
@@ -5,14 +6,14 @@ from qiskit.quantum_info import Pauli, SparsePauliOp
 from qiskit_aer import Aer
 
 import numpy as np
-import platform
 
+import platform
 import copy as cp
 
 
 def test_str():
     """Test method for str dunder method"""
-    lattice1 = afh.Lattice(2, 1)
+    lattice1 = afh.Lattice(2, pbc=True)
     ham1 = afh.HubbardHamiltonian(lattice1, 2, 2, 2)
     ad_circ = afh.AdiabaticCircuit(ham1, 0.01, 1000)
 
@@ -47,6 +48,8 @@ def test_pauli_string_rotation():
 
     assert str(circ) == str(circ1)
 
+    # test to cover case where all qubits involved in rotation
+
     # do XYXY rotation (rightmost position is qubit 0), phase pi
     circ2 = QuantumCircuit(4, 0)
     circ2.rx(3 * np.pi / 2, 0)
@@ -73,11 +76,13 @@ def test_pauli_string_rotation():
 
 def test_evolution_operator():
     """Test method for evolution_operator"""
-    lattice1 = afh.Lattice(2, 0)
+    lattice1 = afh.Lattice(2, pbc=False)
     ham1 = afh.HubbardHamiltonian(lattice1)
     ad_circ = afh.AdiabaticCircuit(ham1, 0.1, 2)
 
-    circ = ad_circ.evolution_operator(0)
+    circ = ad_circ.evolution_operator(0) # evolution operator for step 0 from method
+
+    # build evolution operator for step 0 by hand
     circ1 = QuantumCircuit(4, 0)
 
     for i in range(4):
@@ -96,11 +101,13 @@ def test_evolution_operator():
 
 def test_create_circuit():
     """Test method for create_circuit"""
-    lattice1 = afh.Lattice(2, 0)
+    lattice1 = afh.Lattice(2, pbc=False)
     ham1 = afh.HubbardHamiltonian(lattice1)
     ad_circ = afh.AdiabaticCircuit(ham1, 0.1, 2)
 
-    circ = ad_circ.create_circuit()
+    circ = ad_circ.create_circuit() # circuit from method
+    
+    # build adiabatic state prep circuit by hand
     circ1 = QuantumCircuit(4, 0)
 
     for i in range(4):
@@ -118,7 +125,7 @@ def test_create_circuit():
 
 def test_run():
     """Test method for run method"""
-    lattice1 = afh.Lattice(2, 0)
+    lattice1 = afh.Lattice(2, pbc=False)
     ham1 = afh.HubbardHamiltonian(lattice1)
     ad_circ = afh.AdiabaticCircuit(ham1, 0.1, 2)
 
@@ -133,7 +140,8 @@ def test_run():
 
 def test_run_eigensolver_comparison():
     """Test method for eigensolver_comparison"""
-    lattice1 = afh.Lattice(2, 1)
+    # no PBC
+    lattice1 = afh.Lattice(2, pbc=False)
     ham1 = afh.HubbardHamiltonian(lattice1)
     ad_circ = afh.AdiabaticCircuit(ham1, 0.01, 100)
 
@@ -141,10 +149,21 @@ def test_run_eigensolver_comparison():
 
     assert np.isclose(eigensolver_energy, -11.403124237432852)
 
+    # PBC
+    lattice2 = afh.Lattice(3, pbc=True)
+    ham2 = afh.HubbardHamiltonian(lattice2)
+    ad_circ2 = afh.AdiabaticCircuit(ham2, 0.01, 100)
+
+    eigensolver_energy2 = ad_circ2.run_eigensolver_comparison()
+
+    assert np.isclose(eigensolver_energy2, -17.150070940649563)
+
+
 
 def test_calc_energy():
     """Test method for calc_energy"""
-    lattice1 = afh.Lattice(2, 0)
+    # no PBC
+    lattice1 = afh.Lattice(2, pbc=False)
     ham1 = afh.HubbardHamiltonian(lattice1)
     ad_circ = afh.AdiabaticCircuit(ham1, 0.01, 100)
 
@@ -154,10 +173,22 @@ def test_calc_energy():
 
     assert np.isclose(energy, -6.156190736486687)
 
+    # PBC
+    lattice2 = afh.Lattice(3, pbc=True)
+    ham2 = afh.HubbardHamiltonian(lattice2)
+    ad_circ2 = afh.AdiabaticCircuit(ham2, 0.01, 100)
+
+    circuit2 = ad_circ2.create_circuit()
+    result2 = ad_circ2.run(circuit2)
+    energy2 = ad_circ2.calc_energy(result2)
+
+    assert np.isclose(energy2, -9.385097650142908)
+
+
 
 def test_get_num_qubits():
     """Test method for get_num_qubits"""
-    lattice1 = afh.Lattice(2, 0)
+    lattice1 = afh.Lattice(2, pbc=False)
     ham1 = afh.HubbardHamiltonian(lattice1)
     ad_circ = afh.AdiabaticCircuit(ham1, 0.1, 2)
 
@@ -166,7 +197,7 @@ def test_get_num_qubits():
 
 def test_get_hubbard_hamiltonian():
     """Test method for get_hubbard_hamiltonian"""
-    lattice1 = afh.Lattice(2, 0)
+    lattice1 = afh.Lattice(2, pbc=False)
     ham1 = afh.HubbardHamiltonian(lattice1)
     ad_circ = afh.AdiabaticCircuit(ham1, 0.1, 2)
 
@@ -175,7 +206,7 @@ def test_get_hubbard_hamiltonian():
 
 def test_get_time_step():
     """Test method for get_time_step"""
-    lattice1 = afh.Lattice(2, 0)
+    lattice1 = afh.Lattice(2, pbc=False)
     ham1 = afh.HubbardHamiltonian(lattice1)
     ad_circ = afh.AdiabaticCircuit(ham1, 0.1, 2)
 
@@ -184,7 +215,7 @@ def test_get_time_step():
 
 def test_get_step_count():
     """Test method for get_step_count"""
-    lattice1 = afh.Lattice(2, 0)
+    lattice1 = afh.Lattice(2, pbc=False)
     ham1 = afh.HubbardHamiltonian(lattice1)
     ad_circ = afh.AdiabaticCircuit(ham1, 0.1, 2)
 
@@ -193,7 +224,7 @@ def test_get_step_count():
 
 def test_diagonalize_hamiltonian():
     """Test method for diagonalize_hamiltonian"""
-    lattice1 = afh.Lattice(2, 0)
+    lattice1 = afh.Lattice(2, pbc=False)
     ham1 = afh.HubbardHamiltonian(lattice1)
     ad_circ = afh.AdiabaticCircuit(ham1, 0.1, 2)
 
@@ -246,7 +277,7 @@ def test_diagonalize_hamiltonian():
             elif str(pauli_string[i]) == "Z":
                 a = np.array([(1, 0), (0, -1)])  # numpy implementation of Z gate
             else:
-                a = np.eye(2)
+                a = np.eye(2) # identity gate
 
             if i == 0:  # if gate i is the first gate in the Pauli string
                 b = 1
@@ -261,7 +292,10 @@ def test_diagonalize_hamiltonian():
         else:
             final_matrix = np.add(final_matrix, ham_coeffs[i] * matrices[i])
 
-    k = 0  # all H_{init}
+    # diagonalize for three cases:
+
+    # 1. all H_{initial}
+    k = 0
     matrix = final_matrix * (k / ad_circ.get_step_count()) + init_matrix * (
         1 - k / ad_circ.get_step_count()
     )
@@ -273,7 +307,8 @@ def test_diagonalize_hamiltonian():
 
     energies_from_method = ad_circ.diagonalize_hamiltonian(0)
 
-    k2 = ad_circ.get_step_count() // 2  # H_{init}, H_{final} have equal contributions
+    # 2. H_{initial}, H_{final} have equal contributions
+    k2 = ad_circ.get_step_count() // 2
 
     matrix2 = final_matrix * (k2 / ad_circ.get_step_count()) + init_matrix * (
         1 - k2 / ad_circ.get_step_count()
@@ -286,7 +321,8 @@ def test_diagonalize_hamiltonian():
 
     energies_from_method_2 = ad_circ.diagonalize_hamiltonian(k2)
 
-    k3 = ad_circ.get_step_count()  # all H_{final}
+    # 3. all H_{final}
+    k3 = ad_circ.get_step_count()
 
     matrix3 = final_matrix * (k3 / ad_circ.get_step_count()) + init_matrix * (
         1 - k3 / ad_circ.get_step_count()
@@ -300,13 +336,13 @@ def test_diagonalize_hamiltonian():
     energies_from_method_3 = ad_circ.diagonalize_hamiltonian(k3)
 
     assert str(energies) == str(energies_from_method)
-    assert str(energies) == str(energies_from_method)
+    assert str(energies_2) == str(energies_from_method_2)
     assert str(energies_3) == str(energies_from_method_3)
 
 
 def test_initialize_ising():
     """Test method for initialize_ising"""
-    lattice1 = afh.Lattice(2, 0)
+    lattice1 = afh.Lattice(2, pbc=False)
     ham1 = afh.HubbardHamiltonian(lattice1)
     ad_circ = afh.AdiabaticCircuit(ham1, 0.1, 2)
 
@@ -317,7 +353,8 @@ def test_initialize_ising():
     )
     assert ad_circ.ising_n == ad_circ.get_num_qubits()
 
-    lattice2 = afh.Lattice(4, 1)
+    # PBC case
+    lattice2 = afh.Lattice(4, True)
     ham2 = afh.HubbardHamiltonian(lattice2)
     ad_circ1 = afh.AdiabaticCircuit(ham2, 0.1, 2)
 
@@ -331,7 +368,7 @@ def test_initialize_ising():
 
 def test_ising_evolution_operator():
     """Test method for ising_evolution_operator"""
-    lattice1 = afh.Lattice(2, 0)
+    lattice1 = afh.Lattice(2, pbc=False)
     ham1 = afh.HubbardHamiltonian(lattice1)
     ad_circ = afh.AdiabaticCircuit(ham1, 0.1, 2)
 
@@ -355,8 +392,7 @@ def test_ising_evolution_operator():
 
 def test_ising_create_circuit():
     """Test method for ising_create_circuit"""
-    # build out of evolution operators which are already covered
-    lattice1 = afh.Lattice(2, 0)
+    lattice1 = afh.Lattice(2, pbc=False)
     ham1 = afh.HubbardHamiltonian(lattice1)
     ad_circ = afh.AdiabaticCircuit(ham1, 0.1, 2)
 
@@ -380,7 +416,9 @@ def test_ising_create_circuit():
 
 def test_ising_calc_energy():
     """Test method for ising_calc_energy"""
-    lattice1 = afh.Lattice(2, 1)
+
+    # PBC
+    lattice1 = afh.Lattice(2, pbc=True)
     ham1 = afh.HubbardHamiltonian(lattice1)
     ad_circ = afh.AdiabaticCircuit(ham1, 0.01, 100)
 
@@ -392,7 +430,8 @@ def test_ising_calc_energy():
 
     assert np.isclose(ising_energy, -0.30494050361526925)
 
-    lattice2 = afh.Lattice(2, 0)
+    # no PBC
+    lattice2 = afh.Lattice(2, pbc=False)
     ham2 = afh.HubbardHamiltonian(lattice2)
     ad_circ2 = afh.AdiabaticCircuit(ham2, 0.01, 100)
 
