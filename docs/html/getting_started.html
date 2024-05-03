@@ -58,7 +58,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#implementation">Implementation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#representing-fermionic-operators">Representing Fermionic Operators</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#jordan-wigner-transformation">Jordan-Wigner Transformation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#trotterization">Trotterization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#trotter-approximation">Trotter Approximation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#rotation-about-2n-dimensional-pauli-strings">Rotation about <span class="math notranslate nohighlight">\(2N\)</span> -dimensional Pauli strings</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#adiabatic-evolution">Adiabatic Evolution</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#validation">Validation</a></li>
@@ -109,7 +109,7 @@
              
   <section id="getting-started">
 <h1>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h1>
-<p>This page details how to get started with adiabatic_fermi_hubbard.</p>
+<p>This page details how to get started with <code class="docutils literal notranslate"><span class="pre">adiabatic_fermi_hubbard</span></code>.</p>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
 <p>This package is designed for Python 3.8-3.12 and requires the following packages to be installed
@@ -129,7 +129,7 @@ commands:</p>
 <span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
 </pre></div>
 </div>
-<p><strong>WARNING FOR CONDA USERS USING JUPYTER:</strong> Some of the above packages (e.g., <code class="docutils literal notranslate"><span class="pre">qiskit</span></code>, <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code>) are <code class="docutils literal notranslate"><span class="pre">pip</span></code> installs only. If both types of installations are present,
+<p><strong>WARNING FOR CONDA USERS USING JUPYTER:</strong> Some of the above packages (e.g., <code class="docutils literal notranslate"><span class="pre">qiskit</span></code>, <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code>) are <code class="docutils literal notranslate"><span class="pre">pip</span></code> installs only. If both <code class="docutils literal notranslate"><span class="pre">conda</span></code> and <code class="docutils literal notranslate"><span class="pre">pip</span></code> installs are present in a <code class="docutils literal notranslate"><span class="pre">conda</span></code> environment,
 attempting to run the code examples below in <code class="docutils literal notranslate"><span class="pre">jupyter</span></code> can result in the kernel crashing (for example, see this <a class="reference external" href="https://github.com/microsoft/vscode-jupyter/wiki/Kernel-crashes-when-using-numpy">issue</a> in VS Code Jupyter).</p>
 <p>To avoid this, use <code class="docutils literal notranslate"><span class="pre">conda</span></code> to install <code class="docutils literal notranslate"><span class="pre">python</span></code> in the <code class="docutils literal notranslate"><span class="pre">conda</span></code> environment, then use <code class="docutils literal notranslate"><span class="pre">pip</span></code> to install all of the above dependencies.</p>
 </section>
@@ -160,37 +160,37 @@ It has been applied to explain phenomena in materials whose properties depend on
 </section>
 <section id="quantum-computing-and-the-fermi-hubbard-model">
 <h3>Quantum Computing and the Fermi-Hubbard Model<a class="headerlink" href="#quantum-computing-and-the-fermi-hubbard-model" title="Link to this heading"></a></h3>
-<p>The Fermi-Hubbard model has an analytical solution for 1D lattices; however, a more physically relevant case is that of a 2D case, which cannot
+<p>The Fermi-Hubbard model has an analytical solution for 1D lattices; however, a more physically relevant case is that of a 2D lattice, which cannot
 be solved analytically and must be simulated. Classical simulation approaches have been effective in describing much of the phenomena discussed in the previous section; however, these techniques
 have limitations <strong>[3]</strong>. Quantum Monte Carlo (QMC) simulations are successful in describing many-electron lattices, provided the Boltzmann factors involved do not
 become negative, which can happen in fermionic systems. Due to this “sign problem”, for <span class="math notranslate nohighlight">\(U &gt; 0\)</span>, QMC simulations do not converge unless the lattice is “half-filled” <strong>[4]</strong>. “Half-filling” refers to the situation in which the number of lattice sites equals the number of electrons <strong>[5]</strong>. Exact diagonalization techniques, which utilize
-symmetries to reduce the problem to a smaller Hilbert space, are effective for lattice sizes of up to 32 sites <strong>[6]</strong>, <strong>[7]</strong>, <strong>[8]</strong>.</p>
-<p>Due to the limitations of classical simulations, there has been significant interest for using quantum computers to simulate the Fermi-Hubbard model. These efforts include quantum emulation, in which evolution under the Hamiltonian is implemented on a representative qubit system (e.g., atomic lattices) <strong>[3]</strong>, to quantum algorithms
+symmetries to reduce the problem to a smaller Hilbert space, are effective for lattice sizes up to 32 sites <strong>[6]</strong>, <strong>[7]</strong>, <strong>[8]</strong>.</p>
+<p>Due to the limitations of classical simulations, there has been significant interest in using quantum computers to simulate the Fermi-Hubbard model. These efforts include quantum emulation, in which evolution under the Hamiltonian is implemented on a representative qubit system (e.g., atomic lattices) <strong>[3]</strong>, and quantum algorithms
 on spin qubits (e.g., variational quantum eigensolvers on superconducting qubits) <strong>[9]</strong>. Another approach to quantum simulation is adiabatic state preparation.</p>
 </section>
 <section id="adiabatic-state-preparation">
 <h3>Adiabatic State Preparation<a class="headerlink" href="#adiabatic-state-preparation" title="Link to this heading"></a></h3>
 <p>A general approach to finding the ground state of a “difficult” Hamiltonian <span class="math notranslate nohighlight">\(H_{final}\)</span> is to initialize a qubit system in the ground state of a known Hamiltonian
-<span class="math notranslate nohighlight">\(H_{initial}\)</span> and evolve the system using evolution operator <span class="math notranslate nohighlight">\(U(s) = exp(-iH(s)\Delta t)\)</span> where</p>
+<span class="math notranslate nohighlight">\(H_{initial}\)</span> and evolve the system using evolution operator <span class="math notranslate nohighlight">\(U(s) = \exp(-iH(s)\Delta t)\)</span> where</p>
 <div class="math notranslate nohighlight" id="equation-adiabatic">
-<span class="eqno">(3)<a class="headerlink" href="#equation-adiabatic" title="Link to this equation"></a></span>\[H(s) = (1-s) H_{initial} + (s) H_{final} = H_{initial} (1- k/M) + H_{final} (k/M)\]</div>
+<span class="eqno">(3)<a class="headerlink" href="#equation-adiabatic" title="Link to this equation"></a></span>\[H(s) = (1-s) H_{initial} + (s) H_{final} = (1 - k/M) H_{initial} + (k/M) H_{final}\]</div>
 <p>where <span class="math notranslate nohighlight">\(M\)</span> is the number of interpolating steps and <span class="math notranslate nohighlight">\(k = 0, 1, ... M\)</span> <strong>[10]</strong>, <strong>[11]</strong>. Provided the interpolation between <span class="math notranslate nohighlight">\(H_{initial}\)</span> and <span class="math notranslate nohighlight">\(H_{final}\)</span> is slow,
 the adiabatic principle states the system remains in an energy eigenstate of <span class="math notranslate nohighlight">\(H(s)\)</span> at all times. So, the state of the system following interpolation is
-the ground state of <span class="math notranslate nohighlight">\(H_{final}\)</span>. The total evolution time <span class="math notranslate nohighlight">\(t = M\Delta t\)</span> must satisfy <span class="math notranslate nohighlight">\(t &gt;&gt; 1/(E_0-E_1)^2\)</span> where <span class="math notranslate nohighlight">\(E_0-E_1\)</span> is
-the smallest difference between the first excited state energy and the ground state energy of <span class="math notranslate nohighlight">\(H(s)\)</span> for any <span class="math notranslate nohighlight">\(s\)</span> <strong>[10]</strong>.</p>
+the ground state of <span class="math notranslate nohighlight">\(H_{final}\)</span>. The total evolution time <span class="math notranslate nohighlight">\(t = M\Delta t\)</span> must satisfy</p>
+<div class="math notranslate nohighlight" id="equation-condition">
+<span class="eqno">(4)<a class="headerlink" href="#equation-condition" title="Link to this equation"></a></span>\[t &gt;&gt; 1/(E_0-E_1)^2\]</div>
+<p>where <span class="math notranslate nohighlight">\(E_0-E_1\)</span> is the smallest difference between the first excited state energy and the ground state energy of <span class="math notranslate nohighlight">\(H(s)\)</span> for any <span class="math notranslate nohighlight">\(s\)</span> <strong>[10]</strong>.</p>
 <p>This approach has been previously applied to simulate the ground state of Fermi-Hubbard model with chemical potential and magnetic
 field terms, starting from the ground state of a Hamiltonian that describes d-wave electron pairing (a type of superconductivity) <strong>[2]</strong>.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">adiabatic_fermi_hubbard</span></code> package uses a different starting point to find the ground state of the Fermi-Hubbard model through adiabatic state preparation
-for small lattices.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">adiabatic_fermi_hubbard</span></code> package uses a different starting point to find the ground state of the Fermi-Hubbard model on small 1D lattices through adiabatic state preparation.</p>
 </section>
 </section>
 <section id="implementation">
 <h2>Implementation<a class="headerlink" href="#implementation" title="Link to this heading"></a></h2>
-<p>This package creates Qiskit circuits <strong>[12]</strong> to carry out adiabatic state preparation to find the ground state energy of the Fermi-Hubbard Hamiltonian on
-1D lattices. The following section highlights some details of the implementation.</p>
+<p>This package creates <code class="docutils literal notranslate"><span class="pre">qiskit</span></code> circuits <strong>[12]</strong> to carry out adiabatic state preparation. The following section highlights some details of the implementation.</p>
 <section id="representing-fermionic-operators">
 <h3>Representing Fermionic Operators<a class="headerlink" href="#representing-fermionic-operators" title="Link to this heading"></a></h3>
-<p>This package relies heavily on methods in <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code>, a part of the Qiskit ecosystem <strong>[13]</strong>, to create and manipulate fermionic raising/lowering operators. This
+<p>This package relies heavily on methods in <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code>, a part of the <code class="docutils literal notranslate"><span class="pre">qiskit</span></code> ecosystem <strong>[13]</strong>, to create and manipulate fermionic raising/lowering operators. This
 is accomplished through the use of <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code>’s <code class="docutils literal notranslate"><span class="pre">FermionicOp</span></code> objects <strong>[14]</strong>. The <code class="docutils literal notranslate"><span class="pre">adiabatic_fermi_hubbard</span></code> package adopts <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code>’s convention for representing
 creation/annihilation operators for up and down spins, where <code class="docutils literal notranslate"><span class="pre">FermionicOp</span></code> objects with even (odd) indices correspond to spin up (down) electrons. For example, the
 four creation/annilhilation operators for the first site in a 8-site 1D lattice are</p>
@@ -200,9 +200,9 @@ four creation/annilhilation operators for the first site in a 8-site 1D lattice 
 <li><p><span class="math notranslate nohighlight">\(a_{0 \downarrow}\)</span>: <code class="docutils literal notranslate"><span class="pre">FermionicOp({“-_1”:1.0},</span> <span class="pre">num_spin_orbitals=16)</span></code></p></li>
 <li><p><span class="math notranslate nohighlight">\(a^\dagger_{0 \downarrow}\)</span>: <code class="docutils literal notranslate"><span class="pre">FermionicOp({“+_1”:1.0},</span> <span class="pre">num_spin_orbitals=16)</span></code></p></li>
 </ul>
-<p>The above example shows that the fermionic operators for a single lattice site are represented by two spin orbitals (in this case, 0 and 1). For an <span class="math notranslate nohighlight">\(N = 8\)</span> lattice, the
+<p>The above example shows that the fermionic operators for a single lattice site are represented by two spin orbitals (indexed by 0 and 1). For an <span class="math notranslate nohighlight">\(N = 8\)</span> lattice, the
 total number of spin orbitals is <span class="math notranslate nohighlight">\(2N = 16\)</span> (hence the value of <code class="docutils literal notranslate"><span class="pre">num_spin_orbitals</span></code> in the above constructors) <strong>[15]</strong>.</p>
-<p>For a specified lattice size and <span class="math notranslate nohighlight">\(t, U, \mu\)</span> parameters, the <code class="docutils literal notranslate"><span class="pre">adiabatic_fermi_hubbard</span></code> package constructs the Fermi-Hubbard Hamiltonian <a class="reference internal" href="#equation-ham-with-mu">(2)</a> out of these FermionicOp objects.</p>
+<p>For a specified lattice and <span class="math notranslate nohighlight">\(t, U, \mu\)</span> parameters, the <code class="docutils literal notranslate"><span class="pre">adiabatic_fermi_hubbard</span></code> package constructs the Fermi-Hubbard Hamiltonian <a class="reference internal" href="#equation-ham-with-mu">(2)</a> out of these FermionicOp objects.</p>
 </section>
 <section id="jordan-wigner-transformation">
 <h3>Jordan-Wigner Transformation<a class="headerlink" href="#jordan-wigner-transformation" title="Link to this heading"></a></h3>
@@ -213,36 +213,36 @@ The transformation of the fermionic annihilation/creation operators is given by<
 \[a_{i} = \bigotimes_{j=1}^{i} Z_j \otimes (X_i - i Y_i), a_{i}^\dagger = \bigotimes_{j=1}^{i} Z_j \otimes (X_i + i Y_i)\]</div>
 <p>where <span class="math notranslate nohighlight">\(X_k, Y_k, Z_k\)</span> are Pauli gates acting on qubit <span class="math notranslate nohighlight">\(k\)</span> and <span class="math notranslate nohighlight">\(i\)</span> are the indices assigned by the convention in the previous section <strong>[16]</strong>.
 The <code class="docutils literal notranslate"><span class="pre">adiabatic_fermi_hubbard</span></code> package applies this transformation to express the Hamiltonian as a weighted sum of Pauli strings (e.g., <span class="math notranslate nohighlight">\(X \otimes Y \otimes Z \otimes I\)</span>)
-of size <span class="math notranslate nohighlight">\(2N\)</span>, where <span class="math notranslate nohighlight">\(N\)</span> is the number of lattice sites.</p>
+of length <span class="math notranslate nohighlight">\(2N\)</span>, where <span class="math notranslate nohighlight">\(N\)</span> is the number of lattice sites.</p>
 </section>
-<section id="trotterization">
-<h3>Trotterization<a class="headerlink" href="#trotterization" title="Link to this heading"></a></h3>
+<section id="trotter-approximation">
+<h3>Trotter Approximation<a class="headerlink" href="#trotter-approximation" title="Link to this heading"></a></h3>
 <p>Following the Jordan-Wigner transformation, the Fermi-Hubbard Hamiltonian becomes a sum of Pauli strings, each of which has an associated
 coefficient. Symbolically,</p>
 <div class="math notranslate nohighlight" id="equation-jw-ham">
-<span class="eqno">(4)<a class="headerlink" href="#equation-jw-ham" title="Link to this equation"></a></span>\[H_{after ~JW} = \sum_{j}^{K} \alpha_j P_j\]</div>
+<span class="eqno">(5)<a class="headerlink" href="#equation-jw-ham" title="Link to this equation"></a></span>\[H_{after ~JW} = \sum_{j}^{K} \alpha_j P_j\]</div>
 <p>where <span class="math notranslate nohighlight">\(\alpha_i\)</span> are the coefficients and <span class="math notranslate nohighlight">\(P_i\)</span> are Pauli strings of length <span class="math notranslate nohighlight">\(2N\)</span>.
 Generally, not all of the Pauli strings in <span class="math notranslate nohighlight">\(H_{after~ JW}\)</span> commute, meaning</p>
 <div class="math notranslate nohighlight">
-\[exp(-i \Delta t \sum_{j} \alpha_j P_j ) \neq exp(-i \Delta t \alpha_1 P_1) exp(-i \Delta t \alpha_2 P_2) ... exp(-i \Delta t \alpha_K P_K)\]</div>
+\[\exp(-i \Delta t \sum_{j} \alpha_j P_j ) \neq \exp(-i \Delta t \alpha_1 P_1) \exp(-i \Delta t \alpha_2 P_2) ... \exp(-i \Delta t \alpha_K P_K)\]</div>
 <p>However, provided <span class="math notranslate nohighlight">\(\Delta t\)</span> is small, the Trotter approximation allows</p>
 <div class="math notranslate nohighlight">
-\[exp(-i \Delta t \sum_{j} \alpha_j P_j ) \approx exp(-i \Delta t \alpha_1 P_1) exp(-i \Delta t \alpha_2 P_2) ... exp(-i \Delta t \alpha_K P_K)\]</div>
+\[\exp(-i \Delta t \sum_{j} \alpha_j P_j ) \approx \exp(-i \Delta t \alpha_1 P_1) \exp(-i \Delta t \alpha_2 P_2) ... \exp(-i \Delta t \alpha_K P_K)\]</div>
 <p><strong>[11]</strong>, <strong>[17]</strong>. The <code class="docutils literal notranslate"><span class="pre">adiabatic_fermi_hubbard</span></code> package assumes the Trotter approximation to decompose the Jordan-Wigner transformed Hamiltonian into a sequence
 of rotations about Pauli strings.</p>
 </section>
 <section id="rotation-about-2n-dimensional-pauli-strings">
 <h3>Rotation about <span class="math notranslate nohighlight">\(2N\)</span> -dimensional Pauli strings<a class="headerlink" href="#rotation-about-2n-dimensional-pauli-strings" title="Link to this heading"></a></h3>
-<p>Once an evolution operator of the form <span class="math notranslate nohighlight">\(exp(-i \Delta t  \sum_{j}^{K} \alpha_j P_j)\)</span> is decomposed using the
+<p>Once an evolution operator of the form <span class="math notranslate nohighlight">\(\exp(-i \Delta t  \sum_{j}^{K} \alpha_j P_j)\)</span> is decomposed using the
 Trotter approximation, it becomes necessary to implement rotations about arbitrary Pauli strings of length <span class="math notranslate nohighlight">\(2N\)</span>.
 To accomplish this, the package utilizes the approach discussed in Nielsen and Chuang, Ch 4 <strong>[17]</strong>. The strategy is briefly summarized here.</p>
 <p>A rotation about an arbitrary Pauli string can be turned into a single qubit rotation by mapping the parity of each qubit onto an
 ancilla qubit (or onto the last qubit involved in the rotation) using <span class="math notranslate nohighlight">\(CNOT\)</span> gates and then performing a <span class="math notranslate nohighlight">\(Z\)</span>-rotation on that qubit. Following said
-rotation, <span class="math notranslate nohighlight">\(CNOT\)</span> s are required to undo the parity mapping. For instance, a circuit which performs the rotation <span class="math notranslate nohighlight">\(exp(-i \pi (Z \otimes Z \otimes Z \otimes Z))\)</span> is given by</p>
+rotation, <span class="math notranslate nohighlight">\(CNOT\)</span> s are required to undo the parity mapping. For instance, a circuit which performs the rotation <span class="math notranslate nohighlight">\(\exp(-i \pi (Z \otimes Z \otimes Z \otimes Z))\)</span> is given by</p>
 <a class="reference internal image-reference" href="_images/zzzz.png"><img alt="_images/zzzz.png" src="_images/zzzz.png" style="width: 400px;" /></a>
 <p>If the Pauli string contains <span class="math notranslate nohighlight">\(X\)</span> or <span class="math notranslate nohighlight">\(Y\)</span> gates, they can be transformed into <span class="math notranslate nohighlight">\(Z\)</span> gates for the purpose of the parity encoding by applying a
 <span class="math notranslate nohighlight">\(H\)</span> gate or a <span class="math notranslate nohighlight">\(R_Y(3\pi/2)\)</span> gate before the <span class="math notranslate nohighlight">\(CNOT\)</span> s, respectively. The inverse operations are required after the second set of <span class="math notranslate nohighlight">\(CNOT\)</span> s. For example,
-a circuit which performs the rotation <span class="math notranslate nohighlight">\(exp(-i \pi (Z \otimes X \otimes Y \otimes Z))\)</span> is</p>
+a circuit which performs the rotation <span class="math notranslate nohighlight">\(\exp(-i \pi (Z \otimes X \otimes Y \otimes Z))\)</span> is</p>
 <a class="reference internal image-reference" href="_images/zxyz.png"><img alt="_images/zxyz.png" src="_images/zxyz.png" style="width: 400px;" /></a>
 <p>Additional details can be found in <strong>[17]</strong>.</p>
 </section>
@@ -255,7 +255,7 @@ The <code class="docutils literal notranslate"><span class="pre">adiabatic_fermi
 \[H_{initial} = \sum_{i}^{2N} X_i, ~ |\psi_0 \rangle = |--...- \rangle\]</div>
 <p>as its starting Hamiltonian, with the ground state <span class="math notranslate nohighlight">\(|\psi_0 \rangle\)</span>, following the approach in <strong>[11]</strong>. For each <span class="math notranslate nohighlight">\(k = 0, 1, ..., M\)</span>, the package builds the evolution operator</p>
 <div class="math notranslate nohighlight">
-\[U(k) \approx exp(-i \Delta t H_{initial}) exp(-i \Delta t H_{final})\]</div>
+\[U(k) \approx \exp(-i \Delta t H_{initial}) \exp(-i \Delta t H_{final})\]</div>
 <p>(another Trotter approximation) and constructs the circuit which carries out the operation</p>
 <div class="math notranslate nohighlight">
 \[|\psi_{0, ~FH} \rangle = U(M)U(M-1)...U(2)U(1)U(0) |\psi_0 \rangle\]</div>
@@ -279,6 +279,7 @@ been indicated. These estimates come from running the examples in a <code class=
 <p>This example shows how to create instances of the <code class="docutils literal notranslate"><span class="pre">Lattice</span></code> and <code class="docutils literal notranslate"><span class="pre">HubbardHamiltonian</span></code> classes.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">adiabatic_fermi_hubbard</span> <span class="k">as</span> <span class="nn">afh</span>
 
+<span class="c1"># create Lattice with 4 sites, no PBC</span>
 <span class="n">lattice1</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">pbc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="c1"># create HubbardHamiltonian with t = 2, U = 4, \mu = -2</span>
@@ -327,6 +328,7 @@ been indicated. These estimates come from running the examples in a <code class=
 <p>The following code block implements periodic boundary conditions:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">adiabatic_fermi_hubbard</span> <span class="k">as</span> <span class="nn">afh</span>
 
+<span class="c1"># create Lattice with 4 sites, PBC</span>
 <span class="n">lattice2</span> <span class="o">=</span> <span class="n">afh</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">pbc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="c1"># create HubbardHamiltonian with t = 2, U = 4, \mu = -2</span>
@@ -540,7 +542,6 @@ the ground state energy resulting from adiabatic state preparation.</p>
 <p>The following code block creates a plot which shows the difference between the ground state energy found through adiabatic state preparation and
 the reference ground state energy found using <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code> for different <span class="math notranslate nohighlight">\(M\)</span> and <span class="math notranslate nohighlight">\(\Delta t\)</span> values.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">adiabatic_fermi_hubbard</span> <span class="k">as</span> <span class="nn">afh</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
 <span class="n">counts_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">250</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">750</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">2500</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">]</span> <span class="c1"># step counts</span>
@@ -589,14 +590,14 @@ the reference ground state energy found using <code class="docutils literal notr
 <a class="reference internal image-reference" href="_images/errorplot.png"><img alt="_images/errorplot.png" src="_images/errorplot.png" style="width: 400px;" /></a>
 <p>There are a few trends to pick out from the above plot:</p>
 <ul class="simple">
-<li><p>First, as the step count <span class="math notranslate nohighlight">\(M\)</span> increases, the error or difference between the adiabatic solution and the qiskit-nature reference generally improves. This can be understood from the fact that as the total evolution time <span class="math notranslate nohighlight">\(t = M \Delta t\)</span> increases, <span class="math notranslate nohighlight">\(t\)</span> becomes larger relative to <span class="math notranslate nohighlight">\(1/(E_0-E_1)^2\)</span>.</p></li>
-<li><p>For short time steps, the total evolution time becomes small, in which case the condition <span class="math notranslate nohighlight">\(t &gt;&gt; 1/(E_0-E_1)^2\)</span> is likely unfulfilled.</p></li>
+<li><p>First, as the step count <span class="math notranslate nohighlight">\(M\)</span> increases, the error or difference between the adiabatic solution and the qiskit-nature reference generally improves. This can be understood from the fact that as the total evolution time <span class="math notranslate nohighlight">\(t = M \Delta t\)</span> increases, <span class="math notranslate nohighlight">\(t\)</span> becomes larger and closer to satisfying Equation <a class="reference internal" href="#equation-condition">(4)</a>.</p></li>
+<li><p>For short time steps, the total evolution time becomes small, in which case Equation <code class="xref eq docutils literal notranslate"><span class="pre">condidion</span></code> is likely unfulfilled.</p></li>
 <li><p>For long time steps (e.g., 1 and 10) the evolution time is longer; however, the Trotter approximation becomes worse since <span class="math notranslate nohighlight">\(\Delta t\)</span> is no longer considered a small argument.</p></li>
 </ul>
 </section>
 <section id="validating-the-slow-evolution-condition-for-n-2">
 <h3>Validating the “slow” evolution condition for <span class="math notranslate nohighlight">\(N = 2\)</span><a class="headerlink" href="#validating-the-slow-evolution-condition-for-n-2" title="Link to this heading"></a></h3>
-<p>This example aims to quantify the quantity <span class="math notranslate nohighlight">\(1/(E_0 - E_1)^2\)</span> to investigate the condition <span class="math notranslate nohighlight">\(t &gt;&gt; 1/(E_0 - E_1)^2\)</span> discussed in the above example. This example
+<p>This example aims to quantify the quantity <span class="math notranslate nohighlight">\(1/(E_0 - E_1)^2\)</span> to investigate the condition in Equation <a class="reference internal" href="#equation-condition">(4)</a>. This example
 makes use of the <code class="docutils literal notranslate"><span class="pre">diagonalize_hamiltonian</span></code> method.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">adiabatic_fermi_hubbard</span> <span class="k">as</span> <span class="nn">afh</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -691,26 +692,26 @@ can be “solved” with adiabatic state preparation.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Ground</span> <span class="n">state</span> <span class="n">energy</span><span class="p">:</span><span class="o">-</span><span class="mf">61.78857249382058</span>
 </pre></div>
 </div>
-<p>However, for the reasons discussed in the previous two examples, this veracity of this value depends on whether the condition <span class="math notranslate nohighlight">\(t &gt;&gt; 1/(E_0-E_1)^2\)</span> holds.
+<p>However, for the reasons discussed in the previous two examples, this veracity of this value depends on whether Equation <a class="reference internal" href="#equation-condition">(4)</a> holds.
 Note that lattices of this size have been solved using exact diagonalization techniques, which may offer a route to validating the above
 result <strong>[7]</strong>.</p>
 </section>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
-<p><strong>[1]</strong> Qin, M., T. Schäfer, S. Andergassen, P. Corboz, and E. Gull, 2022, Annu. Rev. Condens. Matter Phys., 13, 275-302, DOI: <a class="reference external" href="https://doi.org/10.1146/annurev-conmatphys-090921-033948">https://doi.org/10.1146/annurev-conmatphys-090921-033948</a>.</p>
-<p><strong>[2]</strong> Jiang, Z., K. J. Sung, K. Kechedzhi, V. N. Smelyanskiy, and S. Boixo, 2018, Phys. Rev. Applied, 9, 044036, DOI: <a class="reference external" href="https://doi.org/10.1103/PhysRevApplied.9.044036">https://doi.org/10.1103/PhysRevApplied.9.044036</a>.</p>
-<p><strong>[3]</strong> Hofstetter, W. and T. Qin, 2018, J. Phys. B: At. Mol. Opt. Phys., 51, 082001, DOI: <a class="reference external" href="https://doi.org/10.1088/1361-6455/aaa31b">https://doi.org/10.1088/1361-6455/aaa31b</a>.</p>
-<p><strong>[4]</strong> Li, Z-X. and H. Yao, 2019, Annu. Rev. Condens. Matter Phys., 10, 337-56, DOI: <a class="reference external" href="https://doi.org/10.1146/annurev-conmatphys-033117-054307">https://doi.org/10.1146/annurev-conmatphys-033117-054307</a>.</p>
-<p><strong>[5]</strong> Arovas, D. P., E. Berg, S. A. Kivelson, and S. Raghu, Annu. Rev. Condens. Matter Phys., 13, 239-74, DOI: <a class="reference external" href="https://doi.org/10.1146/annurev-conmatphys-031620-102024">https://doi.org/10.1146/annurev-conmatphys-031620-102024</a>.</p>
-<p><strong>[6]</strong> Zhang, J. M., and R. X. Dong, 2010, Eur. J. Phys., 31, 591, DOI: <a class="reference external" href="https://doi.org/10.1088/0143-0807/31/3/016">https://doi.org/10.1088/0143-0807/31/3/016</a>.</p>
-<p><strong>[7]</strong> Lin, H. Q., 1990, 42, 6561, DOI: <a class="reference external" href="https://doi.org/10.1103/PhysRevB.42.6561">https://doi.org/10.1103/PhysRevB.42.6561</a>.</p>
-<p><strong>[8]</strong> Lin, H. Q., J. E. Gubernatis, H. Gould, and J. Tobochnik, 1993, Comput. Phys. 7, 400-07, DOI: <a class="reference external" href="https://doi.org/10.1063/1.4823192">https://doi.org/10.1063/1.4823192</a>.</p>
-<p><strong>[9]</strong> Stanisic, S., J. L. Bosse, F. M. Gambetta, R. A. Santos, W. Mruczkiewicz, T. E. O’Brien, E. Ostby, and A. Montanaro, 2022, Nat. Commun., 13, 5743, DOI: <a class="reference external" href="https://doi.org/10.1038/s41467-022-33335-4">https://doi.org/10.1038/s41467-022-33335-4</a>.</p>
-<p><strong>[10]</strong> Albash, T. and D. A. Lidar, 2018, Rev. Mod. Phys., 90, 015002, DOI: <a class="reference external" href="https://doi.org/10.1103/RevModPhys.90.015002">https://doi.org/10.1103/RevModPhys.90.015002</a>.</p>
+<p><strong>[1]</strong> Qin, M., T. Schäfer, S. Andergassen, P. Corboz, and E. Gull, 2022, <em>Annu. Rev. Condens. Matter Phys.</em>, <strong>13</strong>, 275-302, DOI: <a class="reference external" href="https://doi.org/10.1146/annurev-conmatphys-090921-033948">https://doi.org/10.1146/annurev-conmatphys-090921-033948</a>.</p>
+<p><strong>[2]</strong> Jiang, Z., K. J. Sung, K. Kechedzhi, V. N. Smelyanskiy, and S. Boixo, 2018, <em>Phys. Rev. Applied</em>, <strong>9</strong>, 044036, DOI: <a class="reference external" href="https://doi.org/10.1103/PhysRevApplied.9.044036">https://doi.org/10.1103/PhysRevApplied.9.044036</a>.</p>
+<p><strong>[3]</strong> Hofstetter, W. and T. Qin, 2018, <em>J. Phys. B: At. Mol. Opt. Phys.</em>, <strong>51</strong>, 082001, DOI: <a class="reference external" href="https://doi.org/10.1088/1361-6455/aaa31b">https://doi.org/10.1088/1361-6455/aaa31b</a>.</p>
+<p><strong>[4]</strong> Li, Z-X. and H. Yao, 2019, <em>Annu. Rev. Condens. Matter Phys.</em>, <strong>10</strong>, 337-56, DOI: <a class="reference external" href="https://doi.org/10.1146/annurev-conmatphys-033117-054307">https://doi.org/10.1146/annurev-conmatphys-033117-054307</a>.</p>
+<p><strong>[5]</strong> Arovas, D. P., E. Berg, S. A. Kivelson, and S. Raghu, <em>Annu. Rev. Condens. Matter Phys.</em>, <strong>13</strong>, 239-74, DOI: <a class="reference external" href="https://doi.org/10.1146/annurev-conmatphys-031620-102024">https://doi.org/10.1146/annurev-conmatphys-031620-102024</a>.</p>
+<p><strong>[6]</strong> Zhang, J. M., and R. X. Dong, 2010, <em>Eur. J. Phys.</em>, <strong>31</strong>, 591, DOI: <a class="reference external" href="https://doi.org/10.1088/0143-0807/31/3/016">https://doi.org/10.1088/0143-0807/31/3/016</a>.</p>
+<p><strong>[7]</strong> Lin, H. Q., 1990, <em>Phys. Rev. B.</em>, <strong>42</strong>, 6561, DOI: <a class="reference external" href="https://doi.org/10.1103/PhysRevB.42.6561">https://doi.org/10.1103/PhysRevB.42.6561</a>.</p>
+<p><strong>[8]</strong> Lin, H. Q., J. E. Gubernatis, H. Gould, and J. Tobochnik, 1993, <em>Comput. Phys.</em>, <strong>7</strong>, 400-07, DOI: <a class="reference external" href="https://doi.org/10.1063/1.4823192">https://doi.org/10.1063/1.4823192</a>.</p>
+<p><strong>[9]</strong> Stanisic, S., J. L. Bosse, F. M. Gambetta, R. A. Santos, W. Mruczkiewicz, T. E. O’Brien, E. Ostby, and A. Montanaro, 2022, <em>Nat. Commun.</em>, <strong>13</strong>, 5743, DOI: <a class="reference external" href="https://doi.org/10.1038/s41467-022-33335-4">https://doi.org/10.1038/s41467-022-33335-4</a>.</p>
+<p><strong>[10]</strong> Albash, T. and D. A. Lidar, 2018, <em>Rev. Mod. Phys.</em>, <strong>90</strong>, 015002, DOI: <a class="reference external" href="https://doi.org/10.1103/RevModPhys.90.015002">https://doi.org/10.1103/RevModPhys.90.015002</a>.</p>
 <p><strong>[11]</strong> Mayhall, N. <em>Adiabatic Evolution of Ising Hamiltonian with Quantum Circuit</em>. <a class="reference external" href="https://github.com/CHEM-PHYS-X684/AdiabaticPrinciple/blob/main/3_adiabatic.ipynb">https://github.com/CHEM-PHYS-X684/AdiabaticPrinciple/blob/main/3_adiabatic.ipynb</a>.</p>
 <p><strong>[12]</strong> Qiskit contributors. <em>Qiskit: An Open-source Framework for Quantum Computing</em>, 2023, DOI: <a class="reference external" href="https://doi.org/10.5281/zenodo.2573505">https://doi.org/10.5281/zenodo.2573505</a>.</p>
-<p><strong>[13]</strong> Qiskit Nature Development Team. <em>Qiskit Nature</em>. DOI: <a class="reference external" href="https://doi.org/10.5281/zenodo.7828767">https://doi.org/10.5281/zenodo.7828767</a>.</p>
+<p><strong>[13]</strong> Qiskit Nature Development Team. <em>Qiskit Nature</em>, 2023, DOI: <a class="reference external" href="https://doi.org/10.5281/zenodo.7828767">https://doi.org/10.5281/zenodo.7828767</a>.</p>
 <p><strong>[14]</strong> Qiskit Nature Development Team. <em>FermionicOp</em>.  <a class="reference external" href="https://qiskit-community.github.io/qiskit-nature/stubs/qiskit_nature.second_q.operators.FermionicOp.html#qiskit_nature.second_q.operators.FermionicOp">https://qiskit-community.github.io/qiskit-nature/stubs/qiskit_nature.second_q.operators.FermionicOp.html#qiskit_nature.second_q.operators.FermionicOp</a></p>
 <p><strong>[15]</strong> Qiskit Nature Development Team. <em>Lattice models</em>. <a class="reference external" href="https://qiskit-community.github.io/qiskit-nature/tutorials/10_lattice_models.html">https://qiskit-community.github.io/qiskit-nature/tutorials/10_lattice_models.html</a>.</p>
 <p><strong>[16]</strong> Qiskit Nature Development Team. <em>Mapping to the Qubit Space</em>. <a class="reference external" href="https://qiskit-community.github.io/qiskit-nature/tutorials/06_qubit_mappers.html">https://qiskit-community.github.io/qiskit-nature/tutorials/06_qubit_mappers.html</a>.</p>
