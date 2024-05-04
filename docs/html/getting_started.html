@@ -152,7 +152,7 @@ on a lattice. The Hamiltonian is given by:</p>
 <p>The first term is the “hopping” term which describes how electrons move from site to site (e.g., for adjacent sites <span class="math notranslate nohighlight">\(i, j\)</span>, an electron hopping from
 <span class="math notranslate nohighlight">\(i\)</span> to <span class="math notranslate nohighlight">\(j\)</span> can be described by the product of an annihilation operator on site <span class="math notranslate nohighlight">\(i\)</span> and creation operator on site <span class="math notranslate nohighlight">\(j\)</span>). The strength of this
 term is controlled by the parameter <span class="math notranslate nohighlight">\(t\)</span>. The second term describes an interaction between two electrons on the same site, with strength <span class="math notranslate nohighlight">\(U\)</span>.
-Depending on the relative strengths of <span class="math notranslate nohighlight">\(t\)</span> and <span class="math notranslate nohighlight">\(U\)</span> as well as the number of electrons in the lattice, the above model captures superconducting, antiferromagnetic (and ferromagnetic), and insulating phases.
+Depending on the relative strengths of <span class="math notranslate nohighlight">\(t\)</span> and <span class="math notranslate nohighlight">\(U\)</span> as well as the number of electrons in the lattice, the above model captures superconducting, (anti)ferromagnetic, and insulating phases.
 It has been applied to explain phenomena in materials whose properties depend on correlated electrons, including high-temperature cuprate superconductors <strong>[1]</strong>.</p>
 <p>The above Hamiltonian can be modified to include a chemical potential term with strength <span class="math notranslate nohighlight">\(\mu\)</span> to control the number of electrons in the lattice <strong>[2]</strong>:</p>
 <div class="math notranslate nohighlight" id="equation-ham-with-mu">
@@ -162,7 +162,7 @@ It has been applied to explain phenomena in materials whose properties depend on
 <h3>Quantum Computing and the Fermi-Hubbard Model<a class="headerlink" href="#quantum-computing-and-the-fermi-hubbard-model" title="Link to this heading"></a></h3>
 <p>The Fermi-Hubbard model has an analytical solution for 1D lattices; however, a more physically relevant case is that of a 2D lattice, which cannot
 be solved analytically and must be simulated. Classical simulation approaches have been effective in describing much of the phenomena discussed in the previous section; however, these techniques
-have limitations <strong>[3]</strong>. Quantum Monte Carlo (QMC) simulations are successful in describing many-electron lattices, provided the Boltzmann factors involved do not
+have limitations <strong>[3]</strong>. Quantum Monte Carlo (QMC) simulations provide successful descriptions of many-electron lattices when the Boltzmann factors involved do not
 become negative, which can happen in fermionic systems. Due to this “sign problem”, for <span class="math notranslate nohighlight">\(U &gt; 0\)</span>, QMC simulations do not converge unless the lattice is “half-filled” <strong>[4]</strong>. “Half-filling” refers to the situation in which the number of lattice sites equals the number of electrons <strong>[5]</strong>. Exact diagonalization techniques, which utilize
 symmetries to reduce the problem to a smaller Hilbert space, are effective for lattice sizes up to 32 sites <strong>[6]</strong>, <strong>[7]</strong>, <strong>[8]</strong>.</p>
 <p>Due to the limitations of classical simulations, there has been significant interest in using quantum computers to simulate the Fermi-Hubbard model. These efforts include quantum emulation, in which evolution under the Hamiltonian is implemented on a representative qubit system (e.g., atomic lattices) <strong>[3]</strong>, and quantum algorithms
@@ -179,9 +179,9 @@ the adiabatic principle states the system remains in an energy eigenstate of <sp
 the ground state of <span class="math notranslate nohighlight">\(H_{final}\)</span>. The total evolution time <span class="math notranslate nohighlight">\(t = M\Delta t\)</span> must satisfy</p>
 <div class="math notranslate nohighlight" id="equation-condition">
 <span class="eqno">(4)<a class="headerlink" href="#equation-condition" title="Link to this equation"></a></span>\[t &gt;&gt; 1/(E_0-E_1)^2\]</div>
-<p>where <span class="math notranslate nohighlight">\(E_0-E_1\)</span> is the smallest difference between the first excited state energy and the ground state energy of <span class="math notranslate nohighlight">\(H(s)\)</span> for any <span class="math notranslate nohighlight">\(s\)</span> <strong>[10]</strong>.</p>
-<p>This approach has been previously applied to simulate the ground state of Fermi-Hubbard model with chemical potential and magnetic
-field terms, starting from the ground state of a Hamiltonian that describes d-wave electron pairing (a type of superconductivity) <strong>[2]</strong>.</p>
+<p>where <span class="math notranslate nohighlight">\(E_0-E_1\)</span> is the smallest magnitude difference between the first excited state energy and the ground state energy of <span class="math notranslate nohighlight">\(H(s)\)</span> for any <span class="math notranslate nohighlight">\(s\)</span> <strong>[10]</strong>.</p>
+<p>This approach has been previously applied to simulate the ground state of the Fermi-Hubbard model with chemical potential and magnetic
+field terms, starting from the ground state of a Hamiltonian which models d-wave electron pairing (a type of superconductivity) <strong>[2]</strong>.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">adiabatic_fermi_hubbard</span></code> package uses a different starting point to find the ground state of the Fermi-Hubbard model on small 1D lattices through adiabatic state preparation.</p>
 </section>
 </section>
@@ -200,9 +200,9 @@ four creation/annilhilation operators for the first site in a 8-site 1D lattice 
 <li><p><span class="math notranslate nohighlight">\(a_{0 \downarrow}\)</span>: <code class="docutils literal notranslate"><span class="pre">FermionicOp({“-_1”:1.0},</span> <span class="pre">num_spin_orbitals=16)</span></code></p></li>
 <li><p><span class="math notranslate nohighlight">\(a^\dagger_{0 \downarrow}\)</span>: <code class="docutils literal notranslate"><span class="pre">FermionicOp({“+_1”:1.0},</span> <span class="pre">num_spin_orbitals=16)</span></code></p></li>
 </ul>
-<p>The above example shows that the fermionic operators for a single lattice site are represented by two spin orbitals (indexed by 0 and 1). For an <span class="math notranslate nohighlight">\(N = 8\)</span> lattice, the
+<p>The above example shows that the fermionic operators for a single lattice site are represented by two spin orbitals (indexed by 0 and 1). For a <span class="math notranslate nohighlight">\(N = 8\)</span> lattice, the
 total number of spin orbitals is <span class="math notranslate nohighlight">\(2N = 16\)</span> (hence the value of <code class="docutils literal notranslate"><span class="pre">num_spin_orbitals</span></code> in the above constructors) <strong>[15]</strong>.</p>
-<p>For a specified lattice and <span class="math notranslate nohighlight">\(t, U, \mu\)</span> parameters, the <code class="docutils literal notranslate"><span class="pre">adiabatic_fermi_hubbard</span></code> package constructs the Fermi-Hubbard Hamiltonian <a class="reference internal" href="#equation-ham-with-mu">(2)</a> out of these FermionicOp objects.</p>
+<p>For a specified lattice and <span class="math notranslate nohighlight">\(t, U, \mu\)</span> parameters, the <code class="docutils literal notranslate"><span class="pre">adiabatic_fermi_hubbard</span></code> package constructs the Fermi-Hubbard Hamiltonian <a class="reference internal" href="#equation-ham-with-mu">(2)</a> out of these <code class="docutils literal notranslate"><span class="pre">FermionicOp</span></code> objects.</p>
 </section>
 <section id="jordan-wigner-transformation">
 <h3>Jordan-Wigner Transformation<a class="headerlink" href="#jordan-wigner-transformation" title="Link to this heading"></a></h3>
@@ -590,9 +590,9 @@ the reference ground state energy found using <code class="docutils literal notr
 <a class="reference internal image-reference" href="_images/errorplot.png"><img alt="_images/errorplot.png" src="_images/errorplot.png" style="width: 400px;" /></a>
 <p>There are a few trends to pick out from the above plot:</p>
 <ul class="simple">
-<li><p>First, as the step count <span class="math notranslate nohighlight">\(M\)</span> increases, the error or difference between the adiabatic solution and the qiskit-nature reference generally improves. This can be understood from the fact that as the total evolution time <span class="math notranslate nohighlight">\(t = M \Delta t\)</span> increases, <span class="math notranslate nohighlight">\(t\)</span> becomes larger and closer to satisfying Equation <a class="reference internal" href="#equation-condition">(4)</a>.</p></li>
+<li><p>First, as the step count <span class="math notranslate nohighlight">\(M\)</span> increases, the difference between the adiabatic solution and the qiskit-nature reference generally decreases. This can be understood from the fact that as the total evolution time <span class="math notranslate nohighlight">\(t = M \Delta t\)</span> increases, <span class="math notranslate nohighlight">\(t\)</span> becomes larger and closer to satisfying Equation <a class="reference internal" href="#equation-condition">(4)</a>.</p></li>
 <li><p>For short time steps, the total evolution time becomes small, in which case Equation <a class="reference internal" href="#equation-condition">(4)</a> is likely unfulfilled.</p></li>
-<li><p>For long time steps (e.g., 1 and 10) the evolution time is longer; however, the Trotter approximation becomes worse since <span class="math notranslate nohighlight">\(\Delta t\)</span> is no longer considered a small argument.</p></li>
+<li><p>For long time steps (e.g., 1 and 10) the evolution time is longer; however, the Trotter approximation becomes worse since <span class="math notranslate nohighlight">\(\Delta t\)</span> is no longer a small argument.</p></li>
 </ul>
 </section>
 <section id="validating-the-slow-evolution-condition-for-n-2">
@@ -663,12 +663,12 @@ makes use of the <code class="docutils literal notranslate"><span class="pre">di
 </div>
 <a class="reference internal image-reference" href="_images/spectralplot.png"><img alt="_images/spectralplot.png" src="_images/spectralplot.png" style="width: 500px;" /></a>
 <p>For both <span class="math notranslate nohighlight">\(M=1000\)</span> and <span class="math notranslate nohighlight">\(M=10000\)</span>, the peak value of <span class="math notranslate nohighlight">\(1/(E_0-E_1)^2\)</span> occurs at around <span class="math notranslate nohighlight">\(M/2\)</span> and has the same value. The reason for the peak can be seen in how the gap between the two lowest eigenvalues of <span class="math notranslate nohighlight">\(H(k)\)</span> changes as <span class="math notranslate nohighlight">\(k\)</span> increases.
-So, <span class="math notranslate nohighlight">\(M\)</span> is not involved in setting the condition on the total evolution time <span class="math notranslate nohighlight">\(t = M \Delta t\)</span> (Equation <a class="reference internal" href="#equation-condition">(4)</a>). However, increasing <span class="math notranslate nohighlight">\(M\)</span> brings <span class="math notranslate nohighlight">\(t\)</span> closer to fulfilling the condition on the two site lattice, which is why the error/energy difference
-explored in the previous section generally improved for increasing evolution time (excluding the cases where <span class="math notranslate nohighlight">\(\Delta t\)</span> being too large questioned the validity of the Trotter approximation).</p>
+The behavior of the gap seems independent of <span class="math notranslate nohighlight">\(M\)</span>. However, increasing <span class="math notranslate nohighlight">\(M\)</span> brings <span class="math notranslate nohighlight">\(t\)</span> closer to fulfilling the condition in Equation <a class="reference internal" href="#equation-condition">(4)</a> on the two site lattice, which is why the error/energy difference
+explored in the previous section generally decreased for increasing evolution time (excluding the cases where <span class="math notranslate nohighlight">\(\Delta t\)</span> being too large called into question the validity of the Trotter approximation).</p>
 </section>
 <section id="a-larger-lattice-n-12">
 <h3>A larger lattice (<span class="math notranslate nohighlight">\(N = 12\)</span>)<a class="headerlink" href="#a-larger-lattice-n-12" title="Link to this heading"></a></h3>
-<p>The following code block is an example of a large lattice whose ground state cannot be solved using the <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code> eigensolver, but
+<p>The following code block is an example of a large lattice whose ground state cannot be solved using the <code class="docutils literal notranslate"><span class="pre">qiskit-nature</span></code> eigensolver but
 can be “solved” with adiabatic state preparation.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">adiabatic_fermi_hubbard</span> <span class="k">as</span> <span class="nn">afh</span>
 
@@ -688,7 +688,7 @@ can be “solved” with adiabatic state preparation.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ground state energy:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">energy</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>After ~42 min of execution time, the following results:</p>
+<p>After ~47 min of execution time, the following results:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Ground</span> <span class="n">state</span> <span class="n">energy</span><span class="p">:</span><span class="o">-</span><span class="mf">61.78857249382058</span>
 </pre></div>
 </div>
@@ -709,11 +709,11 @@ result <strong>[7]</strong>.</p>
 <p><strong>[8]</strong> Lin, H. Q., J. E. Gubernatis, H. Gould, and J. Tobochnik, 1993, <em>Comput. Phys.</em>, <strong>7</strong>, 400-07, DOI: <a class="reference external" href="https://doi.org/10.1063/1.4823192">https://doi.org/10.1063/1.4823192</a>.</p>
 <p><strong>[9]</strong> Stanisic, S., J. L. Bosse, F. M. Gambetta, R. A. Santos, W. Mruczkiewicz, T. E. O’Brien, E. Ostby, and A. Montanaro, 2022, <em>Nat. Commun.</em>, <strong>13</strong>, 5743, DOI: <a class="reference external" href="https://doi.org/10.1038/s41467-022-33335-4">https://doi.org/10.1038/s41467-022-33335-4</a>.</p>
 <p><strong>[10]</strong> Albash, T. and D. A. Lidar, 2018, <em>Rev. Mod. Phys.</em>, <strong>90</strong>, 015002, DOI: <a class="reference external" href="https://doi.org/10.1103/RevModPhys.90.015002">https://doi.org/10.1103/RevModPhys.90.015002</a>.</p>
-<p><strong>[11]</strong> Mayhall, N. <em>Adiabatic Evolution of Ising Hamiltonian with Quantum Circuit</em>. <a class="reference external" href="https://github.com/CHEM-PHYS-X684/AdiabaticPrinciple/blob/main/3_adiabatic.ipynb">https://github.com/CHEM-PHYS-X684/AdiabaticPrinciple/blob/main/3_adiabatic.ipynb</a>.</p>
+<p><strong>[11]</strong> Mayhall, N. <em>Ising Adiabatic State Preparation</em>. <a class="reference external" href="https://github.com/CHEM-PHYS-X684/QuantumSoftware/blob/main/assignments/adiabatic.ipynb">https://github.com/CHEM-PHYS-X684/QuantumSoftware/blob/main/assignments/adiabatic.ipynb</a>.</p>
 <p><strong>[12]</strong> Qiskit contributors. <em>Qiskit: An Open-source Framework for Quantum Computing</em>, 2023, DOI: <a class="reference external" href="https://doi.org/10.5281/zenodo.2573505">https://doi.org/10.5281/zenodo.2573505</a>.</p>
 <p><strong>[13]</strong> Qiskit Nature Development Team. <em>Qiskit Nature</em>, 2023, DOI: <a class="reference external" href="https://doi.org/10.5281/zenodo.7828767">https://doi.org/10.5281/zenodo.7828767</a>.</p>
 <p><strong>[14]</strong> Qiskit Nature Development Team. <em>FermionicOp</em>.  <a class="reference external" href="https://qiskit-community.github.io/qiskit-nature/stubs/qiskit_nature.second_q.operators.FermionicOp.html#qiskit_nature.second_q.operators.FermionicOp">https://qiskit-community.github.io/qiskit-nature/stubs/qiskit_nature.second_q.operators.FermionicOp.html#qiskit_nature.second_q.operators.FermionicOp</a></p>
-<p><strong>[15]</strong> Qiskit Nature Development Team. <em>Lattice models</em>. <a class="reference external" href="https://qiskit-community.github.io/qiskit-nature/tutorials/10_lattice_models.html">https://qiskit-community.github.io/qiskit-nature/tutorials/10_lattice_models.html</a>.</p>
+<p><strong>[15]</strong> Qiskit Nature Development Team. <em>Lattice models</em>. <a class="reference external" href="https://qiskit-community.github.io/qiskit-nature/tutorials/10_lattice_models.html#The-Fermi-Hubbard-model">https://qiskit-community.github.io/qiskit-nature/tutorials/10_lattice_models.html#The-Fermi-Hubbard-model</a>.</p>
 <p><strong>[16]</strong> Qiskit Nature Development Team. <em>Mapping to the Qubit Space</em>. <a class="reference external" href="https://qiskit-community.github.io/qiskit-nature/tutorials/06_qubit_mappers.html">https://qiskit-community.github.io/qiskit-nature/tutorials/06_qubit_mappers.html</a>.</p>
 <p><strong>[17]</strong> Nielsen, M., A., and I. L. Chuang. “4: Quantum Circuits”, <em>Quantum Computation and Quantum Information</em>, Cambridge University Press, 2010.</p>
 </section>

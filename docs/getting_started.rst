@@ -53,7 +53,7 @@ where
 The first term is the "hopping" term which describes how electrons move from site to site (e.g., for adjacent sites :math:`i, j`, an electron hopping from
 :math:`i` to :math:`j` can be described by the product of an annihilation operator on site :math:`i` and creation operator on site :math:`j`). The strength of this
 term is controlled by the parameter :math:`t`. The second term describes an interaction between two electrons on the same site, with strength :math:`U`. 
-Depending on the relative strengths of :math:`t` and :math:`U` as well as the number of electrons in the lattice, the above model captures superconducting, antiferromagnetic (and ferromagnetic), and insulating phases. 
+Depending on the relative strengths of :math:`t` and :math:`U` as well as the number of electrons in the lattice, the above model captures superconducting, (anti)ferromagnetic, and insulating phases. 
 It has been applied to explain phenomena in materials whose properties depend on correlated electrons, including high-temperature cuprate superconductors **[1]**.
 
 The above Hamiltonian can be modified to include a chemical potential term with strength :math:`\mu` to control the number of electrons in the lattice **[2]**:
@@ -66,7 +66,7 @@ Quantum Computing and the Fermi-Hubbard Model
 '''''''''''''''''''''''''''''''''''''''''''''
 The Fermi-Hubbard model has an analytical solution for 1D lattices; however, a more physically relevant case is that of a 2D lattice, which cannot
 be solved analytically and must be simulated. Classical simulation approaches have been effective in describing much of the phenomena discussed in the previous section; however, these techniques 
-have limitations **[3]**. Quantum Monte Carlo (QMC) simulations are successful in describing many-electron lattices, provided the Boltzmann factors involved do not
+have limitations **[3]**. Quantum Monte Carlo (QMC) simulations provide successful descriptions of many-electron lattices when the Boltzmann factors involved do not
 become negative, which can happen in fermionic systems. Due to this "sign problem", for :math:`U > 0`, QMC simulations do not converge unless the lattice is "half-filled" **[4]**. "Half-filling" refers to the situation in which the number of lattice sites equals the number of electrons **[5]**. Exact diagonalization techniques, which utilize
 symmetries to reduce the problem to a smaller Hilbert space, are effective for lattice sizes up to 32 sites **[6]**, **[7]**, **[8]**.
 
@@ -88,10 +88,10 @@ the ground state of :math:`H_{final}`. The total evolution time :math:`t = M\Del
 .. math:: t >> 1/(E_0-E_1)^2
     :label: condition
 
-where :math:`E_0-E_1` is the smallest difference between the first excited state energy and the ground state energy of :math:`H(s)` for any :math:`s` **[10]**.
+where :math:`E_0-E_1` is the smallest magnitude difference between the first excited state energy and the ground state energy of :math:`H(s)` for any :math:`s` **[10]**.
 
-This approach has been previously applied to simulate the ground state of Fermi-Hubbard model with chemical potential and magnetic
-field terms, starting from the ground state of a Hamiltonian that describes d-wave electron pairing (a type of superconductivity) **[2]**. 
+This approach has been previously applied to simulate the ground state of the Fermi-Hubbard model with chemical potential and magnetic
+field terms, starting from the ground state of a Hamiltonian which models d-wave electron pairing (a type of superconductivity) **[2]**. 
 
 The ``adiabatic_fermi_hubbard`` package uses a different starting point to find the ground state of the Fermi-Hubbard model on small 1D lattices through adiabatic state preparation.
 
@@ -111,10 +111,10 @@ four creation/annilhilation operators for the first site in a 8-site 1D lattice 
 * :math:`a_{0 \downarrow}`: ``FermionicOp({“-_1”:1.0}, num_spin_orbitals=16)``
 * :math:`a^\dagger_{0 \downarrow}`: ``FermionicOp({“+_1”:1.0}, num_spin_orbitals=16)``
 
-The above example shows that the fermionic operators for a single lattice site are represented by two spin orbitals (indexed by 0 and 1). For an :math:`N = 8` lattice, the
+The above example shows that the fermionic operators for a single lattice site are represented by two spin orbitals (indexed by 0 and 1). For a :math:`N = 8` lattice, the
 total number of spin orbitals is :math:`2N = 16` (hence the value of ``num_spin_orbitals`` in the above constructors) **[15]**.
 
-For a specified lattice and :math:`t, U, \mu` parameters, the ``adiabatic_fermi_hubbard`` package constructs the Fermi-Hubbard Hamiltonian :eq:`ham_with_mu` out of these FermionicOp objects.
+For a specified lattice and :math:`t, U, \mu` parameters, the ``adiabatic_fermi_hubbard`` package constructs the Fermi-Hubbard Hamiltonian :eq:`ham_with_mu` out of these ``FermionicOp`` objects.
 
 Jordan-Wigner Transformation
 ''''''''''''''''''''''''''''
@@ -550,9 +550,9 @@ This will produce the following after an evaluation time of approximately 27 min
 
 There are a few trends to pick out from the above plot:
 
-* First, as the step count :math:`M` increases, the error or difference between the adiabatic solution and the qiskit-nature reference generally improves. This can be understood from the fact that as the total evolution time :math:`t = M \Delta t` increases, :math:`t` becomes larger and closer to satisfying Equation :eq:`condition`.
+* First, as the step count :math:`M` increases, the difference between the adiabatic solution and the qiskit-nature reference generally decreases. This can be understood from the fact that as the total evolution time :math:`t = M \Delta t` increases, :math:`t` becomes larger and closer to satisfying Equation :eq:`condition`.
 * For short time steps, the total evolution time becomes small, in which case Equation :eq:`condition` is likely unfulfilled.
-* For long time steps (e.g., 1 and 10) the evolution time is longer; however, the Trotter approximation becomes worse since :math:`\Delta t` is no longer considered a small argument.
+* For long time steps (e.g., 1 and 10) the evolution time is longer; however, the Trotter approximation becomes worse since :math:`\Delta t` is no longer a small argument.
 
 Validating the "slow" evolution condition for :math:`N = 2`
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -629,13 +629,13 @@ This code should produce the following text output and plot after 1 minute of ev
 
 
 For both :math:`M=1000` and :math:`M=10000`, the peak value of :math:`1/(E_0-E_1)^2` occurs at around :math:`M/2` and has the same value. The reason for the peak can be seen in how the gap between the two lowest eigenvalues of :math:`H(k)` changes as :math:`k` increases.
-So, :math:`M` is not involved in setting the condition on the total evolution time :math:`t = M \Delta t` (Equation :eq:`condition`). However, increasing :math:`M` brings :math:`t` closer to fulfilling the condition on the two site lattice, which is why the error/energy difference
-explored in the previous section generally improved for increasing evolution time (excluding the cases where :math:`\Delta t` being too large questioned the validity of the Trotter approximation).
+The behavior of the gap seems independent of :math:`M`. However, increasing :math:`M` brings :math:`t` closer to fulfilling the condition in Equation :eq:`condition` on the two site lattice, which is why the error/energy difference
+explored in the previous section generally decreased for increasing evolution time (excluding the cases where :math:`\Delta t` being too large called into question the validity of the Trotter approximation).
 
 
 A larger lattice (:math:`N = 12`)
 '''''''''''''''''''''''''''''''''
-The following code block is an example of a large lattice whose ground state cannot be solved using the ``qiskit-nature`` eigensolver, but
+The following code block is an example of a large lattice whose ground state cannot be solved using the ``qiskit-nature`` eigensolver but
 can be "solved" with adiabatic state preparation.
 
 ::
@@ -657,7 +657,7 @@ can be "solved" with adiabatic state preparation.
 
     print("Ground state energy:" + str(energy))
 
-After ~42 min of execution time, the following results:
+After ~47 min of execution time, the following results:
 
 ::
 
@@ -689,7 +689,7 @@ References
 
 **[10]** Albash, T. and D. A. Lidar, 2018, *Rev. Mod. Phys.*, **90**, 015002, DOI: https://doi.org/10.1103/RevModPhys.90.015002.
 
-**[11]** Mayhall, N. *Adiabatic Evolution of Ising Hamiltonian with Quantum Circuit*. https://github.com/CHEM-PHYS-X684/AdiabaticPrinciple/blob/main/3_adiabatic.ipynb. 
+**[11]** Mayhall, N. *Ising Adiabatic State Preparation*. https://github.com/CHEM-PHYS-X684/QuantumSoftware/blob/main/assignments/adiabatic.ipynb. 
 
 **[12]** Qiskit contributors. *Qiskit: An Open-source Framework for Quantum Computing*, 2023, DOI: https://doi.org/10.5281/zenodo.2573505. 
 
@@ -697,7 +697,7 @@ References
 
 **[14]** Qiskit Nature Development Team. *FermionicOp*.  https://qiskit-community.github.io/qiskit-nature/stubs/qiskit_nature.second_q.operators.FermionicOp.html#qiskit_nature.second_q.operators.FermionicOp 
 
-**[15]** Qiskit Nature Development Team. *Lattice models*. https://qiskit-community.github.io/qiskit-nature/tutorials/10_lattice_models.html. 
+**[15]** Qiskit Nature Development Team. *Lattice models*. https://qiskit-community.github.io/qiskit-nature/tutorials/10_lattice_models.html#The-Fermi-Hubbard-model. 
 
 **[16]** Qiskit Nature Development Team. *Mapping to the Qubit Space*. https://qiskit-community.github.io/qiskit-nature/tutorials/06_qubit_mappers.html. 
 
